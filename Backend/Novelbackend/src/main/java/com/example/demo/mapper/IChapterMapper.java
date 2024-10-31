@@ -11,7 +11,7 @@ import com.example.demo.entity.Chapter;
 public interface IChapterMapper {
 
 	@Mapping(target = "id_Chapter",ignore = true)
-	@Mapping(target = "novel",ignore = true)
+//	@Mapping(target = "novel",ignore = true)
 	Chapter toChapter(ChapterCreationRequest request);
 	ChapterRespone toChapterRespone(Chapter chapter);
 }

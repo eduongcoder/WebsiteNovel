@@ -28,19 +28,21 @@ public class ChapterService {
 	IChapterRepository chapterRepository;
 	IChapterMapper chapterMapper;
 	INovelRepository novelRepository;
-	
+
 	public ChapterRespone createChapter(ChapterCreationRequest request) {
-		Novel novel=novelRepository.findByNameNovel(request.getNovelName());
-		request.setNovel(novel);
-		Chapter chapter=chapterMapper.toChapter(request);
+		Novel novel = novelRepository.findByNameNovel(request.getNovelName());
+		request.setView_Chapter(0);
+//		request.setNovel(novel);
+		Chapter chapter = chapterMapper.toChapter(request);
 		return chapterMapper.toChapterRespone(chapterRepository.save(chapter));
+
 	}
-	
-	public List<ChapterRespone> getAllChapterByIdNovel(String nameNovel){
-		Novel novel=novelRepository.findByNameNovel(nameNovel);
-		List<Chapter> chapterRespones=new ArrayList<>(novel.getChapter());
-		
+
+	public List<ChapterRespone> getAllChapterByIdNovel(String nameNovel) {
+		Novel novel = novelRepository.findByNameNovel(nameNovel);
+		List<Chapter> chapterRespones = new ArrayList<>(novel.getChapter());
+
 		return chapterRespones.stream().map(t -> chapterMapper.toChapterRespone(t)).toList();
 	}
-	
+
 }

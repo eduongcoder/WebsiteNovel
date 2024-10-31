@@ -20,34 +20,29 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/api/novel")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class NovelController {
 
 	NovelService novelService;
-	
+
 	@GetMapping("/getNovels")
 	public ApiRespone<List<NovelRespone>> getAllNovel() {
-		return ApiRespone.<List<NovelRespone>>builder()
-				.result(novelService.getAllNovel())
-				.build();
-	} 
- 
-	@PostMapping(value = "/createNovel",consumes = {"multipart/form-data"})
-	public ApiRespone<NovelRespone>  createNovel(@RequestParam MultipartFile image,@RequestPart NovelCreationRequest request) throws IOException {
+		return ApiRespone.<List<NovelRespone>>builder().result(novelService.getAllNovel()).build();
+	}
+
+	@PostMapping(value = "/createNovel", consumes = { "multipart/form-data"})
+	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,
+			@RequestPart NovelCreationRequest request) throws IOException {
 		request.setImage_Novel(image.getBytes());
-		NovelRespone novelRespone =novelService.createNovel(request);
-		
+		NovelRespone novelRespone = novelService.createNovel(request);
+
 		return ApiRespone.<NovelRespone>builder().result(novelRespone).build();
 	}
-	
-	
+
 }
