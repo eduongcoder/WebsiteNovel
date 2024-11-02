@@ -1,10 +1,8 @@
-import ChapForm from "./InputChap";
+import InputCategory from "./InputCategory";
 function Category() {
-    return (  
-        <div>
-            <ChapForm />
-        </div>
-    );
+    return ( <div>
+        <InputCategory/>
+    </div> );
 }
 
 export default Category;

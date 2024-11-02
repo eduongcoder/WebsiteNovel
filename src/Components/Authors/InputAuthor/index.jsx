@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const NovelForm = () => {
+const InputAuthor = () => {
     const [file, setFile] = useState(null);
     const [id_Novel, setId_Novel] = useState('');
     const [name_Novel, setName_Novel] = useState('');
@@ -98,4 +98,4 @@ const NovelForm = () => {
     );
 };
 
-export default NovelForm;
+export default InputAuthor;
