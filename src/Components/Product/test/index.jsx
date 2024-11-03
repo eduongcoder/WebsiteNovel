@@ -6,6 +6,7 @@ const TABLE_HEADS = [
     'description_Novel',
     'status_Novel',
     'file',
+    'action',
 ];
 function ProductList() {
     const [p, setp] = useState([]);
@@ -51,23 +52,23 @@ function ProductList() {
                         </thead>
                         <tbody>
                             {p.map((novel) => (
-                                <tr key={novel.id_Novel}>
+                                <tr key={novel.idNovel}>
                                     <td className="px-3 py-3">
-                                        {novel.id_Novel}
+                                        {novel.idNovel}
                                     </td>
                                     <td className="px-3 py-3">
                                         {novel.nameNovel}
                                     </td>
                                     <td className="px-3 py-3">
-                                        {novel.description_Novel}
+                                        {novel.descriptionNovel}
                                     </td>
                                     <td className="px-3 py-3">
-                                        {novel.status_Novel}
+                                        {novel.statusNovel}
                                     </td>
                                     <td className="px-3 py-3">
                                         <img
-                                            src={novel.image_Novel}
-                                            alt={`Novel ${novel.id_Novel}`}
+                                            src={novel.imageNovel}
+                                            alt={`Novel ${novel.idNovel}`}
                                             className="w-20 h-auto"
                                         />
                                     </td>

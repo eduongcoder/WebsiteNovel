@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const TABLE_HEADS = ['ID Category', 'Name Category', 'Action'];
+const TABLE_HEADS = ['ID Author', 'Description Author','Name Author', 'Action'];
 
-function ListViewCategory() {
-    const [categories, setCategories] = useState([]);
+function ListViewAuthors() {
+    const [authors, setCategories] = useState([]);
 
     useEffect(() => {
         axios
-            .get('http://26.232.136.42:8080/api/category/getAllCategory')
-            .then((categories) => {
-                setCategories(Array.from(categories.data.result));
-                console.log( Array.from(categories.data.result)); // Log for debugging
+            .get('http://26.232.136.42:8080/api/author/getAllAuthor')
+            .then((authors) => {
+                setCategories(Array.from(authors.data.result));
+                console.log(Array.from(authors.data.result)); // Log for debugging
             })
             .catch((error) => console.error('Error fetching data:', error));
     }, []);
@@ -34,21 +34,17 @@ function ListViewCategory() {
                             </tr>
                         </thead>
                         <tbody>
-                            {categories.map((category) => (
-                                <tr key={category.idCategory}>
+                            {authors.map((author) => (
+                                <tr key={author.idAuthor}>
                                     <td className="px-3 py-3">
-                                        {category.idCategory}
+                                        {author.idAuthor}
                                     </td>
                                     <td className="px-3 py-3">
-                                        {category.nameCategory}
-                                    </td>
-                                    {/* <td className="px-3 py-3">
-                                        {category.authors}
+                                        {author.descriptionAuthor}
                                     </td>
                                     <td className="px-3 py-3">
-                                        {category.pointOfViews}
-                                    </td> */}
-                                   
+                                        {author.nameAuthor}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -59,4 +55,4 @@ function ListViewCategory() {
     );
 }
 
-export default ListViewCategory;
+export default ListViewAuthors;

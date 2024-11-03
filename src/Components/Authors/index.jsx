@@ -1,5 +1,10 @@
+import InputAuthor from "./InputAuthor";
+import ListViewAuthors from "./ListViewAuthors";
 function Authors() {
-    return ( <div>hello</div> );
+    return ( <div>
+        <InputAuthor/>
+        <ListViewAuthors/>
+    </div> );
 }
 
 export default Authors;

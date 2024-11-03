@@ -1,10 +1,12 @@
 import ChapForm from './InputChap';
 import getAllChapters from './InputChap/index2';
+import ListViewChap from './ListViewChap';
 function Chapter() {
     return (
         <div>
             <ChapForm />
-            <getAllChapters />
+            <ListViewChap />
+            {/* //<getAllChapters /> */}
         </div>
     );
 }
