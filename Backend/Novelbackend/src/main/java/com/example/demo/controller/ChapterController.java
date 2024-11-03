@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
@@ -42,10 +40,10 @@ public class ChapterController {
 	
 	@PostMapping(value = "/createChapter", consumes = {"multipart/form-data"})
 	public ApiRespone<ChapterRespone> createChapter(
-	        @RequestParam("file") MultipartFile file, @RequestPart("request")  ChapterCreationRequest request
+	        @RequestPart("file") MultipartFile file, @RequestPart("request")  ChapterCreationRequest request
 	       ) throws IOException {
 		
-	    request.setContent_Chapter(file.getBytes());
+	    request.setContentChapter(file.getBytes());
 	    ChapterRespone chapterRespone = chapterService.createChapter(request);
 	    
 	    return ApiRespone.<ChapterRespone>builder().result(chapterRespone).build();

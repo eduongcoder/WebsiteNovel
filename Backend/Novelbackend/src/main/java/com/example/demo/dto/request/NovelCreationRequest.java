@@ -20,11 +20,11 @@ import lombok.experimental.FieldDefaults;
 public class NovelCreationRequest {
 
 //	String id_Novel;
-	String name_Novel;
-	String description_Novel;
+	String nameNovel;
+	String descriptionNovel;
 	@Enumerated(EnumType.STRING) 
-	Status status_Novel;
-	byte[] image_Novel;
+	Status statusNovel;
+	byte[] imageNovel;
 	
 	
 }

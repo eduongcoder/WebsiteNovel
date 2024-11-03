@@ -1,4 +1,4 @@
-package com.example.demo.dto.respone;
+package com.example.demo.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,14 +9,12 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level =  AccessLevel.PRIVATE)
-public class ChapterRespone {
+public class AuthorUpdateRequest {
 
-	String idChapter;
-	String titleChapter;
-	String number_Chapter;
-	int viewChapter;
-	byte[] contentChapter;
+	String idAuthor;
+	String descriptionAuthor;
+	String nameAuthor; 
 }

@@ -10,8 +10,7 @@ import com.example.demo.entity.Chapter;
 @Mapper(componentModel = "spring")
 public interface IChapterMapper {
 
-	@Mapping(target = "id_Chapter",ignore = true)
-//	@Mapping(target = "novel",ignore = true)
+	@Mapping(target = "idChapter",ignore = true)
 	Chapter toChapter(ChapterCreationRequest request);
 	ChapterRespone toChapterRespone(Chapter chapter);
 }

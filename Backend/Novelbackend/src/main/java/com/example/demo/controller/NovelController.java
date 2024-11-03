@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.NovelCreationRequest;
 import com.example.demo.dto.respone.ApiRespone;
+import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
 import com.example.demo.service.NovelService;
 
@@ -35,14 +36,37 @@ public class NovelController {
 	public ApiRespone<List<NovelRespone>> getAllNovel() {
 		return ApiRespone.<List<NovelRespone>>builder().result(novelService.getAllNovel()).build();
 	}
+	
+	@GetMapping("/getNovelsNoImage")
+	public ApiRespone<List<NovelNoImageRespone>> getAllNovelNoImage() {
+		return ApiRespone.<List<NovelNoImageRespone>>builder().result(novelService.getAllNovelNoImage()).build();
+	}
 
-	@PostMapping(value = "/createNovel", consumes = { "multipart/form-data"})
+	@GetMapping("/getNovelByName")
+	public ApiRespone<NovelRespone> getNovelByName(@RequestParam String nameNovel) {
+		return ApiRespone.<NovelRespone>builder().result(novelService.getNovelByName(nameNovel)).build();
+	}
+
+	@PostMapping(value = "/createNovel", consumes = { "multipart/form-data" })
 	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,
 			@RequestPart NovelCreationRequest request) throws IOException {
-		request.setImage_Novel(image.getBytes());
+		request.setImageNovel(image.getBytes());
 		NovelRespone novelRespone = novelService.createNovel(request);
 
 		return ApiRespone.<NovelRespone>builder().result(novelRespone).build();
+	}
+
+	@PostMapping("/addCategory")
+	public ApiRespone<NovelRespone> addCategory(@RequestParam String nameCategory, @RequestParam String nameNovel) {
+		return ApiRespone.<NovelRespone>builder().result(novelService.addCategory(nameCategory, nameNovel)).build();
+	}
+	@PostMapping("/addAuthor")
+	public ApiRespone<NovelRespone> addAuthor(@RequestParam String nameAuthor, @RequestParam String nameNovel) {
+		return ApiRespone.<NovelRespone>builder().result(novelService.addAuthor(nameAuthor, nameNovel)).build();
+	}
+	@PostMapping("/addPOV")
+	public ApiRespone<NovelRespone> addPointOfView(@RequestParam String namePOV, @RequestParam String nameNovel) {
+		return ApiRespone.<NovelRespone>builder().result(novelService.addPointOfView(namePOV, nameNovel)).build();
 	}
 
 }

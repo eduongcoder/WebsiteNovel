@@ -1,6 +1,4 @@
-package com.example.demo.dto.request;
-
-import com.example.demo.entity.Novel;
+package com.example.demo.dto.respone;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,18 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChapterCreationRequest {
+public class PointOfViewRespone {
+	String idPointOfView;
 	
-	String novelName;
-	String titleChapter;
-	String numberChapter;
-	int viewChapter;
-	byte[] contentChapter;
-	Novel novel;
+	String namePointOfView;
 }

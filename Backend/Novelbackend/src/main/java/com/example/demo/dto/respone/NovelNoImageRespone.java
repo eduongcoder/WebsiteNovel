@@ -19,14 +19,13 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @AllArgsConstructor
 @FieldDefaults(level =  AccessLevel.PRIVATE)
-public class NovelRespone {
+public class NovelNoImageRespone {
 
 	String idNovel;
 	String nameNovel;
 	String descriptionNovel;
 	Status statusNovel;
-	String imageNovel;
-	
+
 	Set<Category> categories;
 //	Set<ChapterRespone> chapter;
 	Set<Author> authors;
