@@ -24,6 +24,8 @@ export default {
       },
       screens: {
         xl: "1400px", // Bạn có thể sử dụng tên này để áp dụng cho các màn hình rộng hơn 1400px
+        'mdd': '1700px',
+        'xl': '1800px',
       },
     },
   },

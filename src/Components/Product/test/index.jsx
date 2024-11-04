@@ -74,6 +74,7 @@ function ProductList() {
                                     </td>
                                 </tr>
                             ))}
+                            
                         </tbody>
                     </table>
                 </div>
