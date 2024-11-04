@@ -11,6 +11,8 @@ import com.example.demo.dto.request.PointOfViewUpdateRequest;
 import com.example.demo.dto.respone.AuthorRespone;
 import com.example.demo.dto.respone.PointOfViewRespone;
 import com.example.demo.entity.PointOfView;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.IPointOfViewMapper;
 import com.example.demo.repository.IPointOfViewRepository;
 
@@ -29,6 +31,9 @@ public class PointOfViewService {
 	IPointOfViewMapper pointOfViewMapper;
 
 	public PointOfViewRespone createPOV(PointOfViewCreationRequest request) {
+		if (pointOfViewRepository.existsByNamePointOfView(request.getNamePointOfView())) {
+			throw new AppException(ErrorCode.POV_ALREADY_IN);
+		}
 		PointOfView pov = pointOfViewMapper.toPointOfView(request);
 
 		return pointOfViewMapper.toPointOfViewRespone(pointOfViewRepository.save(pov));
@@ -38,12 +43,17 @@ public class PointOfViewService {
 		return pointOfViewRepository.findAll().stream().map(t ->pointOfViewMapper.toPointOfViewRespone(t)).toList();
 	}
 	public String deletePOV(String idPOV) {
+		if (!pointOfViewRepository.existsById(idPOV)) {
+			throw new AppException(ErrorCode.POV_NOT_EXISTED);
+		}
 		pointOfViewRepository.deleteById(idPOV);
 		return idPOV;
 	}
 
 	public Optional<PointOfViewRespone> updatePOV(PointOfViewUpdateRequest request) {
-		
+		if (!pointOfViewRepository.existsById(request.getIdPointOfView())) {
+			throw new AppException(ErrorCode.POV_NOT_EXISTED);
+		}
 		return pointOfViewRepository.findById(request.getIdPointOfView()).map(t -> {
 			t.setNamePointOfView(request.getNamePointOfView());
 			return pointOfViewMapper.toPointOfViewRespone(pointOfViewRepository.save(t));

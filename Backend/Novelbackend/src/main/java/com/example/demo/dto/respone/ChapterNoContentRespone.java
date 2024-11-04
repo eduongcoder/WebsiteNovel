@@ -12,11 +12,10 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @AllArgsConstructor
 @FieldDefaults(level =  AccessLevel.PRIVATE)
-public class ChapterRespone {
+public class ChapterNoContentRespone {
 
 	String idChapter;
 	String titleChapter;
 	String numberChapter;
 	int viewChapter;
-	byte[] contentChapter;
 }

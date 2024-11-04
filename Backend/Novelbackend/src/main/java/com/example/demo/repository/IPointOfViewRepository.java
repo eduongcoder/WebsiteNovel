@@ -9,4 +9,5 @@ import com.example.demo.entity.PointOfView;
 @Repository
 public interface IPointOfViewRepository extends JpaRepository<PointOfView, String> {
 	PointOfView  findByNamePointOfView(String namePointOfView);
+	boolean existsByNamePointOfView(String namePointOfView);
 }

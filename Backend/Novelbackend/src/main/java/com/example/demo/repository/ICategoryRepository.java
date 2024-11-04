@@ -4,10 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.Category;
-import java.util.List;
 
 
 @Repository
 public interface ICategoryRepository extends JpaRepository<Category, String>{
 	 Category findByNameCategory(String nameCategory);
+	 boolean existsByNameCategory(String nameCategory);
 }

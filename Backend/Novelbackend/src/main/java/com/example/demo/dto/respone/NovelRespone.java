@@ -28,7 +28,7 @@ public class NovelRespone {
 	String imageNovel;
 	
 	Set<Category> categories;
-//	Set<ChapterRespone> chapter;
+	Set<ChapterRespone> chapter;
 	Set<Author> authors;
 	Set<PointOfView> pointOfViews;
 }

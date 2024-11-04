@@ -28,7 +28,8 @@ public class Chapter {
 	String idChapter;
 	String titleChapter;
 	String numberChapter;
-	int view_hapter;
+	@Column(nullable = false,columnDefinition = "int default 0")
+	int viewChapter;
 	@Lob
 	@Column(name = "content_Chapter",columnDefinition = "MEDIUMBLOB")
 	byte[] contentChapter;

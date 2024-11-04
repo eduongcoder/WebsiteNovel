@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.ChapterCreationRequest;
 import com.example.demo.dto.respone.ApiRespone;
+import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
 import com.example.demo.service.ChapterService;
 
@@ -36,19 +37,27 @@ public class ChapterController {
 
 		return ApiRespone.<List<ChapterRespone>>builder().result(chapterService.getAllChapterByIdNovel(nameNovel))
 				.build();
-	} 
-	
-	@PostMapping(value = "/createChapter", consumes = {"multipart/form-data"})
-	public ApiRespone<ChapterRespone> createChapter(
-	        @RequestPart("file") MultipartFile file, @RequestPart("request")  ChapterCreationRequest request
-	       ) throws IOException {
-		
-	    request.setContentChapter(file.getBytes());
-	    ChapterRespone chapterRespone = chapterService.createChapter(request);
-	    
-	    return ApiRespone.<ChapterRespone>builder().result(chapterRespone).build();
 	}
 
+	@GetMapping("/getAllChapterNoContent")
+	public ApiRespone<List<ChapterNoContentRespone>> getAllChapterNoContentByNameNovel(@RequestParam String nameNovel) {
+
+		return ApiRespone.<List<ChapterNoContentRespone>>builder().result(chapterService.getAllChapterNoContentByIdNovel(nameNovel))
+				.build();
+	}
 	
+	@PostMapping(value = "/createChapter", consumes = { "multipart/form-data" })
+	public ApiRespone<ChapterRespone> createChapter(@RequestPart("file") MultipartFile file,
+			@RequestPart("request") ChapterCreationRequest request) throws IOException {
+		ChapterRespone chapterRespone = chapterService.createChapter(file, request);
+
+		return ApiRespone.<ChapterRespone>builder().result(chapterRespone).build();
+	}
+
+	@PostMapping(value = "/testChapter", consumes = { "multipart/form-data" })
+	public boolean testChapter(@RequestPart("file") MultipartFile file) throws IOException {
+
+		return chapterService.isPdfFile(file);
+	}
 
 }

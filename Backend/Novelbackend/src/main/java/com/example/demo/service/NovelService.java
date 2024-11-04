@@ -1,14 +1,12 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Base64;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dto.request.CategoryCreationRequest;
 import com.example.demo.dto.request.NovelCreationRequest;
 import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
@@ -16,13 +14,14 @@ import com.example.demo.entity.Author;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Novel;
 import com.example.demo.entity.PointOfView;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.INovelMapper;
 import com.example.demo.repository.IAuthorRepository;
 import com.example.demo.repository.ICategoryRepository;
 import com.example.demo.repository.INovelRepository;
 import com.example.demo.repository.IPointOfViewRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,10 +39,15 @@ public class NovelService {
 	IPointOfViewRepository pointOfViewRepository;
 	IAuthorRepository authorRepository;
 
-	public NovelRespone createNovel(NovelCreationRequest request) {
+	public NovelRespone createNovel(MultipartFile image, NovelCreationRequest request) throws IOException {
+		isImageFIle(image);
+
+		request.setImageNovel(image.getBytes());
+
 		Novel novel = novelMapper.toNovel(request);
 
 		return novelMapper.toNovelRespone(novelRepository.save(novel));
+
 	}
 
 	public List<NovelRespone> getAllNovel() {
@@ -55,10 +59,10 @@ public class NovelService {
 			return novelRespone;
 		}).toList();
 	}
-	
+
 	public List<NovelNoImageRespone> getAllNovelNoImage() {
 
-		return novelRepository.findAll().stream().map(t ->novelMapper.toNovelNoImageRespone(t)).toList();
+		return novelRepository.findAll().stream().map(t -> novelMapper.toNovelNoImageRespone(t)).toList();
 	}
 
 	public NovelRespone getNovelByName(String nameNovel) {
@@ -66,37 +70,65 @@ public class NovelService {
 		NovelRespone novelRespone = novelMapper.toNovelRespone(novel);
 		novelRespone
 				.setImageNovel("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(novel.getImageNovel()));
-		log.info("HUHU: " + novel.getChapter().toString());
 		return novelRespone;
 	}
 
 	public NovelRespone addCategory(String nameCategory, String nameNovel) {
 		Novel novel = novelRepository.findByNameNovel(nameNovel);
 		Category category = categoryRepository.findByNameCategory(nameCategory);
-
+		if (category == null) {
+			throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+		}
+		if (novel.getCategories().contains(category)) {
+			throw new AppException(ErrorCode.CATEGORY_ALREADY_IN);
+		}
 		novel.getCategories().add(category);
 
 		return novelMapper.toNovelRespone(novelRepository.save(novel));
 
 	}
-	
+
 	public NovelRespone addAuthor(String nameAuthor, String nameNovel) {
 		Novel novel = novelRepository.findByNameNovel(nameNovel);
 		Author author = authorRepository.findByNameAuthor(nameAuthor);
-
+		if (author == null) {
+			throw new AppException(ErrorCode.AUTHOR_NOT_EXISTED);
+		}
+		if (novel.getAuthors().contains(author)) {
+			throw new AppException(ErrorCode.AUTHOR_ALREADY_IN);
+		}
 		novel.getAuthors().add(author);
 
 		return novelMapper.toNovelRespone(novelRepository.save(novel));
 
 	}
-	
+
 	public NovelRespone addPointOfView(String namePointOfView, String nameNovel) {
 		Novel novel = novelRepository.findByNameNovel(nameNovel);
-		PointOfView pointOfView = pointOfViewRepository.findByNamePointOfView(namePointOfView);
 
+		PointOfView pointOfView = pointOfViewRepository.findByNamePointOfView(namePointOfView);
+		if (pointOfView == null) {
+			throw new AppException(ErrorCode.POV_NOT_EXISTED);
+
+		}
+		if (novel.getPointOfViews().contains(pointOfView)) {
+			throw new AppException(ErrorCode.POV_ALREADY_IN);
+		}
 		novel.getPointOfViews().add(pointOfView);
 
 		return novelMapper.toNovelRespone(novelRepository.save(novel));
 
+	}
+
+	public boolean isImageFIle(MultipartFile file) {
+		String contentType = file.getContentType();
+		boolean flag;
+		flag = contentType != null && (contentType.equals(MediaType.IMAGE_JPEG_VALUE)
+				|| contentType.equals(MediaType.IMAGE_PNG_VALUE) || contentType.equals(MediaType.IMAGE_GIF_VALUE));
+		if (flag) {
+			return flag;
+		} else {
+			throw new AppException(ErrorCode.NOT_IMAGE);
+		}
 	}
 }

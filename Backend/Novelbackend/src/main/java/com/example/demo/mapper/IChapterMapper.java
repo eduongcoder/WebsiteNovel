@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.example.demo.dto.request.ChapterCreationRequest;
+import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
 import com.example.demo.entity.Chapter;
 
@@ -13,4 +14,5 @@ public interface IChapterMapper {
 	@Mapping(target = "idChapter",ignore = true)
 	Chapter toChapter(ChapterCreationRequest request);
 	ChapterRespone toChapterRespone(Chapter chapter);
+	ChapterNoContentRespone toChapterNoContentRespone(Chapter chapter);
 }

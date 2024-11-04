@@ -1,5 +1,7 @@
 package com.example.demo.dto.respone;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +13,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@FieldDefaults(level = AccessLevel.PACKAGE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiRespone<T> {
 	@Builder.Default
 	int code=1000;

@@ -20,7 +20,8 @@ public class ChapterCreationRequest {
 	String novelName;
 	String titleChapter;
 	String numberChapter;
-	int viewChapter;
+//	@Builder.Default
+//	int viewChapter=0;
 	byte[] contentChapter;
 	Novel novel;
 }

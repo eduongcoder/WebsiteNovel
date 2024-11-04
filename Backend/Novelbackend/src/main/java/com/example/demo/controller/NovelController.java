@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -36,7 +37,7 @@ public class NovelController {
 	public ApiRespone<List<NovelRespone>> getAllNovel() {
 		return ApiRespone.<List<NovelRespone>>builder().result(novelService.getAllNovel()).build();
 	}
-	
+
 	@GetMapping("/getNovelsNoImage")
 	public ApiRespone<List<NovelNoImageRespone>> getAllNovelNoImage() {
 		return ApiRespone.<List<NovelNoImageRespone>>builder().result(novelService.getAllNovelNoImage()).build();
@@ -50,20 +51,26 @@ public class NovelController {
 	@PostMapping(value = "/createNovel", consumes = { "multipart/form-data" })
 	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,
 			@RequestPart NovelCreationRequest request) throws IOException {
-		request.setImageNovel(image.getBytes());
-		NovelRespone novelRespone = novelService.createNovel(request);
+		NovelRespone novelRespone = novelService.createNovel(image, request);
 
 		return ApiRespone.<NovelRespone>builder().result(novelRespone).build();
+	}
+
+	@PostMapping(value = "/testImage", consumes = { "multipart/form-data" })
+	public boolean testImage(@RequestParam MultipartFile image) {
+		return novelService.isImageFIle(image);
 	}
 
 	@PostMapping("/addCategory")
 	public ApiRespone<NovelRespone> addCategory(@RequestParam String nameCategory, @RequestParam String nameNovel) {
 		return ApiRespone.<NovelRespone>builder().result(novelService.addCategory(nameCategory, nameNovel)).build();
 	}
+
 	@PostMapping("/addAuthor")
 	public ApiRespone<NovelRespone> addAuthor(@RequestParam String nameAuthor, @RequestParam String nameNovel) {
 		return ApiRespone.<NovelRespone>builder().result(novelService.addAuthor(nameAuthor, nameNovel)).build();
 	}
+
 	@PostMapping("/addPOV")
 	public ApiRespone<NovelRespone> addPointOfView(@RequestParam String namePOV, @RequestParam String nameNovel) {
 		return ApiRespone.<NovelRespone>builder().result(novelService.addPointOfView(namePOV, nameNovel)).build();

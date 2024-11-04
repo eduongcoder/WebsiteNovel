@@ -9,16 +9,20 @@ import com.example.demo.dto.request.CategoryCreationRequest;
 import com.example.demo.dto.request.CategoryUpdateRequest;
 import com.example.demo.dto.respone.CategoryRespone;
 import com.example.demo.entity.Category;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.ICategoryMapper;
 import com.example.demo.repository.ICategoryRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class CategoryService {
 
 	ICategoryMapper categoryMapper;
@@ -29,18 +33,26 @@ public class CategoryService {
 	}
 
 	public CategoryRespone createCategory(CategoryCreationRequest request) {
+		if (categoryRepository.existsByNameCategory(request.getNameCategory())) {
+			throw new AppException(ErrorCode.CATEGORY_ALREADY_IN);
+		}
 		Category category = categoryMapper.toCategory(request);
-
+		
 		return categoryMapper.toCategoryRespone(categoryRepository.save(category));
 	}
 
 	public String deleteCategory(String idCategory) {
+		if (!categoryRepository.existsById(idCategory)) {
+			throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+		}
 		categoryRepository.deleteById(idCategory);
 		return idCategory;
 	}
 
 	public Optional<CategoryRespone> updateCategory(CategoryUpdateRequest request) {
-		
+		if (!categoryRepository.existsById(request.getIdCategory())) {
+			throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+		}
 		return categoryRepository.findById(request.getIdCategory()).map(t -> {
 			t.setNameCategory(request.getNameCategory());
 			return categoryMapper.toCategoryRespone(categoryRepository.save(t));
