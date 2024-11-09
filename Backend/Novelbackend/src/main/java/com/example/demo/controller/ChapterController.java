@@ -8,6 +8,7 @@ import com.example.demo.dto.request.ChapterCreationRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
+import com.example.demo.dto.respone.PdfPageResponse;
 import com.example.demo.service.ChapterService;
 
 import lombok.AccessLevel;
@@ -39,13 +40,15 @@ public class ChapterController {
 				.build();
 	}
 
+	 
+	
 	@GetMapping("/getAllChapterNoContent")
 	public ApiRespone<List<ChapterNoContentRespone>> getAllChapterNoContentByNameNovel(@RequestParam String nameNovel) {
 
-		return ApiRespone.<List<ChapterNoContentRespone>>builder().result(chapterService.getAllChapterNoContentByIdNovel(nameNovel))
-				.build();
+		return ApiRespone.<List<ChapterNoContentRespone>>builder()
+				.result(chapterService.getAllChapterNoContentByIdNovel(nameNovel)).build();
 	}
-	
+
 	@PostMapping(value = "/createChapter", consumes = { "multipart/form-data" })
 	public ApiRespone<ChapterRespone> createChapter(@RequestPart("file") MultipartFile file,
 			@RequestPart("request") ChapterCreationRequest request) throws IOException {
@@ -60,4 +63,34 @@ public class ChapterController {
 		return chapterService.isPdfFile(file);
 	}
 
+	@GetMapping("/page")
+	public ApiRespone<PdfPageResponse> getPdfPage(@RequestParam("id") String pdfId,
+			@RequestParam("page") int pageNumber) throws IOException {
+		byte[] pdfBytes = chapterService.getChapter(pdfId).getContentChapter();
+
+		String pageContent = chapterService.getPdfPage(pdfBytes, pageNumber);
+		int totalPages = chapterService.getTotalPages(pdfBytes);
+
+		return ApiRespone.<PdfPageResponse>builder().result(
+				PdfPageResponse.builder().
+				pageContent(pageContent)
+				.totalPages(pageNumber).
+				totalPages(totalPages).
+				build()).build();
+	}
+	@GetMapping("/pages")
+	public ApiRespone<PdfPageResponse> getPdfPages(@RequestParam("id") String pdfId,
+			@RequestParam("page") int pageNumber,@RequestParam("pageGet") int pageGet) throws IOException {
+		byte[] pdfBytes = chapterService.getChapter(pdfId).getContentChapter();
+
+		String pageContent = chapterService.getPdfPages(pdfBytes, pageNumber,pageGet);
+		int totalPages = chapterService.getTotalPages(pdfBytes);
+
+		return ApiRespone.<PdfPageResponse>builder().result(
+				PdfPageResponse.builder().
+				pageContent(pageContent)
+				.totalPages(pageNumber).
+				totalPages(totalPages).
+				build()).build();
+	}
 }

@@ -1,5 +1,7 @@
 package com.example.demo.dto.respone;
 
+import com.example.demo.enums.Status;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,12 +10,14 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
+@NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRespone {
-	String idCategory;
-	String nameCategory; 
-	
+@FieldDefaults(level =  AccessLevel.PRIVATE)
+public class NovelNoChapterRespone {
+	String idNovel;
+	String nameNovel;
+	String descriptionNovel;
+	Status statusNovel;
+	String imageNovel;
 }

@@ -1,9 +1,14 @@
 package com.example.demo.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,5 +78,59 @@ public class ChapterService {
 			throw new AppException(ErrorCode.NOT_PDF);
 		}
 	}
+	public ChapterRespone getChapter(String idChapter) {
+		Chapter chapter=chapterRepository.findByIdChapter(idChapter);
+		
+		return chapterMapper.toChapterRespone(chapter);
+	}
+	
+	public String getPdfPage(byte[] pdfBytes, int pageNumber) throws IOException {
+        try (PDDocument document = PDDocument.load(pdfBytes)) {
+            if (pageNumber < 0 || pageNumber >= document.getNumberOfPages()) {
+                throw new IllegalArgumentException("Invalid page number");
+            }
+          
+            PDPage page = document.getPage(pageNumber);
+            try (PDDocument singlePageDoc = new PDDocument()) {
+                singlePageDoc.addPage(page);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                singlePageDoc.save(outputStream);
+                return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+            }
+        }
+    }
 
+	public String getPdfPages(byte[] pdfBytes, int pageNumber,int pageGet) throws IOException {
+		
+        try (PDDocument document = PDDocument.load(pdfBytes)) {
+        	int totalPage=document.getNumberOfPages();
+            if (pageNumber < 0 || pageNumber >= totalPage) {
+                throw new IllegalArgumentException("Invalid page number");
+            }
+            
+            if (pageGet<=0) {
+            	throw new IllegalArgumentException("Page get must be greater than 0");
+			}
+            
+           int endPage=Math.min(pageGet +pageNumber, totalPage);
+            
+            
+            try (PDDocument multiPageDoc = new PDDocument()) {
+            	for (int i = pageNumber; i < endPage; i++) {
+            		PDPage page = document.getPage(i);
+            		multiPageDoc.addPage(page);
+                     
+				}
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                multiPageDoc.save(outputStream);
+                return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+            }
+        }
+    }
+	
+    public int getTotalPages(byte[] pdfBytes) throws IOException {
+        try (PDDocument document = PDDocument.load(pdfBytes)) {
+            return document.getNumberOfPages();
+        }
+    }
 }

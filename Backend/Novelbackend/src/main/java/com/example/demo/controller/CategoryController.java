@@ -37,7 +37,7 @@ public class CategoryController {
 
 	CategoryService categoryService;
 	
-	@GetMapping("/getAllCategory")
+	@GetMapping("/getAllCategory") 
 	public ApiRespone<List<CategoryRespone>> getAllCategory() {
 		return ApiRespone.<List<CategoryRespone>>builder()
 				.result(categoryService.getAllCategory())

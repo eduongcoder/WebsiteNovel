@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRespone {
-	String idCategory;
-	String nameCategory; 
-	
+public class PdfPageResponse {
+	String pageContent;
+	int pageNumber;
+	int totalPages;
 }

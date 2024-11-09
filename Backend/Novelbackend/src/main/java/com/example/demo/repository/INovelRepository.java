@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface INovelRepository extends JpaRepository<Novel, String>{
 	Novel findByNameNovel(String nameNovel);
+	Novel findByIdNovel(String idNovel);
 	
 }

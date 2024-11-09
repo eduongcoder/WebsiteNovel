@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.NovelCreationRequest;
+import com.example.demo.dto.respone.NovelNoChapterRespone;
 import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
 import com.example.demo.entity.Author;
@@ -50,6 +51,16 @@ public class NovelService {
 
 	}
 
+	public List<NovelNoChapterRespone> getAllNovelNoChapter() {
+
+		return novelRepository.findAll().stream().map(t -> {
+			NovelNoChapterRespone novelRespone = novelMapper.toNovelNoChapterRespone(t);
+			novelRespone
+					.setImageNovel("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(t.getImageNovel()));
+			return novelRespone;
+		}).toList();
+	}
+	
 	public List<NovelRespone> getAllNovel() {
 
 		return novelRepository.findAll().stream().map(t -> {
@@ -73,9 +84,14 @@ public class NovelService {
 		return novelRespone;
 	}
 
-	public NovelRespone addCategory(String nameCategory, String nameNovel) {
-		Novel novel = novelRepository.findByNameNovel(nameNovel);
+	public NovelRespone addCategory(String nameCategory, String idNovel) {
+		Novel novel = novelRepository.findByIdNovel(idNovel);
 		Category category = categoryRepository.findByNameCategory(nameCategory);
+		
+		if (novel==null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED); 
+		}
+		
 		if (category == null) {
 			throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
 		}
@@ -88,9 +104,13 @@ public class NovelService {
 
 	}
 
-	public NovelRespone addAuthor(String nameAuthor, String nameNovel) {
-		Novel novel = novelRepository.findByNameNovel(nameNovel);
-		Author author = authorRepository.findByNameAuthor(nameAuthor);
+	public NovelRespone addAuthor(String idAuthor, String idNovel) {
+		Novel novel = novelRepository.findByIdNovel(idNovel);
+		Author author = authorRepository.findByIdAuthor(idAuthor);
+		if (novel==null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED); 
+		}
+		
 		if (author == null) {
 			throw new AppException(ErrorCode.AUTHOR_NOT_EXISTED);
 		}
@@ -103,10 +123,14 @@ public class NovelService {
 
 	}
 
-	public NovelRespone addPointOfView(String namePointOfView, String nameNovel) {
-		Novel novel = novelRepository.findByNameNovel(nameNovel);
+	public NovelRespone addPointOfView(String namePointOfView, String idNovel) {
+		Novel novel = novelRepository.findByIdNovel(idNovel);
 
 		PointOfView pointOfView = pointOfViewRepository.findByNamePointOfView(namePointOfView);
+		if (novel==null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED); 
+		}
+		
 		if (pointOfView == null) {
 			throw new AppException(ErrorCode.POV_NOT_EXISTED);
 
@@ -122,6 +146,7 @@ public class NovelService {
 
 	public boolean isImageFIle(MultipartFile file) {
 		String contentType = file.getContentType();
+		
 		boolean flag;
 		flag = contentType != null && (contentType.equals(MediaType.IMAGE_JPEG_VALUE)
 				|| contentType.equals(MediaType.IMAGE_PNG_VALUE) || contentType.equals(MediaType.IMAGE_GIF_VALUE));

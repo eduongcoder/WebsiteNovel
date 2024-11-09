@@ -1,5 +1,7 @@
 package com.example.demo.dto.respone;
 
+import java.time.LocalDate;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,12 +10,16 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRespone {
-	String idCategory;
-	String nameCategory; 
-	
+public class UserRespone {
+	String idUser;
+
+	String userName;
+	String password;
+	byte[] avatarUser;
+	LocalDate dobUser;
+
 }

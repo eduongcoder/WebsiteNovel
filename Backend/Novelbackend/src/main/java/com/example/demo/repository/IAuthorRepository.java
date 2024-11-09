@@ -10,4 +10,5 @@ import com.example.demo.entity.Author;
 public interface IAuthorRepository extends JpaRepository<Author, String>{
 	Author findByNameAuthor(String nameAuthor);
 	boolean existsByNameAuthor(String nameAuthor);
+	Author findByIdAuthor(String idAuthor);
 }

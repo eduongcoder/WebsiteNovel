@@ -10,6 +10,7 @@ public enum ErrorCode {
 
 	POV_NOT_EXISTED(1006, "Pov not existed"), AUTHOR_ALREADY_IN(1007, "Author already in"),
 	CATEGORY_ALREADY_IN(1008, "Category already in"), POV_ALREADY_IN(1009, "Pov already in"),
+	USER_EXISTED(1010,"User already existed"),USER_NOT_EXISTED(1011,"User not existed"),
 	UNKNOW_ERROR(9999, "Unknow error");
 
 	private int code;
