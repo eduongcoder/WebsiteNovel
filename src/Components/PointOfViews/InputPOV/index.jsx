@@ -1,33 +1,14 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-
+import { useDispatch } from 'react-redux';
+import { createPov } from '@/Redux/ReduxSlice/povSlice';
 const InputPOV = () => {
-    const [idPointOfView, setIdPOV] = useState('');
     const [namePointOfView, setNamePOV] = useState('');
+    const dispatch = useDispatch();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-    
-        // Chuẩn bị dữ liệu JSON
-        const requestData = {
-            namePointOfView, // Biến state chứa tên của POV
-        };
-    
-        try {
-            // Gửi dữ liệu với Content-Type là application/json
-            const response = await axios.post(
-                'http://26.232.136.42:8080/api/pov/createPOV',
-                requestData, // Gửi dữ liệu dưới dạng JSON
-                {
-                    headers: {
-                        'Content-Type': 'application/json', // Định dạng JSON
-                    },
-                }
-            );
-            console.log('Response:', response.data);
-        } catch (error) {
-            console.error('Error creating POV:', error);
-        }
+        // Dispatch the createCategory thunk action with the input data
+        dispatch(createPov({ namePointOfView }));
     };
     
 

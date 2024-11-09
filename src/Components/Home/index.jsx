@@ -10,10 +10,10 @@ function Home() {
     return (
         <div className="mx-5 space-y-[15px]">
             <TopHome />
-            <Cards />
-            {/* <TYP/> */}
+            <Cards /> 
             <ASPC />
             <OrderTable />
+             {/* <TYP/> */}
         </div>
     );
 }

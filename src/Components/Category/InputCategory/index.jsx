@@ -8,11 +8,9 @@ const InputCategory = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         // Dispatch the createCategory thunk action with the input data
         dispatch(createCategory({ nameCategory }));
     };
-
     return (
         <form
             onSubmit={handleSubmit}

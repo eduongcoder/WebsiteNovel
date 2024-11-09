@@ -5,7 +5,6 @@ function CardNovel() {
     const [novels, setNovels] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     useEffect(() => {
         const fetchNovels = async () => {
             try {

@@ -3,55 +3,123 @@ import axios from 'axios';
 
 // Fetch all novels without chapters
 export const fetchNovels = createAsyncThunk('novel/fetchNovels', async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovelsNoChapter');
+    const response = await axios.get(
+        'http://26.232.136.42:8080/api/novel/getNovelsNoChapter',
+    );
     return response.data.result || [];
 });
 
 // Fetch a single novel by its name
-export const fetchNovelByName = createAsyncThunk('novel/fetchNovelByName', async (name) => {
-    const response = await axios.get(`http://26.232.136.42:8080/api/novel/getNovelByName?name=${name}`);
-    return response.data.result || {};
-});
+export const fetchNovelByName = createAsyncThunk(
+    'novel/fetchNovelByName',
+    async (name) => {
+        const response = await axios.get(
+            `http://26.232.136.42:8080/api/novel/getNovelByName?name=${name}`,
+        );
+        return response.data.result || {};
+    },
+);
 
 // Create a new novel
-export const createNovel = createAsyncThunk('novel/createNovel', async (novelData) => {
-    const response = await axios.post('http://26.232.136.42:8080/api/novel/createNovel', novelData);
-    return response.data.result || {};
-});
+
+export const createNovel = createAsyncThunk(
+    'novel/createNovel',
+    async (novelData, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.append('image', novelData.file);
+            formData.append(
+                'request',
+                new Blob(
+                    [
+                        JSON.stringify({
+                            id_Novel: novelData.id_Novel,
+                            name_Novel: novelData.name_Novel,
+                            description_Novel: novelData.description_Novel,
+                            status_Novel: novelData.status_Novel,
+                        }),
+                    ],
+                    { type: 'application/json' },
+                ),
+            );
+
+            const response = await axios.post(
+                'http://26.232.136.42:8080/api/novel/createNovel',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                },
+            );
+
+            return response.data.result || {};
+        } catch (error) {
+            // Handle error and reject with value for error handling in reducers
+            return rejectWithValue(
+                error.response?.data || 'Failed to create novel',
+            );
+        }
+    },
+);
 
 // Add POV (Point of View) to a novel
 export const addPOV = createAsyncThunk('novel/addPOV', async (data) => {
-    const response = await axios.post('http://26.232.136.42:8080/api/novel/addPOV', data);
+    const response = await axios.post(
+        'http://26.232.136.42:8080/api/novel/addPOV',
+        data,
+    );
     return response.data.result || {};
 });
 
 // Add category to a novel
-export const addCategory = createAsyncThunk('novel/addCategory', async (data) => {
-    const response = await axios.post('http://26.232.136.42:8080/api/novel/addCategory', data);
-    return response.data.result || {};
-});
+export const addCategory = createAsyncThunk(
+    'novel/addCategory',
+    async (data) => {
+        const response = await axios.post(
+            'http://26.232.136.42:8080/api/novel/addCategory',
+            data,
+        );
+        return response.data.result || {};
+    },
+);
 
 // Add author to a novel
 export const addAuthor = createAsyncThunk('novel/addAuthor', async (data) => {
-    const response = await axios.post('http://26.232.136.42:8080/api/novel/addAuthor', data);
+    const response = await axios.post(
+        'http://26.232.136.42:8080/api/novel/addAuthor',
+        data,
+    );
     return response.data.result || {};
 });
 
 // Fetch novels without images
-export const fetchNovelsNoImage = createAsyncThunk('novel/fetchNovelsNoImage', async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovelsNoImage');
-    return response.data.result || [];
-});
+export const fetchNovelsNoImage = createAsyncThunk(
+    'novel/fetchNovelsNoImage',
+    async () => {
+        const response = await axios.get(
+            'http://26.232.136.42:8080/api/novel/getNovelsNoImage',
+        );
+        return response.data.result || [];
+    },
+);
 
 // Fetch novels with images
-export const fetchNovelsWithImage = createAsyncThunk('novel/fetchNovelsWithImage', async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovels');
-    return response.data.result || [];
-});
+export const fetchNovelsWithImage = createAsyncThunk(
+    'novel/fetchNovelsWithImage',
+    async () => {
+        const response = await axios.get(
+            'http://26.232.136.42:8080/api/novel/getNovels',
+        );
+        return response.data.result || [];
+    },
+);
 
 // Test image endpoint (for example)
 export const testImage = createAsyncThunk('novel/testImage', async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/novel/testImage');
+    const response = await axios.get(
+        'http://26.232.136.42:8080/api/novel/testImage',
+    );
     return response.data.result || {};
 });
 
@@ -78,7 +146,7 @@ const novelSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message || 'Error fetching novels';
             })
-            
+
             .addCase(fetchNovelByName.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -89,7 +157,8 @@ const novelSlice = createSlice({
             })
             .addCase(fetchNovelByName.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Error fetching novel by name';
+                state.error =
+                    action.error.message || 'Error fetching novel by name';
             })
 
             .addCase(createNovel.pending, (state) => {
@@ -154,7 +223,9 @@ const novelSlice = createSlice({
             })
             .addCase(fetchNovelsNoImage.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Error fetching novels without images';
+                state.error =
+                    action.error.message ||
+                    'Error fetching novels without images';
             })
 
             .addCase(fetchNovelsWithImage.pending, (state) => {
@@ -167,9 +238,10 @@ const novelSlice = createSlice({
             })
             .addCase(fetchNovelsWithImage.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Error fetching novels with images';
+                state.error =
+                    action.error.message || 'Error fetching novels with images';
             })
-            
+
             .addCase(testImage.pending, (state) => {
                 state.loading = true;
                 state.error = null;
