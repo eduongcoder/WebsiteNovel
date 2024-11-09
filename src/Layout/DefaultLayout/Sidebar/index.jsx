@@ -72,6 +72,13 @@ function Sidebar() {
                         <FaProductHunt />
                         <span className="mx-4 font-medium">Category</span>
                     </Link>
+                    <Link
+                        to="/ViewChap"
+                        className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    >
+                        <FaProductHunt />
+                        <span className="mx-4 font-medium">ViewChap</span>
+                    </Link>
 
                     <Link
                         to="/Authors"
@@ -87,6 +94,13 @@ function Sidebar() {
                     >
                         <FaProductHunt />
                         <span className="mx-4 font-medium">Point Of Views</span>
+                    </Link>
+                    <Link
+                        to="/Customer"
+                        className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    >
+                        <FaProductHunt />
+                        <span className="mx-4 font-medium">customer</span>
                     </Link>
                     <hr className="my-6 border-gray-200 dark:border-gray-600" />
 

@@ -8,30 +8,21 @@ const InputAuthor = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Khởi tạo FormData
-        const formData = new FormData();
-        formData.append(
-            'request',
-            new Blob(
-                [
-                    JSON.stringify({
-                        idAuthor,
-                        descriptionAuthor,
-                        nameAuthor,
-                    }),
-                ],
-                { type: 'application/json' }
-            )
-        );
-
+    
+        // Chuẩn bị dữ liệu JSON
+        const requestData = {
+            descriptionAuthor,
+            nameAuthor,
+        };
+    
         try {
+            // Gửi dữ liệu dưới dạng JSON
             const response = await axios.post(
                 'http://26.232.136.42:8080/api/author/createAuthor',
-                formData,
+                requestData, // Dữ liệu JSON
                 {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'application/json', // Header cho dữ liệu JSON
                     },
                 }
             );
@@ -40,20 +31,21 @@ const InputAuthor = () => {
             console.error('Error uploading author:', error);
         }
     };
+    
 
     return (
         <form
             onSubmit={handleSubmit}
             className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800"
         >
-            <input
+            {/* <input
                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="text"
                 value={idAuthor}
                 onChange={(e) => setIdAuthor(e.target.value)}
                 placeholder="Author ID"
                 required
-            />
+            /> */}
             <textarea
                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 value={descriptionAuthor}

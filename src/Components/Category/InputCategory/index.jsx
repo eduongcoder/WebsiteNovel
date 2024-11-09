@@ -1,41 +1,16 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { createCategory } from '@/Redux/ReduxSlice/categorySlice';
 
 const InputCategory = () => {
-    const [idCategory, setIdCategory] = useState('');
     const [nameCategory, setNameCategory] = useState('');
+    const dispatch = useDispatch();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append(
-            'request',
-            new Blob(
-                [
-                    JSON.stringify({
-                        idCategory,
-                        nameCategory,
-                    }),
-                ],
-                { type: 'application/json' }
-            )
-        );
-
-        try {
-            const response = await axios.post(
-                'http://26.232.136.42:8080/api/category/createCategory',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-            console.log('Response:', response.data);
-        } catch (error) {
-            console.error('Error creating category:', error);
-        }
+        // Dispatch the createCategory thunk action with the input data
+        dispatch(createCategory({ nameCategory }));
     };
 
     return (
@@ -43,14 +18,6 @@ const InputCategory = () => {
             onSubmit={handleSubmit}
             className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800"
         >
-            <input
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-                type="text"
-                value={idCategory}
-                onChange={(e) => setIdCategory(e.target.value)}
-                placeholder="Category ID"
-                required
-            />
             <input
                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="text"
@@ -71,3 +38,13 @@ const InputCategory = () => {
 };
 
 export default InputCategory;
+
+ {/*   const [idCategory, setIdCategory] = useState(''); 
+    <input
+                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                type="text"
+                value={idCategory}
+                onChange={(e) => setIdCategory(e.target.value)}
+                placeholder="Category ID"
+                required
+            /> */}

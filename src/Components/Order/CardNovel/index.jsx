@@ -9,7 +9,7 @@ function CardNovel() {
     useEffect(() => {
         const fetchNovels = async () => {
             try {
-                const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovels');
+                const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovelsNoChapter');
                 setNovels(response.data.result);
             } catch (error) {
                 setError('Lỗi khi tải dữ liệu');

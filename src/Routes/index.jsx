@@ -5,7 +5,8 @@ import Product from '../Components/Product/index.jsx';
 import Chapter from '../Components/Chapter/index.jsx';
 import Authors from '@/Components/Authors/index.jsx';
 import PointOfViews from '@/Components/PointOfViews/index.jsx';
-
+import ViewChap from '@/Components/ViewChap/index.jsx';
+import Customer from '@/Components/customer/index.jsx';
 const publicRoute = [
     { path: '/', component: Home },
     { path: '/Order', component: Order },
@@ -14,6 +15,8 @@ const publicRoute = [
     { path: '/Chapter', component: Chapter },
     { path: '/Authors', component: Authors },
     { path: '/PointOfViews', component: PointOfViews },  //,layout: null
+    { path: '/ViewChap', component: ViewChap ,layout: null },
+    { path: '/Customer', component: Customer,layout: null },
 ];
 
 const privateRoute = [];
