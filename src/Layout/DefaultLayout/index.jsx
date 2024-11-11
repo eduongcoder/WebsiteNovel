@@ -1,18 +1,19 @@
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Carousel from '../../Components/Order/Carousel';
+import TTTe from './Sidebar/TTTe';
 function DefaultLayout({ children }) {
     return (
-        <div className="flex flex-col h-full items-center">
-            <Header />
+      
 
-            <div className="w-full h-full bg-gray-800 flex">
+            <div >
                 <Sidebar />
-                <div className="flex-1 h-full bg-gray-800">
-                    {children}
+                <div className="p-4 sm:ml-64">
+                    <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+                        {children}
+                    </div>
                 </div>
             </div>
-        </div>
     );
 }
 

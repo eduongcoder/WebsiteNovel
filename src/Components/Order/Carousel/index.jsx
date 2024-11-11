@@ -1,42 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchImages, setCurrentIndex } from '@/Redux/ReduxSlice/novelSlice';
 
 function Carousel() {
-    const [images, setImages] = useState([]); // Store images fetched from API
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const dispatch = useDispatch();
+    const { images, currentIndex } = useSelector((state) => state.novel); // Lấy dữ liệu từ Redux store
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [currentX, setCurrentX] = useState(0);
 
     useEffect(() => {
-        // Fetch data from API when component mounts
-        const fetchImages = async () => {
-            try {
-                const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovelsNoChapter');
-                const data = response.data.result; // Extract the 'result' array from the response
-                const imageUrls = data.map((novel) => novel.imageNovel); // Extract image URLs
-                setImages(imageUrls); // Update the images state with the fetched image URLs
-            } catch (error) {
-                console.error('Error fetching images:', error);
-            }
-        };
-
-        fetchImages();
-
-        // Automatically switch images
-        const intervalId = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-        }, 3000); // 3 seconds
-
-        return () => clearInterval(intervalId); // Cleanup the interval when component unmounts
-    }, [images]);
+        // Dispatch action để lấy dữ liệu từ API
+        dispatch(fetchImages());
+    }, [dispatch]);
 
     const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+        dispatch(setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length));
     };
 
     const handlePrev = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+        dispatch(setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1)));
     };
 
     const handleMouseDown = (e) => {
@@ -50,10 +33,10 @@ function Carousel() {
         const distance = e.pageX - startX;
         if (distance > 50) {
             handlePrev();
-            setIsDragging(false); // Stop dragging after switching
+            setIsDragging(false); // Dừng kéo sau khi chuyển ảnh
         } else if (distance < -50) {
             handleNext();
-            setIsDragging(false); // Stop dragging after switching
+            setIsDragging(false); // Dừng kéo sau khi chuyển ảnh
         }
     };
 
@@ -99,7 +82,7 @@ function Carousel() {
                         type="button"
                         className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-gray-800' : 'bg-gray-300'}`}
                         aria-label={`Slide ${index + 1}`}
-                        onClick={() => setCurrentIndex(index)}
+                        onClick={() => dispatch(setCurrentIndex(index))}
                     ></button>
                 ))}
             </div>

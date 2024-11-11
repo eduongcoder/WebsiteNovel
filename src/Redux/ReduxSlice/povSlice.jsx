@@ -12,9 +12,11 @@ export const fetchPov = createAsyncThunk(
             const response = await axios.get(`${BASE_URL}/getAllPOV`);
             return response.data.result || [];
         } catch (error) {
-            return rejectWithValue(error.response?.data || 'Failed to fetch POV data');
+            return rejectWithValue(
+                error.response?.data || 'Failed to fetch POV data',
+            );
         }
-    }
+    },
 );
 
 // Thunk to delete a POV
@@ -25,9 +27,11 @@ export const deletePov = createAsyncThunk(
             await axios.delete(`${BASE_URL}/deletePOV?idPOV=${povId}`);
             return povId;
         } catch (error) {
-            return rejectWithValue(error.response?.data || 'Failed to delete POV');
+            return rejectWithValue(
+                error.response?.data || 'Failed to delete POV',
+            );
         }
-    }
+    },
 );
 
 // Thunk to create a new POV
@@ -35,29 +39,40 @@ export const createPov = createAsyncThunk(
     'pov/createPov',
     async (newPov, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/createPOV`, newPov,{
+            const response = await axios.post(`${BASE_URL}/createPOV`, newPov, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
             return response.data.result;
         } catch (error) {
-            return rejectWithValue(error.response?.data || 'Failed to create POV');
+            return rejectWithValue(
+                error.response?.data || 'Failed to create POV',
+            );
         }
-    }
+    },
 );
 
 // Thunk to update a POV
+// updatePov action
 export const updatePov = createAsyncThunk(
     'pov/updatePov',
     async ({ povId, updatedPov }, { rejectWithValue }) => {
         try {
-            const response = await axios.put(`${BASE_URL}/updatePOV/${povId}`, updatedPov);
-            return response.data.result;
+            const response = await axios.put(
+                `${BASE_URL}/updatePOV`, // URL API để cập nhật POV
+                {
+                    idPointOfView: povId, // Dữ liệu cần truyền vào là `idPointOfView` thay vì `povId`
+                    namePointOfView: updatedPov.namePointOfView, // Cập nhật `namePointOfView` từ updatedPov
+                },
+            );
+            return response.data.result; // Trả về kết quả nếu thành công
         } catch (error) {
-            return rejectWithValue(error.response?.data || 'Failed to update POV');
+            return rejectWithValue(
+                error.response?.data || 'Failed to update POV',
+            );
         }
-    }
+    },
 );
 
 // Slice for POV data
@@ -88,7 +103,9 @@ const povSlice = createSlice({
             })
             // Delete POV fulfilled state
             .addCase(deletePov.fulfilled, (state, action) => {
-                state.pov = state.pov.filter((pov) => pov.idPov !== action.payload);
+                state.pov = state.pov.filter(
+                    (pov) => pov.idPov !== action.payload,
+                );
             })
             // Delete POV rejected state
             .addCase(deletePov.rejected, (state, action) => {
@@ -104,14 +121,20 @@ const povSlice = createSlice({
             })
             // Update POV fulfilled state
             .addCase(updatePov.fulfilled, (state, action) => {
-                const index = state.pov.findIndex((pov) => pov.idPov === action.payload.idPov);
+                const index = state.povs.findIndex(
+                    (pov) => pov.idPointOfView === action.payload.idPointOfView,
+                );
+
                 if (index !== -1) {
-                    state.pov[index] = action.payload;
+                    state.povs[index] = action.payload; // Cập nhật POV tại vị trí đã tìm
+                } else {
+                    state.povs.push(action.payload); // Nếu không tìm thấy POV, thêm mới vào danh sách
                 }
             })
-            // Update POV rejected state
+
+            // Khi action updatePov thất bại (rejected)
             .addCase(updatePov.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to update POV';
+                state.error = action.payload || 'Failed to update POV'; // Lưu thông báo lỗi vào state
             });
     },
 });

@@ -8,7 +8,7 @@ function Order() {
   return <div>
     {/* <OrderTable /> */}
     <Navbar />
-    <Carousel />
+    {/* <Carousel /> */}
     <CardNovel />
 
   </div>;

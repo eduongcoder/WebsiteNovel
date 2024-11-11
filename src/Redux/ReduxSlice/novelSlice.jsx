@@ -8,7 +8,34 @@ export const fetchNovels = createAsyncThunk('novel/fetchNovels', async () => {
     );
     return response.data.result || [];
 });
-
+export const fetchImages = createAsyncThunk('carousel/fetchImages', async () => {
+    const response = await axios.get('http://26.232.136.42:8080/api/novel/getNovelsNoChapter');
+    const data = response.data.result; // Extract the 'result' array from the response
+    const imageUrls = data.map((novel) => novel.imageNovel); // Extract image URLs
+    return imageUrls;
+});
+const carouselSlice = createSlice({
+    name: 'carousel',
+    initialState: {
+        images: [],
+        currentIndex: 0,
+    },
+    reducers: {
+        setCurrentIndex: (state, action) => {
+            state.currentIndex = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchImages.fulfilled, (state, action) => {
+                state.images = action.payload;
+            })
+            .addCase(fetchImages.rejected, (state, action) => {
+                console.error('Error fetching images:', action.error);
+            });
+    },
+});
+export const { setCurrentIndex } = carouselSlice.actions;
 // Fetch a single novel by its name
 export const fetchNovelByName = createAsyncThunk(
     'novel/fetchNovelByName',
