@@ -16,9 +16,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level =  AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-	String idUser;
+	String email;
 	String userName;
-	String password;
 	byte[] avatarUser;
 	LocalDate dobUser;
 }

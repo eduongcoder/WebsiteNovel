@@ -42,11 +42,17 @@ public class PointOfViewService {
 	public List<PointOfViewRespone> getAllPOV() {
 		return pointOfViewRepository.findAll().stream().map(t ->pointOfViewMapper.toPointOfViewRespone(t)).toList();
 	}
+	
 	public String deletePOV(String idPOV) {
 		if (!pointOfViewRepository.existsById(idPOV)) {
 			throw new AppException(ErrorCode.POV_NOT_EXISTED);
 		}
-		pointOfViewRepository.deleteById(idPOV);
+		try {
+			pointOfViewRepository.deleteById(idPOV);
+		} catch (Exception e) {
+			throw new AppException(ErrorCode.DELETE_CONTRAINT);
+		}
+	
 		return idPOV;
 	}
 

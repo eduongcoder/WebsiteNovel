@@ -28,7 +28,12 @@ public class User {
 	String idUser;
 	
 	String userName;
+	@Column(name = "password",nullable = true)
 	String password;
+	
+	@Column(name = "email",unique = true)
+	String email;
+	
 	@Lob
 	@Column(name = "avatarUser",columnDefinition = "MEDIUMBLOB")
 	byte[] avatarUser;

@@ -1,8 +1,6 @@
 package com.example.demo.dto.request;
 
 
-import java.time.LocalDate;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level =  AccessLevel.PRIVATE)
 public class UserCreationRequest {
-	String userName;
 	String password;
-	byte[] avatarUser;
-	LocalDate dobUser;
+	String email;
+
 }

@@ -1,8 +1,5 @@
-package com.example.demo.dto.respone;
+package com.example.demo.dto.request;
 
-import java.util.Set;
-
-import com.example.demo.entity.HistoryRead;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,14 +10,11 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level =  AccessLevel.PRIVATE)
-public class ChapterNoContentRespone {
+public class UserCreationByEmailRequest {
+	String userName;
+	String email;
 
-	String idChapter;
-	String titleChapter;
-	String numberChapter;
-	int viewChapter;
-	Set<HistoryRead> historyReads;
 }

@@ -31,4 +31,5 @@ public class NovelRespone {
 	Set<ChapterRespone> chapter;
 	Set<Author> authors;
 	Set<PointOfView> pointOfViews;
+	
 }

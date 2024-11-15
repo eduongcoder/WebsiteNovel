@@ -37,7 +37,7 @@ public class CategoryService {
 			throw new AppException(ErrorCode.CATEGORY_ALREADY_IN);
 		}
 		Category category = categoryMapper.toCategory(request);
-		
+
 		return categoryMapper.toCategoryRespone(categoryRepository.save(category));
 	}
 
@@ -45,7 +45,12 @@ public class CategoryService {
 		if (!categoryRepository.existsById(idCategory)) {
 			throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
 		}
-		categoryRepository.deleteById(idCategory);
+		try {
+			categoryRepository.deleteById(idCategory);
+
+		} catch (Exception e) {
+			throw new AppException(ErrorCode.DELETE_CONTRAINT);
+		}
 		return idCategory;
 	}
 

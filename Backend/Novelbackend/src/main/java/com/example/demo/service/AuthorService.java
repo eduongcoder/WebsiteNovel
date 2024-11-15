@@ -38,7 +38,12 @@ public class AuthorService {
 		if (!authorRepository.existsById(idAuthor)) {
 			throw new AppException(ErrorCode.AUTHOR_NOT_EXISTED);
 		}
-		authorRepository.deleteById(idAuthor);
+		try {
+			authorRepository.deleteById(idAuthor);
+
+		} catch (Exception e) {
+			throw new AppException(ErrorCode.DELETE_CONTRAINT);
+		}
 		return idAuthor;
 	}
 
@@ -48,7 +53,7 @@ public class AuthorService {
 		}
 		return authorRepository.findById(request.getIdAuthor()).map(t -> {
 			t.setDescriptionAuthor(request.getDescriptionAuthor());
-			t.setNameAuthor(t.getNameAuthor());
+			t.setNameAuthor(request.getNameAuthor());
 			return authorMapper.toAuthorRespone(authorRepository.save(t));
 		});
 	}

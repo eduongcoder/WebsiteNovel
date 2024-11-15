@@ -2,6 +2,8 @@ package com.example.demo.dto.respone;
 
 import java.time.LocalDate;
 
+import com.example.demo.entity.HistoryRead;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +22,8 @@ public class UserRespone {
 	String userName;
 	String password;
 	byte[] avatarUser;
+	String email;
 	LocalDate dobUser;
+	HistoryRead historyRead;
 
 }
