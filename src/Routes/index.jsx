@@ -9,7 +9,7 @@ import ViewChap from '@/Components/ViewChap/index.jsx';
 import Customer from '@/Components/customer/index.jsx';
 const publicRoute = [
     { path: '/', component: Home },
-    { path: '/Order', component: Order },
+    { path: '/Order', component: Order ,layout: null },
     { path: '/Category', component: Category },
     { path: '/Product', component: Product }, //,layout: null
     { path: '/Chapter', component: Chapter },

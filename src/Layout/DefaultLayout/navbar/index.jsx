@@ -2,7 +2,7 @@ import Modal from '@/Components/customer/Login';
 import Register from '@/Components/customer/regiter';
 function Navbar() {
     return (
-        <nav className="bg-white mb-4 border-gray-200 dark:bg-gray-900">
+        <nav className="bg-white mb-4 border-gray-200 dark:bg-gray-900 mx-auto  h-full max-w-[1280px] flex-1 py-0 px-8 md:px-24">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a
                     href="https://flowbite.com/"
@@ -147,12 +147,6 @@ function Navbar() {
                             >
                                 Services
                             </a>
-                        </li>
-                        <li>
-                            <Modal />
-                        </li>
-                        <li>
-                            <Register />
                         </li>
                     </ul>
                 </div>
