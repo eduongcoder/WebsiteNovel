@@ -1,31 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchImages, setCurrentIndex } from '@/Redux/ReduxSlice/novelSlice';
+import { fetchNovels, setCurrentIndex } from '@/Redux/ReduxSlice/novelSlice';
 
 function Carousel() {
     const dispatch = useDispatch();
-    const { images, currentIndex } = useSelector((state) => state.novel); // Lấy dữ liệu từ Redux store
+    const { images = [], currentIndex } = useSelector((state) => state.novel); // Đảm bảo images là một mảng
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
-    const [currentX, setCurrentX] = useState(0);
-
     useEffect(() => {
-        // Dispatch action để lấy dữ liệu từ API
-        dispatch(fetchImages());
+        dispatch(fetchNovels());
     }, [dispatch]);
 
     const handleNext = () => {
-        dispatch(setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length));
+        if (images.length > 0) {
+            dispatch(setCurrentIndex((currentIndex + 1) % images.length));
+        }
     };
 
     const handlePrev = () => {
-        dispatch(setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1)));
+        if (images.length > 0) {
+            dispatch(
+                setCurrentIndex(
+                    (currentIndex === 0 ? images.length : currentIndex) - 1,
+                ),
+            );
+        }
     };
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
         setStartX(e.pageX);
-        setCurrentX(e.pageX);
     };
 
     const handleMouseMove = (e) => {
@@ -33,25 +37,21 @@ function Carousel() {
         const distance = e.pageX - startX;
         if (distance > 50) {
             handlePrev();
-            setIsDragging(false); // Dừng kéo sau khi chuyển ảnh
+            setIsDragging(false);
         } else if (distance < -50) {
             handleNext();
-            setIsDragging(false); // Dừng kéo sau khi chuyển ảnh
+            setIsDragging(false);
         }
     };
 
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
+    const handleMouseUp = () => setIsDragging(false);
 
-    const handleMouseLeave = () => {
-        setIsDragging(false);
-    };
+    const handleMouseLeave = () => setIsDragging(false);
 
     return (
         <div
             id="default-carousel"
-            className="relative w-full"
+            className="relative mb-4 w-full"
             data-carousel="slide"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -59,28 +59,45 @@ function Carousel() {
             onMouseLeave={handleMouseLeave}
         >
             <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-                {images.length > 0 && images.map((imgSrc, index) => (
-                    <div
-                        key={index}
-                        className={`absolute w-full h-full transition-opacity duration-700 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
-                        data-carousel-item={index === currentIndex ? 'active' : ''}
-                    >
-                        <img
-                            src={imgSrc}
-                            className="block w-full h-full object-cover"
-                            alt={`Slide ${index + 1}`}
-                        />
+                {images.length > 0 ? (
+                    images.map((imgSrc, index) => (
+                        <div
+                            key={index}
+                            className={`absolute w-full h-full transition-opacity duration-700 ease-in-out ${
+                                index === currentIndex
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                            }`}
+                            data-carousel-item={
+                                index === currentIndex ? 'active' : ''
+                            }
+                        >
+                            <img
+                                src={imgSrc}
+                                className="block w-full h-full object-cover"
+                                alt={`Slide ${index + 1}`}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    <div className="flex items-center justify-center h-full">
+                        <p>Loading images...</p>
+                        <h1>{images.length}</h1>
                     </div>
-                ))}
+                )}
             </div>
 
             {/* Slider indicators */}
             <div className="absolute z-30 flex -translate-x-1/2 space-x-3 rtl:space-x-reverse bottom-5 left-1/2">
-                {images.length > 0 && images.map((_, index) => (
+                {images.map((_, index) => (
                     <button
                         key={index}
                         type="button"
-                        className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-gray-800' : 'bg-gray-300'}`}
+                        className={`w-3 h-3 rounded-full ${
+                            currentIndex === index
+                                ? 'bg-gray-800'
+                                : 'bg-gray-300'
+                        }`}
                         aria-label={`Slide ${index + 1}`}
                         onClick={() => dispatch(setCurrentIndex(index))}
                     ></button>

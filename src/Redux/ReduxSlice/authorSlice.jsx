@@ -39,16 +39,34 @@ export const createAuthor = createAsyncThunk(
     'author/createAuthor',
     async (newAuthor, { rejectWithValue }) => {
         try {
+            const formData = new FormData();
+            // Thêm hình ảnh
+            formData.append('image', newAuthor.file);
+            // Thêm thông tin mô tả dưới dạng object JSON
+            formData.append(
+                'request',
+                new Blob(
+                    [
+                        JSON.stringify({
+                            descriptionAuthor: newAuthor.descriptionAuthor,
+                            nameAuthor: newAuthor.nameAuthor,
+                            nationality: newAuthor.nationality,
+                            dobAuthor: newAuthor.dobAuthor,
+                            dodAuthor: newAuthor.dodAuthor,
+                        }),
+                    ],
+                    { type: 'application/json' },
+                ),
+            );
+
             const response = await axios.post(
                 `${BASE_URL}/createAuthor`,
-                newAuthor,
+                formData,
                 {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'multipart/form-data' },
                 },
             );
-            return response.data.result;
+            return response.data.result || {};
         } catch (error) {
             return rejectWithValue(
                 error.response?.data || 'Failed to create author',
@@ -57,24 +75,33 @@ export const createAuthor = createAsyncThunk(
     },
 );
 
-// Thunk to update an author
+// Thunk để cập nhật tác giả
+
 export const updateAuthor = createAsyncThunk(
     'author/updateAuthor',
-    async ({ idAuthor, updatedAuthor }, { rejectWithValue }) => {
+    async (formData, { rejectWithValue }) => {
         try {
-            // Request PUT với dữ liệu cập nhật gửi đi
-            const response = await axios.put(`${BASE_URL}/updateAuthor`, {
-                idAuthor,
-                ...updatedAuthor,
-            });
-            return response.data.result;
+            // Gửi PUT request với 'multipart/form-data'
+            const response = await axios.put(
+                `${BASE_URL}/updateAuthor`, // Đặt URL endpoint phù hợp
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+
+            // Trả về kết quả thành công
+            return response.data.result || {}; // Xử lý phản hồi thành công
         } catch (error) {
             return rejectWithValue(
-                error.response?.data || 'Failed to update author',
+                error.response?.data || 'Failed to update author' // Xử lý lỗi nếu có
             );
         }
-    },
+    }
 );
+
 
 // Slice for author data
 const authorSlice = createSlice({
@@ -87,51 +114,46 @@ const authorSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            // Fetch authors pending state
             .addCase(fetchAuthors.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            // Fetch authors fulfilled state
             .addCase(fetchAuthors.fulfilled, (state, action) => {
                 state.loading = false;
                 state.authors = action.payload;
             })
-            // Fetch authors rejected state
             .addCase(fetchAuthors.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || 'Failed to load authors';
             })
-            // Delete author fulfilled state
             .addCase(deleteAuthor.fulfilled, (state, action) => {
                 state.authors = state.authors.filter(
                     (author) => author.idAuthor !== action.payload,
                 );
             })
-            // Delete author rejected state
             .addCase(deleteAuthor.rejected, (state, action) => {
                 state.error = action.payload || 'Failed to delete author';
             })
-            // Create author fulfilled state
             .addCase(createAuthor.fulfilled, (state, action) => {
                 state.authors.push(action.payload);
             })
-            // Create author rejected state
             .addCase(createAuthor.rejected, (state, action) => {
                 state.error = action.payload || 'Failed to create author';
             })
-            // Update author fulfilled state
             .addCase(updateAuthor.fulfilled, (state, action) => {
-                console.log('Update fulfilled payload:', action.payload); // Kiểm tra dữ liệu trả về
+                console.log('Update fulfilled payload:', action.payload);
                 const index = state.authors.findIndex(
                     (author) => author.idAuthor === action.payload.idAuthor,
                 );
                 if (index !== -1) {
-                    state.authors[index] = action.payload;
+                    state.authors[index] = {
+                        ...state.authors[index],
+                        ...action.payload,
+                    };
                 }
             })
             .addCase(updateAuthor.rejected, (state, action) => {
-                console.error('Update rejected error:', action.payload); // Kiểm tra lỗi
+                console.error('Update rejected error:', action.payload);
                 state.error = action.payload || 'Failed to update author';
             });
     },

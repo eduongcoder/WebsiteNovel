@@ -1,74 +1,20 @@
-// import React, { useState } from 'react';
-// import { useDispatch } from 'react-redux';
-// import { createAuthor } from '@/Redux/ReduxSlice/authorSlice';
-
-// const InputAuthor = () => {
-//     const [idAuthor, setIdAuthor] = useState('');
-//     const [descriptionAuthor, setDescriptionAuthor] = useState('');
-//     const [nameAuthor, setNameAuthor] = useState('');
-//     const dispatch = useDispatch();
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         // Dispatch the createAuthor thunk action with the input data
-//         dispatch(createAuthor({ idAuthor, nameAuthor, descriptionAuthor }));
-//     };
-
-//     return (
-//         <form
-//             onSubmit={handleSubmit}
-//             className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800"
-//         >
-//             <input
-//                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-//                 type="text"
-//                 value={idAuthor}
-//                 onChange={(e) => setIdAuthor(e.target.value)}
-//                 placeholder="Author ID"
-//                 required
-//             />
-
-//             <textarea
-//                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-//                 value={descriptionAuthor}
-//                 onChange={(e) => setDescriptionAuthor(e.target.value)}
-//                 placeholder="Description"
-//                 required
-//             />
-
-//             <input
-//                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-//                 type="text"
-//                 value={nameAuthor}
-//                 onChange={(e) => setNameAuthor(e.target.value)}
-//                 placeholder="Author Name"
-//                 required
-//             />
-
-//             <button
-//                 type="submit"
-//                 className="px-8 py-2.5 leading-5 text-white bg-gray-700 rounded-md hover:bg-gray-600"
-//             >
-//                 Submit
-//             </button>
-//         </form>
-//     );
-// };
-
-// export default InputAuthor;
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     createAuthor,
     updateAuthor,
     fetchAuthors,
-} from '@/Redux/ReduxSlice/authorSlice'; // Giả sử bạn có action fetchAuthors
+} from '@/Redux/ReduxSlice/authorSlice';
 
 const InputAuthor = () => {
-    const [idAuthor, setIdAuthor] = useState('');
+    const [file, setFile] = useState(null);
     const [descriptionAuthor, setDescriptionAuthor] = useState('');
     const [nameAuthor, setNameAuthor] = useState('');
+    const [nationalityauthor, setNationality] = useState('');
+    const [dobAuthor, setDobAuthor] = useState('');
+    const [dodAuthor, setDodAuthor] = useState('');
+    const [selectedAuthorId, setSelectedAuthorId] = useState(''); // Lưu id tác giả đang chọn
+
     const dispatch = useDispatch();
 
     // Lấy danh sách tác giả để hiển thị trong combobox
@@ -78,26 +24,77 @@ const InputAuthor = () => {
 
     const authors = useSelector((state) => state.author.authors); // Giả sử state có danh sách tác giả
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (idAuthor) {
-            // Nếu đã có idAuthor, thực hiện cập nhật tác giả
-            dispatch(
-                updateAuthor({
-                    idAuthor,
-                    updatedAuthor: { nameAuthor, descriptionAuthor },
-                }),
-            );
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        
+        // Kiểm tra xem có file được chọn không
+        if (selectedFile) {
+            setFile(selectedFile);
+            console.log('Selected file:', selectedFile); // Hiển thị file hiện tại để kiểm tra
         } else {
-            // Nếu chưa có idAuthor, thực hiện tạo tác giả mới
-            dispatch(createAuthor({ nameAuthor, descriptionAuthor }));
+            setFile(null);
+            console.log('No file selected');
         }
     };
+    
+
+    const handleCreate = (e) => {
+        e.preventDefault();
+
+        // Kiểm tra nếu file hình ảnh không được chọn
+        if (!file) {
+            alert('Please select an image file');
+            return;
+        }
+
+        // Thực hiện tạo tác giả mới
+        dispatch(
+            createAuthor({
+                nameAuthor,
+                descriptionAuthor,
+                nationality: nationalityauthor,
+                dobAuthor,
+                dodAuthor,
+                file,
+            }),
+        );
+    };
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+    
+        // Tạo FormData
+        const formData = new FormData();
+    
+        // Thêm file vào FormData nếu tồn tại
+        if (file) {
+            formData.append('image', file); // Thêm trường 'image' với tệp đã chọn
+        }
+    
+        // Thêm các trường khác vào FormData
+        const authorData = {
+            idAuthor: selectedAuthorId,
+            nameAuthor,
+            descriptionAuthor,
+            nationality: nationalityauthor,
+            dobAuthor,
+            dodAuthor,
+        };
+    
+        formData.append(
+            'request',
+            new Blob([JSON.stringify(authorData)], { type: 'application/json' })
+        );
+    
+        // Gửi FormData thông qua action creator
+        dispatch(updateAuthor(formData));
+    };
+    
+    
 
     const handleAuthorChange = (e) => {
-        const selectedAuthorId = e.target.value; // Lấy id của tác giả được chọn
-        setIdAuthor(selectedAuthorId);
+        const selectedAuthorId = e.target.value;
+        setSelectedAuthorId(selectedAuthorId); // Cập nhật ID tác giả đã chọn
 
         // Tìm tác giả đã chọn từ danh sách tác giả
         const selectedAuthor = authors.find(
@@ -108,38 +105,33 @@ const InputAuthor = () => {
         if (selectedAuthor) {
             setNameAuthor(selectedAuthor.nameAuthor);
             setDescriptionAuthor(selectedAuthor.descriptionAuthor);
+            setNationality(selectedAuthor.nationality);
+            setDobAuthor(selectedAuthor.dobAuthor);
+            setDodAuthor(selectedAuthor.dodAuthor);
         } else {
-            // Nếu không tìm thấy tác giả (ví dụ khi xóa tác giả), xóa các trường nhập liệu
+            // Xóa các trường nhập liệu khi không tìm thấy
             setNameAuthor('');
             setDescriptionAuthor('');
+            setNationality('');
+            setDobAuthor('');
+            setDodAuthor('');
         }
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800"
-        >
+        <form className="max-w-4xl p-6 mx-auto bg-indigo-800 rounded-md shadow-md dark:bg-gray-800">
             <select
-                value={idAuthor}
                 onChange={handleAuthorChange}
+                value={selectedAuthorId}
                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             >
                 <option value="">Chọn tác giả</option>
                 {authors.map((author) => (
                     <option key={author.idAuthor} value={author.idAuthor}>
-                        {author.idAuthor}
+                        {author.nameAuthor}
                     </option>
                 ))}
             </select>
-
-            <textarea
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-                value={descriptionAuthor}
-                onChange={(e) => setDescriptionAuthor(e.target.value)}
-                placeholder="Mô tả"
-                required
-            />
 
             <input
                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
@@ -149,13 +141,55 @@ const InputAuthor = () => {
                 placeholder="Tên tác giả"
                 required
             />
-
-            <button
-                type="submit"
-                className="px-8 py-2.5 leading-5 text-white bg-gray-700 rounded-md hover:bg-gray-600"
-            >
-                {idAuthor ? 'Cập nhật tác giả' : 'Tạo tác giả'}
-            </button>
+            <textarea
+                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                value={descriptionAuthor}
+                onChange={(e) => setDescriptionAuthor(e.target.value)}
+                placeholder="Description"
+                required
+            />
+            <input
+                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                type="text"
+                value={nationalityauthor}
+                onChange={(e) => setNationality(e.target.value)}
+                placeholder="Quốc tịch"
+            />
+            <input
+                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                type="date"
+                value={dobAuthor}
+                onChange={(e) => setDobAuthor(e.target.value)}
+                placeholder="Ngày sinh"
+            />
+            <input
+                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                type="date"
+                value={dodAuthor}
+                onChange={(e) => setDodAuthor(e.target.value)}
+                placeholder="Ngày mất"
+            />
+            <input
+                type="file"
+                onChange={handleFileChange}
+                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+            />
+            <div className="flex space-x-4">
+                <button
+                    type="button"
+                    onClick={handleCreate}
+                    className="px-8 py-2.5 leading-5 text-white bg-green-600 rounded-md hover:bg-green-500"
+                >
+                    Create
+                </button>
+                <button
+                    type="button"
+                    onClick={handleUpdate}
+                    className="px-8 py-2.5 leading-5 text-white bg-blue-600 rounded-md hover:bg-blue-500"
+                >
+                    Update
+                </button>
+            </div>
         </form>
     );
 };

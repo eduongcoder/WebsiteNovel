@@ -1,82 +1,111 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const BASE_URL = 'http://26.232.136.42:8080/api/chapter';
+
 // Thunk để lấy tất cả các chapter
 export const fetchChapters = createAsyncThunk(
   'chapter/fetchChapters',
   async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/chapter/getAllChapter');
+    const response = await axios.get(`${BASE_URL}/getAllChapter`);
     return response.data.result || [];
-  }
+  },
 );
 
 // Thunk để lấy tất cả chapter không có nội dung
 export const fetchChaptersNoContent = createAsyncThunk(
   'chapter/fetchChaptersNoContent',
   async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/chapter/getAllChapterNoContent');
+    const response = await axios.get(`${BASE_URL}/getAllChapterNoContent`);
     return response.data.result || [];
-  }
+  },
 );
 
 // Thunk để kiểm tra chapter
 export const testChapter = createAsyncThunk(
   'chapter/testChapter',
   async () => {
-    const response = await axios.get('http://26.232.136.42:8080/api/chapter/testChapter');
+    const response = await axios.get(`${BASE_URL}/testChapter`);
     return response.data.result || [];
   }
 );
 
-// Thunk để tạo mới chapter
+// Thunk để tạo mới một chapter
 export const createChapter = createAsyncThunk(
   'chapter/createChapter',
-  async (newChapter) => {
-    const response = await axios.post('http://26.232.136.42:8080/api/chapter/createChapter', newChapter);
-    return response.data.result; // Trả về chapter vừa tạo
+  async (newChapter, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/createChapter`, newChapter);
+      return response.data.result;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || 'Lỗi khi tạo chapter'
+      );
+    }
   }
 );
 
-// Thunk để lấy các trang của chapter
-export const fetchChapterPages = createAsyncThunk(
-  'chapter/fetchChapterPages',
-  async (chapterId) => {
-    const response = await axios.get(`http://26.232.136.42:8080/api/chapter/pages/${chapterId}`);
-    return response.data.result || [];
+// Thunk để tạo chapters với file PDF và thông tin khác
+export const createChapters = createAsyncThunk(
+  'chapter/createChapters',
+  async (
+    { filePdf, idNovel, totalChapter, chapterPagesArray },
+    { rejectWithValue }
+  ) => {
+    try {
+      // Kiểm tra các tham số bắt buộc trước khi gửi
+      if (!filePdf || !idNovel || !totalChapter || !chapterPagesArray) {
+        return rejectWithValue('Vui lòng điền đủ thông tin');
+      }
+
+      const formData = new FormData();
+      // Thêm tệp PDF vào FormData
+      formData.append('filePdf', filePdf);
+      // Thêm các trường dữ liệu khác vào FormData
+      formData.append('idNovel', idNovel);
+      formData.append('totalChapter', totalChapter);
+      formData.append('chapterPagesArray', JSON.stringify(chapterPagesArray));
+
+      // Gửi yêu cầu POST với Content-Type là multipart/form-data
+      const response = await axios.post(
+        `${BASE_URL}/createChapters`, // Địa chỉ API
+        formData, // Dữ liệu gửi đi
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Trình duyệt tự động thiết lập này, nhưng hãy giữ cho rõ ràng
+          },
+        }
+      );
+
+      // Trả về kết quả từ response
+      return response.data.result;
+    } catch (error) {
+      // Kiểm tra và trả về lỗi nếu có
+      if (error.response) {
+        return rejectWithValue(error.response.data || 'Lỗi khi tạo chapters');
+      } else {
+        return rejectWithValue('Lỗi kết nối hoặc máy chủ không phản hồi');
+      }
+    }
   }
 );
 
-// Thunk để lấy chapter theo trang
-export const fetchChapterPage = createAsyncThunk(
-  'chapter/fetchChapterPage',
-  async (pageNumber) => {
-    const response = await axios.get(`http://26.232.136.42:8080/api/chapter/page/${pageNumber}`);
-    return response.data.result || [];
-  }
-);
-
-// Thunk để xóa category
-export const deleteCategory = createAsyncThunk(
-  'category/deleteCategory',
-  async (categoryId) => {
-    const response = await axios.delete(`http://26.232.136.42:8080/api/category/deleteCategory/${categoryId}`);
-    return categoryId; // Trả về id của category vừa bị xóa
-  }
-);
-
+// Slice quản lý trạng thái liên quan đến chapter
 const chapterSlice = createSlice({
   name: 'chapter',
   initialState: {
     chapters: [],
+    chaptersNoContent: [],
     pages: [],
     chapterPage: [],
     loading: false,
     error: null,
+    testResult: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Đang tải dữ liệu chapters
+      // fetchChapters
       .addCase(fetchChapters.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -89,7 +118,7 @@ const chapterSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Lỗi tải dữ liệu chapters';
       })
-      // Đang tải dữ liệu chapters không có nội dung
+      // fetchChaptersNoContent
       .addCase(fetchChaptersNoContent.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -100,31 +129,27 @@ const chapterSlice = createSlice({
       })
       .addCase(fetchChaptersNoContent.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Lỗi tải dữ liệu chapters không có nội dung';
+        state.error = action.error.message || 'Lỗi tải chapters không có nội dung';
       })
-      // Kiểm tra chapter
+      // testChapter
       .addCase(testChapter.fulfilled, (state, action) => {
         state.testResult = action.payload;
       })
-      // Tạo mới chapter
+      // createChapter
       .addCase(createChapter.fulfilled, (state, action) => {
-        state.chapters.push(action.payload); // Thêm chapter mới vào state
+        state.chapters.push(action.payload);
       })
-      // Lấy các trang của chapter
-      .addCase(fetchChapterPages.fulfilled, (state, action) => {
-        state.pages = action.payload;
+      .addCase(createChapter.rejected, (state, action) => {
+        state.error = action.payload || 'Lỗi khi tạo chapter';
       })
-      // Lấy chapter theo trang
-      .addCase(fetchChapterPage.fulfilled, (state, action) => {
-        state.chapterPage = action.payload;
+      // createChapters
+      .addCase(createChapters.fulfilled, (state, action) => {
+        state.chapters.push(...action.payload); // Giả định kết quả là một mảng chapters
       })
-      // Xóa category thành công
-      .addCase(deleteCategory.fulfilled, (state, action) => {
-        state.categories = state.categories.filter(
-          (category) => category.idCategory !== action.payload
-        );
+      .addCase(createChapters.rejected, (state, action) => {
+        state.error = action.payload || 'Lỗi khi tạo chapters';
       });
-  },
+  }
 });
 
 export default chapterSlice.reducer;

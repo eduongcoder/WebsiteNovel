@@ -29,11 +29,11 @@ function CardNovel() {
     }
 
     return (
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2  mdd:grid-cols-3 xl:grid-cols-6"> 
+        <div className="grid grid-cols-2 mb-4 md:grid-cols-3 gap-4"> 
             {novels.map((novel) => (
                 <div
                     key={novel.idNovel}
-                    className="flex flex-col justify-between bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 h-400px" // Đặt chiều cao là 400px
+                    className=" h-auto max-w-full  flex flex-col justify-between bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 h-400px" // Đặt chiều cao là 400px
                     style={{ height: '400px' }}                >
                     <img
                          className="rounded-t-lg h-3/5 w-full object-cover" 

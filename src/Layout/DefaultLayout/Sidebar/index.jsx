@@ -62,14 +62,14 @@ function Sidebar() {
                 } sm:translate-x-0 ${
                     theme === 'dark'
                         ? 'bg-gray-800 text-white border-gray-700'
-                        : 'bg-white text-black border-gray-200'
+                        : 'bg-sky-600 text-blue-200 border-gray-200'
                 } border-r rtl:border-r-0 rtl:border-l`}
             >
-                <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+                <div className="h-full px-3 py-4 overflow-y-auto bg-sky-600 dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
                             <Link
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                className="flex items-center p-2 text-blue-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                                 to="/"
                             >
                                 <ImHome3 />
