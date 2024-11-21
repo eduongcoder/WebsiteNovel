@@ -20,7 +20,6 @@ public class ChapterNoContentRespone {
 
 	String idChapter;
 	String titleChapter;
-	String numberChapter;
 	int viewChapter;
 	Set<HistoryRead> historyReads;
 }

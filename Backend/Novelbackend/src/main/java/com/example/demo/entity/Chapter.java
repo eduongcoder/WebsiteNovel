@@ -27,11 +27,10 @@ public class Chapter {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	String idChapter;
 	String titleChapter;
-	String numberChapter;
 	@Column(nullable = false,columnDefinition = "int default 0")
 	int viewChapter;
 	@Lob
-	@Column(name = "content_Chapter",columnDefinition = "MEDIUMBLOB")
+	@Column(name = "content_Chapter",columnDefinition = "LONGBLOB")
 	byte[] contentChapter;
 	
 	@ManyToOne

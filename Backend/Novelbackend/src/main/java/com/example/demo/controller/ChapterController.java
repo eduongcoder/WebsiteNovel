@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.ChapterCreationRequest;
+import com.example.demo.dto.request.ChaptersCreationRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,17 +42,23 @@ public class ChapterController {
 				.build();
 	}
 
-	 
-	
 	@GetMapping("/getAllChapterNoContent")
 	public ApiRespone<List<ChapterNoContentRespone>> getAllChapterNoContentByNameNovel(@RequestParam String nameNovel) {
 
 		return ApiRespone.<List<ChapterNoContentRespone>>builder()
-				.result(chapterService.getAllChapterNoContentByIdNovel(nameNovel)).build();
+				.result(chapterService.getAllChapterNoContent(nameNovel)).build();
 	}
+	
+	@GetMapping("/getAllChapterNoContentByNameNovel")
+	public ApiRespone<List<ChapterNoContentRespone>> getAllChapterNoContentByidNovel(@RequestParam String idNovel) {
+
+		return ApiRespone.<List<ChapterNoContentRespone>>builder()
+				.result(chapterService.getAllChapterNoContentByIdNovel(idNovel)).build();
+	}
+	
 
 	@PostMapping(value = "/createChapter", consumes = { "multipart/form-data" })
-	public ApiRespone<ChapterRespone> createChapter(@RequestPart("file") MultipartFile file,
+	public ApiRespone<ChapterRespone> createChapter(@RequestParam("file") MultipartFile file,
 			@RequestPart("request") ChapterCreationRequest request) throws IOException {
 		ChapterRespone chapterRespone = chapterService.createChapter(file, request);
 
@@ -63,6 +71,14 @@ public class ChapterController {
 		return chapterService.isPdfFile(file);
 	}
 
+	
+	@DeleteMapping("/deleteChapter")
+	public ApiRespone<String> deleteChapter(@RequestParam String idChapter){
+		return ApiRespone.<String>builder().result(chapterService.deleteChapter(idChapter)).build();
+	}
+	
+	// lấy 1 trang từ file pdf
+	// pageNumber trang muốn lấy
 	@GetMapping("/page")
 	public ApiRespone<PdfPageResponse> getPdfPage(@RequestParam("id") String pdfId,
 			@RequestParam("page") int pageNumber) throws IOException {
@@ -71,26 +87,31 @@ public class ChapterController {
 		String pageContent = chapterService.getPdfPage(pdfBytes, pageNumber);
 		int totalPages = chapterService.getTotalPages(pdfBytes);
 
-		return ApiRespone.<PdfPageResponse>builder().result(
-				PdfPageResponse.builder().
-				pageContent(pageContent)
-				.totalPages(pageNumber).
-				totalPages(totalPages).
-				build()).build();
+		return ApiRespone.<PdfPageResponse>builder().result(PdfPageResponse.builder().pageContent(pageContent)
+				.totalPages(pageNumber).totalPages(totalPages).build()).build();
 	}
+
+	// lấy nhiều trang từ file pdf
+	// page là số trang bắt đầu lấy
+	// pageGet là số trang lấy
 	@GetMapping("/pages")
 	public ApiRespone<PdfPageResponse> getPdfPages(@RequestParam("id") String pdfId,
-			@RequestParam("page") int pageNumber,@RequestParam("pageGet") int pageGet) throws IOException {
+			@RequestParam("page") int pageNumber, @RequestParam("pageGet") int pageGet) throws IOException {
 		byte[] pdfBytes = chapterService.getChapter(pdfId).getContentChapter();
 
-		String pageContent = chapterService.getPdfPages(pdfBytes, pageNumber,pageGet);
+		String pageContent = chapterService.getPdfPages(pdfBytes, pageNumber, pageGet);
 		int totalPages = chapterService.getTotalPages(pdfBytes);
 
-		return ApiRespone.<PdfPageResponse>builder().result(
-				PdfPageResponse.builder().
-				pageContent(pageContent)
-				.totalPages(pageNumber).
-				totalPages(totalPages).
-				build()).build();
+		return ApiRespone.<PdfPageResponse>builder().result(PdfPageResponse.builder().pageContent(pageContent)
+				.totalPages(pageNumber).totalPages(totalPages).build()).build();
+	}
+
+	@PostMapping(value = "/createChapters", consumes = { "multipart/form-data" })
+	public ApiRespone<Boolean> createChapters(@RequestParam MultipartFile filePdf,
+			@RequestPart ChaptersCreationRequest request) throws IOException {
+
+		return ApiRespone.<Boolean>builder()
+				.result(chapterService.createChapters(filePdf, request.getIdNovel(), request.getTotalChapter(), request.getArray()))
+				.build();
 	}
 }

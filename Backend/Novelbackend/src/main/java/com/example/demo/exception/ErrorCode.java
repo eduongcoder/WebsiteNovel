@@ -12,6 +12,8 @@ public enum ErrorCode {
 	CATEGORY_ALREADY_IN(1008, "Category already in"), POV_ALREADY_IN(1009, "Pov already in"),
 	USER_EXISTED(1010,"User already existed"),USER_NOT_EXISTED(1011,"User not existed"),
 	PASSWORD_NOT_MATCHED(1012,"Password not matched"), DELETE_CONTRAINT(1013,"Cant delete because it have a contraint forgein key"),
+	UPLOAD_FILE_ERROR(1014,"The uploaded file was corrupted"),NO_FILE_UPLOAD(1015,"There no file has been uploaded"),
+	CHAPTER_NOT_EXISTED(1016,"Chapter not existed"),
 	UNKNOW_ERROR(9999, "Unknow error");
 
 	private int code;

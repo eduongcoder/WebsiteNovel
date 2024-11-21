@@ -1,5 +1,7 @@
 package com.example.demo.dto.request;
 
+import java.time.LocalDate;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +18,8 @@ public class AuthorUpdateRequest {
 
 	String idAuthor;
 	String descriptionAuthor;
-	String nameAuthor; 
+	String nameAuthor;
+	String nationality;
+	LocalDate dobAuthor;
+	LocalDate dodAuthor;
 }

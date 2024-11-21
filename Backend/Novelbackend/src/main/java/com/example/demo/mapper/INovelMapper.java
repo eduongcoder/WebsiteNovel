@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.example.demo.dto.request.NovelCreationRequest;
+import com.example.demo.dto.respone.NovelJustIdAndNameRespone;
 import com.example.demo.dto.respone.NovelNoChapterRespone;
 import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
@@ -17,6 +18,8 @@ public interface INovelMapper {
 	@Mapping(target = "categories",ignore = true)
 	@Mapping(target = "pointOfViews",ignore = true)
 	Novel toNovel(NovelCreationRequest request);
+	
+	NovelJustIdAndNameRespone toNovelJustIdAndNameRespone(Novel novel);
 	NovelNoImageRespone toNovelNoImageRespone(Novel novel);
 	@Mapping(target = "imageNovel",ignore = true)
 	NovelNoChapterRespone toNovelNoChapterRespone(Novel novel);

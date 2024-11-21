@@ -5,10 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.request.AuthorUpdateRequest;
 import com.example.demo.dto.request.PointOfViewCreationRequest;
 import com.example.demo.dto.request.PointOfViewUpdateRequest;
-import com.example.demo.dto.respone.AuthorRespone;
 import com.example.demo.dto.respone.PointOfViewRespone;
 import com.example.demo.entity.PointOfView;
 import com.example.demo.exception.AppException;

@@ -1,5 +1,12 @@
 package com.example.demo.dto.respone;
 
+import java.util.Set;
+
+import com.example.demo.entity.Author;
+import com.example.demo.entity.Category;
+import com.example.demo.entity.PointOfView;
+import com.example.demo.enums.Status;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,10 +19,12 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @AllArgsConstructor
 @FieldDefaults(level =  AccessLevel.PRIVATE)
-public class ChapterRespone {
+public class NovelJustIdAndNameRespone {
 
-	String idChapter;
-	String titleChapter;
-	int viewChapter;
-	byte[] contentChapter;
+	String idNovel;
+	String nameNovel;
+	String descriptionNovel;
+	Status statusNovel;
+
+
 }

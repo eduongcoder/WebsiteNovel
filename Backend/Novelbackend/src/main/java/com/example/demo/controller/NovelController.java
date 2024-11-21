@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.NovelCreationRequest;
 import com.example.demo.dto.respone.ApiRespone;
+import com.example.demo.dto.respone.NovelJustIdAndNameRespone;
 import com.example.demo.dto.respone.NovelNoChapterRespone;
 import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
@@ -41,6 +42,11 @@ public class NovelController {
 	@GetMapping("/getNovelsNoImage")
 	public ApiRespone<List<NovelNoImageRespone>> getAllNovelNoImage() {
 		return ApiRespone.<List<NovelNoImageRespone>>builder().result(novelService.getAllNovelNoImage()).build();
+	}
+	
+	@GetMapping("/getAllNovelsJustIdAndName")
+	public ApiRespone<List<NovelJustIdAndNameRespone>> getAllNovelsJustIdAndName() {
+		return ApiRespone.<List<NovelJustIdAndNameRespone>>builder().result(novelService.getAllNovelJustIdAndName()).build();
 	}
 	
 	@GetMapping("/getNovelsNoChapter")

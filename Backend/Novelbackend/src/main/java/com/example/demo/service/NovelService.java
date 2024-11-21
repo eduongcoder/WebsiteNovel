@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.NovelCreationRequest;
+import com.example.demo.dto.respone.NovelJustIdAndNameRespone;
 import com.example.demo.dto.respone.NovelNoChapterRespone;
 import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
@@ -75,6 +76,12 @@ public class NovelService {
 
 		return novelRepository.findAll().stream().map(t -> novelMapper.toNovelNoImageRespone(t)).toList();
 	}
+	
+	public List<NovelJustIdAndNameRespone> getAllNovelJustIdAndName() {
+
+		return novelRepository.findAll().stream().map(t -> novelMapper.toNovelJustIdAndNameRespone(t)).toList();
+	}
+	
 
 	public NovelRespone getNovelByName(String nameNovel) {
 		Novel novel = novelRepository.findByNameNovel(nameNovel);

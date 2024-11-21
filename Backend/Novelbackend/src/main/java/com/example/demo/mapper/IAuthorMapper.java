@@ -12,7 +12,12 @@ import com.example.demo.entity.Author;
 public interface IAuthorMapper {
 	
 	@Mapping(target = "idAuthor",ignore = true)
+	@Mapping(target = "imageAuthor",ignore = true)
 	Author toAuthor(AuthorCreateionRequest request);
+	@Mapping(target = "imageAuthor",ignore = true)
 	Author toAuthor(AuthorUpdateRequest request);
+	@Mapping(target = "imageAuthor",ignore = true)
+	@Mapping(target = "dobAuthor",ignore = true)
+	@Mapping(target = "dodAuthor",ignore = true)
 	AuthorRespone toAuthorRespone(Author author);
 }
