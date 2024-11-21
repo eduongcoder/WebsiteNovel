@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createChapters } from '@/Redux/ReduxSlice/chapterSlice';
-import { fetchNovels } from '@/Redux/ReduxSlice/novelSlice';
+import { createChapters, fetchChapters } from '@/Redux/ReduxSlice/chapterSlice';
+import { fetchNovelOnlyName } from '@/Redux/ReduxSlice/novelSlice';
 
 const CreateChapterForm = () => {
     const [filePdf, setFilePdf] = useState(null);
@@ -14,8 +14,15 @@ const CreateChapterForm = () => {
 
     // Fetch novels on component mount
     useEffect(() => {
-        dispatch(fetchNovels());
+        dispatch(fetchNovelOnlyName());
     }, [dispatch]);
+
+    useEffect(() => {
+        // Fetch chapters when idNovel changes
+        if (idNovel) {
+            dispatch(fetchChapters(idNovel));
+        }
+    }, [dispatch, idNovel]);
 
     // Retrieve novels data from Redux store
     const novels = useSelector((state) => state.novel.novels);
@@ -42,7 +49,7 @@ const CreateChapterForm = () => {
             { startPage: '', endPage: '' },
         ]);
     };
-
+    const { chapters } = useSelector((state) => state.chapter);
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -107,7 +114,7 @@ const CreateChapterForm = () => {
                 />
             </div>
 
-            <div className="mb-4">
+            {/* <div className="mb-4">
                 <label
                     htmlFor="idNovel"
                     className="block text-sm font-medium text-gray-700"
@@ -122,19 +129,47 @@ const CreateChapterForm = () => {
                     <option value="">Chọn Tiểu Thuyết</option>
                     {loading ? (
                         <option value="">Đang tải...</option>
-                    ) : novels && novels.length > 0 ? (
-                        novels.map((novel) => (
-                            <option key={novel.idNovel} value={novel.idNovel}>
-                                {novel.idNovel}
+                    ) : chapters && chapters.length > 0 ? (
+                        chapters.map((chapter) => (
+                            <option key={chapter.idNovel} value={chapter.idNovel}>
+                                {chapter.nameNovel}
                             </option>
                         ))
                     ) : (
                         <option value="">Không có tiểu thuyết nào</option>
                     )}
                 </select>
+
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            </div> */}
+            <div className="mb-4">
+                <label
+                    htmlFor="idNovel"
+                    className="block text-sm font-medium text-gray-700"
+                >
+                    Chọn chương
+                </label>
+                <select
+                    value={idNovel}
+                    onChange={handleNovelChange}
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40"
+                >
+                    <option value="">Chọn chương </option>
+                    {loading ? (
+                        <option value="">Đang tải...</option>
+                    ) : novels && novels.length > 0 ? (
+                        novels.map((novel) => (
+                            <option key={novel.idNovel} value={novel.idNovel}>
+                                {novel.nameNovel}
+                            </option>
+                        ))
+                    ) : (
+                        <option value="">Không có tiểu thuyết nào</option>
+                    )}
+                </select>
+
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
-
             <div className="mb-4">
                 <label
                     htmlFor="totalChapter"

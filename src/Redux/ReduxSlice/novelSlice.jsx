@@ -22,7 +22,17 @@ export const fetchNovels = createAsyncThunk(
         }
     },
 );
-
+export const fetchNovelOnlyName = createAsyncThunk(
+    'novel/fetchNovelOnlyName',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/getAllNovelsJustIdAndName`);
+            return response.data.result || [];
+        } catch (error) {
+            return handleError(error, rejectWithValue);
+        }
+    },
+);
 // Fetch images for carousel
 export const fetchImages = createAsyncThunk(
     'carousel/fetchImages',
@@ -205,6 +215,11 @@ const novelSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchNovels.fulfilled, (state, action) => {
+                state.novels = action.payload;
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(fetchNovelOnlyName.fulfilled, (state, action) => {
                 state.novels = action.payload;
                 state.loading = false;
                 state.error = null;
