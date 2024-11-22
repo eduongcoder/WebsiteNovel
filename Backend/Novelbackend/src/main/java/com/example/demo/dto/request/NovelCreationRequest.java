@@ -25,6 +25,9 @@ public class NovelCreationRequest {
 	@Enumerated(EnumType.STRING) 
 	Status statusNovel;
 	byte[] imageNovel;
+	byte[] originalNovel;
+	int totalChapter;
+
 	
 	
 }

@@ -29,6 +29,10 @@ public class Chapter {
 	String titleChapter;
 	@Column(nullable = false,columnDefinition = "int default 0")
 	int viewChapter;
+	
+	int startPage;
+	int endPage;
+	
 	@Lob
 	@Column(name = "content_Chapter",columnDefinition = "LONGBLOB")
 	byte[] contentChapter;

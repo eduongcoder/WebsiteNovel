@@ -14,6 +14,7 @@ import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
 import com.example.demo.entity.Author;
 import com.example.demo.entity.Category;
+import com.example.demo.entity.Chapter;
 import com.example.demo.entity.Novel;
 import com.example.demo.entity.PointOfView;
 import com.example.demo.exception.AppException;
@@ -21,6 +22,7 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.INovelMapper;
 import com.example.demo.repository.IAuthorRepository;
 import com.example.demo.repository.ICategoryRepository;
+import com.example.demo.repository.IChapterRepository;
 import com.example.demo.repository.INovelRepository;
 import com.example.demo.repository.IPointOfViewRepository;
 
@@ -36,19 +38,46 @@ import lombok.extern.slf4j.Slf4j;
 public class NovelService {
 
 	INovelRepository novelRepository;
+	ChapterService chapterService;
 	INovelMapper novelMapper;
 	ICategoryRepository categoryRepository;
 	IPointOfViewRepository pointOfViewRepository;
 	IAuthorRepository authorRepository;
 
-	public NovelRespone createNovel(MultipartFile image, NovelCreationRequest request) throws IOException {
+	public NovelRespone createNovel(MultipartFile image, MultipartFile orginalNovel, NovelCreationRequest request)
+			throws IOException {
 		isImageFIle(image);
 
 		request.setImageNovel(image.getBytes());
-
+		request.setOriginalNovel(orginalNovel.getBytes());
+		int totalPage=chapterService.getTotalPages(request.getOriginalNovel());
+		request.setTotalChapter(totalPage);
 		Novel novel = novelMapper.toNovel(request);
 
 		return novelMapper.toNovelRespone(novelRepository.save(novel));
+
+	}
+
+	public String deleteNovel(String idNovel) {
+
+		Novel novel = novelRepository.findByIdNovel(idNovel);
+		if (novel != null) {
+			if (novel.getChapter().isEmpty()) {
+
+				novelRepository.deleteById(idNovel);
+				return idNovel;
+
+			}else {
+				List<Chapter>listcChapters=novel.getChapter();
+				for (Chapter chapter : listcChapters) {
+					chapterService.deleteChapter(chapter.getIdChapter());
+				}
+				novelRepository.deleteById(idNovel);
+				return idNovel;
+			}
+		}
+
+		throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
 
 	}
 
@@ -62,6 +91,14 @@ public class NovelService {
 		}).toList();
 	}
 	
+	public NovelRespone getNovelHaveOrginFile(String idNovel) {
+		Novel novel= novelRepository.findByIdNovel(idNovel);
+		
+		NovelRespone novelRespone=novelMapper.toNovelRespone(novel);
+		novelRespone.setOriginalNovel("data:application/pdf;base64," + Base64.getEncoder().encodeToString(novel.getOriginalNovel()));
+		return novelRespone;
+	}
+
 	public List<NovelRespone> getAllNovel() {
 
 		return novelRepository.findAll().stream().map(t -> {
@@ -76,12 +113,11 @@ public class NovelService {
 
 		return novelRepository.findAll().stream().map(t -> novelMapper.toNovelNoImageRespone(t)).toList();
 	}
-	
+
 	public List<NovelJustIdAndNameRespone> getAllNovelJustIdAndName() {
 
 		return novelRepository.findAll().stream().map(t -> novelMapper.toNovelJustIdAndNameRespone(t)).toList();
 	}
-	
 
 	public NovelRespone getNovelByName(String nameNovel) {
 		Novel novel = novelRepository.findByNameNovel(nameNovel);
@@ -94,11 +130,11 @@ public class NovelService {
 	public NovelRespone addCategory(String nameCategory, String idNovel) {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		Category category = categoryRepository.findByNameCategory(nameCategory);
-		
-		if (novel==null) {
-			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED); 
+
+		if (novel == null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
 		}
-		
+
 		if (category == null) {
 			throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
 		}
@@ -114,10 +150,10 @@ public class NovelService {
 	public NovelRespone addAuthor(String idAuthor, String idNovel) {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		Author author = authorRepository.findByIdAuthor(idAuthor);
-		if (novel==null) {
-			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED); 
+		if (novel == null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
 		}
-		
+
 		if (author == null) {
 			throw new AppException(ErrorCode.AUTHOR_NOT_EXISTED);
 		}
@@ -134,10 +170,10 @@ public class NovelService {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 
 		PointOfView pointOfView = pointOfViewRepository.findByNamePointOfView(namePointOfView);
-		if (novel==null) {
-			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED); 
+		if (novel == null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
 		}
-		
+
 		if (pointOfView == null) {
 			throw new AppException(ErrorCode.POV_NOT_EXISTED);
 
@@ -153,7 +189,7 @@ public class NovelService {
 
 	public boolean isImageFIle(MultipartFile file) {
 		String contentType = file.getContentType();
-		
+
 		boolean flag;
 		flag = contentType != null && (contentType.equals(MediaType.IMAGE_JPEG_VALUE)
 				|| contentType.equals(MediaType.IMAGE_PNG_VALUE) || contentType.equals(MediaType.IMAGE_GIF_VALUE));

@@ -44,6 +44,12 @@ public class Novel {
 	@Column(name = "image_Novel",columnDefinition = "MEDIUMBLOB")
 	byte[] imageNovel;
 	
+	@Lob
+	@Column(name = "originalNovel",columnDefinition = "LONGBLOB")
+	byte[] originalNovel;
+	
+	int totalPage;
+	
 	@OneToMany(mappedBy = "novel",fetch = FetchType.EAGER)
 	List<Chapter> chapter;
 	

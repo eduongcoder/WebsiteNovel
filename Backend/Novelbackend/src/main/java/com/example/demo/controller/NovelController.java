@@ -60,9 +60,9 @@ public class NovelController {
 	}
 
 	@PostMapping(value = "/createNovel", consumes = { "multipart/form-data" })
-	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,
+	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,@RequestParam MultipartFile orginalNovel,
 			@RequestPart NovelCreationRequest request) throws IOException {
-		NovelRespone novelRespone = novelService.createNovel(image, request);
+		NovelRespone novelRespone = novelService.createNovel(image,orginalNovel, request);
 
 		return ApiRespone.<NovelRespone>builder().result(novelRespone).build();
 	}
