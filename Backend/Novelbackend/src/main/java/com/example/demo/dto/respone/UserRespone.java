@@ -24,6 +24,6 @@ public class UserRespone {
 	byte[] avatarUser;
 	String email;
 	LocalDate dobUser;
-	HistoryRead historyRead;
+	HistoryReadRespone historyRead;
 
 }

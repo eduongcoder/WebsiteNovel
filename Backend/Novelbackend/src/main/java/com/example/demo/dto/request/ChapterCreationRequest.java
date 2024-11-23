@@ -22,5 +22,7 @@ public class ChapterCreationRequest {
 //	@Builder.Default
 //	int viewChapter=0;
 	byte[] contentChapter;
+	int startPage;
+	int endPage;
 	Novel novel;
 }

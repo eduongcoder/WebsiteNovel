@@ -58,9 +58,9 @@ public class ChapterController {
 	
 
 	@PostMapping(value = "/createChapter", consumes = { "multipart/form-data" })
-	public ApiRespone<ChapterRespone> createChapter(@RequestParam("file") MultipartFile file,
+	public ApiRespone<ChapterRespone> createChapter(
 			@RequestPart("request") ChapterCreationRequest request) throws IOException {
-		ChapterRespone chapterRespone = chapterService.createChapter(file, request);
+		ChapterRespone chapterRespone = chapterService.createChapter(request);
 
 		return ApiRespone.<ChapterRespone>builder().result(chapterRespone).build();
 	}
@@ -107,11 +107,11 @@ public class ChapterController {
 	}
 
 	@PostMapping(value = "/createChapters", consumes = { "multipart/form-data" })
-	public ApiRespone<Boolean> createChapters(@RequestParam MultipartFile filePdf,
+	public ApiRespone<Boolean> createChapters(
 			@RequestPart ChaptersCreationRequest request) throws IOException {
 
 		return ApiRespone.<Boolean>builder()
-				.result(chapterService.createChapters(filePdf, request.getIdNovel(), request.getTotalChapter(), request.getArray()))
+				.result(chapterService.createChapters(request.getIdNovel(), request.getTotalChapter(), request.getArray()))
 				.build();
 	}
 }

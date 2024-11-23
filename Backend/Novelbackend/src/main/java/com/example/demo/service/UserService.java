@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import com.example.demo.dto.request.UserLoginRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
 import com.example.demo.dto.respone.UserRespone;
 import com.example.demo.entity.Chapter;
+import com.example.demo.entity.HistoryId;
 import com.example.demo.entity.HistoryRead;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
@@ -39,6 +41,11 @@ public class UserService {
 	IChapterRepository chapterRepository;
 	IHistoryReadRepository historyReadRepository;
 
+	
+	public List<UserRespone> getAllUser() {
+		return userRepository.findAll().stream().map(t -> userMapper.toUserRespone(t)).toList();
+	}
+	
 	public UserRespone createUser(UserCreationRequest request) {
 
 		User user = userRepository.findByIdUser(request.getEmail());
@@ -130,8 +137,11 @@ public class UserService {
 		User user=userRepository.findByEmail(email);
 		Chapter chapter=chapterRepository.findByIdChapter(idChapter);
 		
+		HistoryId historyId=new HistoryId();
+		historyId.setIdChapter(idChapter);
+		historyId.setIdUser(user.getIdUser());
 		
-		historyReadRepository.save(HistoryRead.builder().chapter(chapter).readingTime(LocalDateTime.now()).user(user).build());
+		historyReadRepository.save(HistoryRead.builder().id(historyId).chapter(chapter).readingTime(LocalDateTime.now()).user(user).build());
 		return userMapper.toUserRespone(user);
 	}
 	

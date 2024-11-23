@@ -1,5 +1,10 @@
 package com.example.demo.dto.respone;
 
+import java.util.Set;
+
+import com.example.demo.entity.Author;
+import com.example.demo.entity.Category;
+import com.example.demo.entity.PointOfView;
 import com.example.demo.enums.Status;
 
 import lombok.AccessLevel;
@@ -20,4 +25,8 @@ public class NovelNoChapterRespone {
 	String descriptionNovel;
 	Status statusNovel;
 	String imageNovel;
+	
+	Set<Category> categories;
+	Set<Author> authors;
+	Set<PointOfView> pointOfViews;
 }

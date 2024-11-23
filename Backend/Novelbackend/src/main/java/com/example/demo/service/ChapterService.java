@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -21,7 +20,6 @@ import com.example.demo.entity.Novel;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.IChapterMapper;
-import com.example.demo.mapper.INovelMapper;
 import com.example.demo.repository.IChapterRepository;
 import com.example.demo.repository.INovelRepository;
 
@@ -40,10 +38,14 @@ public class ChapterService {
 	IChapterMapper chapterMapper;
 	INovelRepository novelRepository;
 
-	public ChapterRespone createChapter(MultipartFile file, ChapterCreationRequest request) throws IOException {
-		isPdfFile(file);
+	public ChapterRespone createChapter(ChapterCreationRequest request) throws IOException {
 		Novel novel = novelRepository.findByNameNovel(request.getNovelName());
-		request.setContentChapter(file.getBytes());
+		
+		int endPage=request.getEndPage()-request.getStartPage()+1;
+		
+		String content=getPdfPages(novel.getOriginalNovel(),request.getStartPage(),endPage);
+		
+		request.setContentChapter(content.getBytes());
 
 		request.setNovel(novel);
 		Chapter chapter = chapterMapper.toChapter(request);
@@ -167,21 +169,21 @@ public class ChapterService {
 		}
 	}
 
-	public boolean createChapters(MultipartFile filePdf, String idNovel, int totalChapter,
-			List<Integer> array) throws IOException {
-	
-		if (filePdf.getSize() < 0) {
-			throw new AppException(ErrorCode.NO_FILE_UPLOAD);
+	public boolean createChapters(String idNovel, int totalChapter, List<Integer> array) throws IOException {
+		Novel novel = novelRepository.findByIdNovel(idNovel);
+		byte[] filePdf = novel.getOriginalNovel();
+		if (filePdf.length < 0) {
+			throw new AppException(ErrorCode.NO_ORIGIN_FILE);
 		}
 		try {
 			int count = 1;
 			for (int i = 0; i < array.size(); i += 2) {
-				String chapterContent = getPdfPages(filePdf.getBytes(), array.get(i), array.get(i + 1));
+				String chapterContent = getPdfPages(filePdf, array.get(i), array.get(i + 1)-array.get(i)+1);
 				ChapterCreationRequest chapterCreationRequest = new ChapterCreationRequest();
 
 				createChapter(chapterContent.getBytes(),
 						chapterCreationRequest.builder().contentChapter(chapterContent.getBytes())
-								.titleChapter("Chương"+count)
+								.titleChapter("Chương" + count)
 								.novelName(novelRepository.findByIdNovel(idNovel).getNameNovel()).build());
 				count++;
 			}
@@ -194,5 +196,5 @@ public class ChapterService {
 //	public ChapterRespone name() {
 //		
 //	}
-	
+
 }
