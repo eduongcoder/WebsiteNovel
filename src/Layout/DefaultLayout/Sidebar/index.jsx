@@ -1,8 +1,8 @@
 import { ImHome3 } from 'react-icons/im';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { BiSolidCategory } from 'react-icons/bi';
-import { MdBorderColor } from 'react-icons/md';
-import { FaProductHunt } from 'react-icons/fa';
+import { MdBorderColor, MdOutlineCategory, MdGridView } from 'react-icons/md';
+import { FaProductHunt, FaBook, FaUser } from 'react-icons/fa';
 import { AiOutlineCustomerService } from 'react-icons/ai';
 import { ThemeContext } from '@/ConText/ThemeConText';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,10 @@ function Sidebar() {
     // Close sidebar when clicking outside of it
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+            if (
+                sidebarRef.current &&
+                !sidebarRef.current.contains(event.target)
+            ) {
                 setSidebarOpen(false);
             }
         };
@@ -99,7 +102,7 @@ function Sidebar() {
                                 to="/Product"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
-                                <FaProductHunt />
+                                <FaBook />
                                 <span className="ms-3">Novel</span>
                             </Link>
                         </li>
@@ -108,7 +111,7 @@ function Sidebar() {
                                 to="/Category"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
-                                <FaProductHunt />
+                                <MdOutlineCategory />
                                 <span className="ms-3">Category</span>
                             </Link>
                         </li>
@@ -117,7 +120,7 @@ function Sidebar() {
                                 to="/ViewChap"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
-                                <FaProductHunt />
+                                <MdGridView />
                                 <span className="ms-3">ViewChap</span>
                             </Link>
                         </li>
@@ -126,7 +129,7 @@ function Sidebar() {
                                 to="/Authors"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
-                                <FaProductHunt />
+                                <FaUser />
                                 <span className="ms-3">Authors</span>
                             </Link>
                         </li>

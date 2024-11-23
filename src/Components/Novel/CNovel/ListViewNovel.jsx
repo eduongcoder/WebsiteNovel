@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNovels } from '@/Redux/ReduxSlice/novelSlice';
-
+import ListViewChapters from '@/Components/Chapter/ListViewChap';
 const TABLE_HEADS = [
     'id_Novel',
     'name_Novel',

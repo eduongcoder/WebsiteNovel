@@ -26,7 +26,9 @@ export const fetchNovelOnlyName = createAsyncThunk(
     'novel/fetchNovelOnlyName',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`${BASE_URL}/getAllNovelsJustIdAndName`);
+            const response = await axios.get(
+                `${BASE_URL}/getAllNovelsJustIdAndName`,
+            );
             return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
@@ -91,25 +93,8 @@ export const fetchNovelByName = createAsyncThunk(
 // Create a new novel
 export const createNovel = createAsyncThunk(
     'novel/createNovel',
-    async (novelData, { rejectWithValue }) => {
+    async (formData, { rejectWithValue }) => {
         try {
-            const formData = new FormData();
-            formData.append('image', novelData.file);
-            formData.append(
-                'request',
-                new Blob(
-                    [
-                        JSON.stringify({
-                            id_Novel: novelData.id_Novel,
-                            name_Novel: novelData.name_Novel,
-                            description_Novel: novelData.description_Novel,
-                            status_Novel: novelData.status_Novel,
-                        }),
-                    ],
-                    { type: 'application/json' },
-                ),
-            );
-
             const response = await axios.post(
                 `${BASE_URL}/createNovel`,
                 formData,
@@ -117,10 +102,11 @@ export const createNovel = createAsyncThunk(
                     headers: { 'Content-Type': 'multipart/form-data' },
                 },
             );
-
-            return response.data.result || {};
+            return response.data.result || 'Novel created successfully';
         } catch (error) {
-            return handleError(error, rejectWithValue);
+            return rejectWithValue(
+                error.response?.data?.message || 'Error creating Novels',
+            );
         }
     },
 );
@@ -238,23 +224,23 @@ const novelSlice = createSlice({
                 (state) => {
                     state.loading = true;
                     state.error = null;
-                }
+                },
             )
             .addMatcher(
                 (action) => action.type.endsWith('/fulfilled'),
                 (state) => {
                     state.loading = false;
-                }
+                },
             )
             .addMatcher(
                 (action) => action.type.endsWith('/rejected'),
                 (state, action) => {
                     state.loading = false;
-                    state.error = action.payload || 'An unexpected error occurred';
-                }
+                    state.error =
+                        action.payload || 'An unexpected error occurred';
+                },
             );
     },
 });
-
 
 export default novelSlice.reducer;
