@@ -15,7 +15,7 @@ import 'swiper/css/navigation';
 // Import action
 import { fetchNovels } from '@/Redux/ReduxSlice/novelSlice';
 
-export default function Carousel() {
+export default function CCarousel() {
     const dispatch = useDispatch();
 
     // Lấy danh sách novels từ Redux store
@@ -27,7 +27,7 @@ export default function Carousel() {
     }, [dispatch]);
 
     return (
-        <div className="h-80 bg-gray-100 flex justify-center items-center">
+        <div className="h-screen bg-gray-100 flex justify-center items-center">
             <Swiper
                 spaceBetween={30}
                 hashNavigation={{
