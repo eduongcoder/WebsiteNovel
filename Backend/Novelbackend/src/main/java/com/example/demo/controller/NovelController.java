@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.NovelCreationRequest;
+import com.example.demo.dto.request.NovelUpdateRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.NovelJustIdAndNameRespone;
 import com.example.demo.dto.respone.NovelNoChapterRespone;
@@ -21,9 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/novel")
@@ -87,4 +90,8 @@ public class NovelController {
 		return ApiRespone.<NovelRespone>builder().result(novelService.addPointOfView(namePOV, idNovel)).build();
 	} 
 
+	@PutMapping(value = "/updateNovel",consumes = {"multipart/form-data"})
+	public ApiRespone<Optional<NovelRespone>> updateNovel(@RequestParam MultipartFile image, @RequestParam MultipartFile originalFile,@RequestPart NovelUpdateRequest request) throws IOException{
+		return ApiRespone.<Optional<NovelRespone>>builder().result(novelService.updateNovel(image,originalFile,request)).build();
+	}
 }

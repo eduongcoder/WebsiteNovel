@@ -3,11 +3,16 @@ package com.example.demo.service;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.request.CategoryUpdateRequest;
 import com.example.demo.dto.request.NovelCreationRequest;
+import com.example.demo.dto.request.NovelUpdateRequest;
+import com.example.demo.dto.respone.CategoryRespone;
 import com.example.demo.dto.respone.NovelJustIdAndNameRespone;
 import com.example.demo.dto.respone.NovelNoChapterRespone;
 import com.example.demo.dto.respone.NovelNoImageRespone;
@@ -127,6 +132,43 @@ public class NovelService {
 		return novelRespone;
 	}
 
+	public Optional<NovelRespone> updateNovel(MultipartFile image,MultipartFile originalFile, NovelUpdateRequest request) throws IOException {
+		Novel novel=novelRepository.findByIdNovel(request.getIdNovel());
+		if (novel==null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
+		}
+		
+		isImageFIle(originalFile);
+		
+		if (image!=null) {
+			request.setImageNovel(image.getBytes());
+		}else {
+			request.setImageNovel(novel.getImageNovel());
+		}
+		if (originalFile!=null) {
+			request.setOriginalNovel(originalFile.getBytes());
+		}else {
+			request.setOriginalNovel(novel.getOriginalNovel());
+		}
+		
+		return novelRepository.findById(request.getIdNovel()).map(t -> {
+			
+			try {
+				novelMapper.updateNovelFormRequest(request, t);
+				
+				t.setTotalPage(chapterService.getTotalPages(request.getOriginalNovel()));
+				return novelMapper.toNovelRespone(novelRepository.save(t));
+
+			} catch (IOException e) {
+				throw new AppException(ErrorCode.UPLOAD_FILE_ERROR);
+			}
+			
+			
+			
+		});
+	}
+	
+	
 	public NovelRespone addCategory(String nameCategory, String idNovel) {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		Category category = categoryRepository.findByNameCategory(nameCategory);

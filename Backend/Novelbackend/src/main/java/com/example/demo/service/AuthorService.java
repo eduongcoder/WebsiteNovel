@@ -57,7 +57,7 @@ public class AuthorService {
 
 			}
 			return authorRespone;
-		}).toList();
+		}).toList(); 
 	}
 
 	public String deleteAuthor(String idAuthor) {

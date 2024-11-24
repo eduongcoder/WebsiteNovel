@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.AuthorUpdateRequest;
 import com.example.demo.dto.request.PointOfViewCreationRequest;
@@ -11,11 +12,13 @@ import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.AuthorRespone;
 import com.example.demo.dto.respone.PointOfViewRespone;
 import com.example.demo.service.PointOfViewService;
+import com.example.demo.service.UploadFileService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +36,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class POVController {
 
 	PointOfViewService pointOfViewService;
+	UploadFileService uploadFileService;
 	
-	@GetMapping("/getAllPOV")
+	@GetMapping("/getAllPOV") 
 	public ApiRespone<List<PointOfViewRespone>> getAllPOV() {
 		return ApiRespone.<List<PointOfViewRespone>>builder()
 				.result(pointOfViewService.getAllPOV())
@@ -58,5 +62,10 @@ public class POVController {
 		
 
 		return ApiRespone.<String>builder().result(pointOfViewService.deletePOV(idPOV)).build();
+	}
+	
+	@PostMapping(value = "/testAPI", consumes = { "multipart/form-data" })
+	public ApiRespone<String> testAPI(@RequestParam MultipartFile file) throws IOException{
+		return ApiRespone.<String>builder().result(uploadFileService.uploadFile(file)).build();
 	}
 }
