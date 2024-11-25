@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -38,15 +40,26 @@ public class UploadFileService {
 		String extension=parts[parts.length-1];
 //		log.info("extension is {}",extension);
 		
-		File fileUpload=convert(file);
+		File fileUpload=convert(file); 
 //		log.info("fileUpload is: {}",fileUpload);
 		
 		cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id",publicValue));
 		
-		
+		cloudinary.uploader().destroy(publicValue,null);
         cleanDisk(fileUpload);
 
 		return cloudinary.url().generate(StringUtils.join(publicValue,".",extension));
+	}
+	
+	public String deleteImage(String publicID)  {
+		
+		try {
+			cloudinary.uploader().destroy(publicID, null);
+			return "ok";
+		} catch (IOException e) {
+			throw new AppException(ErrorCode.ERROR_PUBLICID);
+		}
+		
 	}
 	
 	   private File convert(MultipartFile file) throws IOException {

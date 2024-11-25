@@ -68,4 +68,9 @@ public class POVController {
 	public ApiRespone<String> testAPI(@RequestParam MultipartFile file) throws IOException{
 		return ApiRespone.<String>builder().result(uploadFileService.uploadFile(file)).build();
 	}
+	
+	@DeleteMapping("/testAPI2")
+	public ApiRespone<String> testAPI2(@RequestParam String publicID) throws IOException{
+		return ApiRespone.<String>builder().result(uploadFileService.deleteImage(publicID)).build();
+	}
 }
