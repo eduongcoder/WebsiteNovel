@@ -2,29 +2,29 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChapters, deleteChapters } from '@/Redux/ReduxSlice/chapterSlice';
 
-const TABLE_HEADS = [
-    'idChapter',
-    'titleChapter',
-    'numberChapter',
-    'viewChapter',
-    'Action',
-];
+const TABLE_HEADS = ['idChapter', 'titleChapter', 'viewChapter', 'Action'];
 
 function ViewChapters({ idNovel }) {
     const dispatch = useDispatch();
 
-    // Lấy danh sách chapters từ Redux state
+    // Get chapters, loading, and error from the Redux state
     const { chapters, loading, error } = useSelector((state) => state.chapter);
 
     useEffect(() => {
-        // Gọi API để lấy chapters khi idNovel thay đổi
+       
+        // Fetch chapters when idNovel changes
         if (idNovel) {
             dispatch(fetchChapters(idNovel));
+            console.log(" idNovel",idNovel);
         }
     }, [dispatch, idNovel]);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    // Log chapters data for debugging
+    console.log("chapters",chapters);
+
+    if (loading) return <p className="text-center">Loading...</p>;
+    if (error)
+        return <p className="text-center text-red-500">Error: {error}</p>;
 
     return (
         <div>
@@ -54,9 +54,6 @@ function ViewChapters({ idNovel }) {
                                         </td>
                                         <td className="px-3 py-3">
                                             {chapter.titleChapter}
-                                        </td>
-                                        <td className="px-3 py-3">
-                                            {chapter.numberChapter}
                                         </td>
                                         <td className="px-3 py-3">
                                             {chapter.viewChapter}

@@ -4,6 +4,7 @@ import OrderTable from '../Home/AreaTable/ODTable';
 import Carousel from '@/Components/Order/Carousel';
 import Navbar from '@/Layout/DefaultLayout/navbar';
 import CardNovel from './CardNovel';
+import CardN from './CardNovel/index1';
 function Order() {
     return (
         <div>
@@ -11,7 +12,7 @@ function Order() {
             <div className="sm2:px-40 px-24 mx-auto max-w-[1280px] pt-16 pb-40 sm:pt-36 sm:pb-80">
                 <Carousel />
                 <CardNovel />
-                
+                <CardN />
             </div>
             <div className="relative left-[50%] right-[50%] -mr-[50vw] mt-10 -ml-[50vw] h-[500px] w-screen">
               <div className='relative'>

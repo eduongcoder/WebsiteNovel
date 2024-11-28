@@ -1,97 +1,98 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    fetchCategories,
-    deleteCategory,
-} from '@/Redux/ReduxSlice/categorySlice';
+import { fetchChapters, deleteChapters } from '@/Redux/ReduxSlice/chapterSlice';
 
-const TABLE_HEADS = ['ID Category', 'Name Category', 'Action'];
+const TABLE_HEADS = [
+    'idChapter',
+    'titleChapter',
+    'numberChapter',
+    'viewChapter',
+    'Action',
+];
 
-function ListViewCategory() {
+function ViewChapters({ idNovel }) {
     const dispatch = useDispatch();
-    const { categories = [], loading, error } = useSelector(
-        (state) => state.category
-    );
 
-    // State for filtering and search
+    const {
+        chapters = [],
+        loading,
+        error,
+    } = useSelector((state) => state.chapter);
+
+    // State cho tìm kiếm, phân trang và sắp xếp
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredCategories, setFilteredCategories] = useState(categories);
+    const [filteredChapters, setFilteredChapters] = useState(chapters);
     const [currentPage, setCurrentPage] = useState(1);
-    const [categoriesPerPage, setCategoriesPerPage] = useState(5); // Default 5 categories per page
-    const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
+    const [chaptersPerPage, setChaptersPerPage] = useState(5);
+    const [sortOrder, setSortOrder] = useState('asc');
 
-    // Fetch categories when the component mounts
     useEffect(() => {
-        dispatch(fetchCategories());
-    }, [dispatch]);
+        if (idNovel) dispatch(fetchChapters(idNovel));
+    }, [dispatch, idNovel]);
 
-    // Filter categories based on search query
+    // Lọc chương dựa trên từ khóa tìm kiếm
     useEffect(() => {
-        if (categories && categories.length > 0) {
-            setFilteredCategories(
-                categories.filter((category) =>
-                    category.nameCategory
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase())
-                )
-            );
-        } else {
-            setFilteredCategories([]); // Nếu không có danh mục, trả về mảng rỗng
-        }
-    }, [categories, searchQuery]);
+        setFilteredChapters(
+            chapters.filter((chapter) =>
+                chapter.titleChapter
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
+            ),
+        );
+    }, [chapters, searchQuery]);
 
-    // Handle delete category
-    const handleDelete = (categoryId) => {
-        dispatch(deleteCategory(categoryId));
-    };
-
-    // Handle sorting based on column
+    // Sắp xếp danh sách chương
     const handleSort = (column) => {
-        const sortedCategories = [...filteredCategories].sort((a, b) => {
-            if (column === 'ID Category') {
+        const sortedChapters = [...filteredChapters].sort((a, b) => {
+            if (
+                column === 'idChapter' ||
+                column === 'numberChapter' ||
+                column === 'viewChapter'
+            ) {
                 return sortOrder === 'asc'
-                    ? a.idCategory - b.idCategory
-                    : b.idCategory - a.idCategory;
-            } else if (column === 'Name Category') {
+                    ? a[column] - b[column]
+                    : b[column] - a[column];
+            } else if (column === 'titleChapter') {
                 return sortOrder === 'asc'
-                    ? a.nameCategory.localeCompare(b.nameCategory)
-                    : b.nameCategory.localeCompare(a.nameCategory);
+                    ? a[column].localeCompare(b[column])
+                    : b[column].localeCompare(a[column]);
             }
             return 0;
         });
 
-        setFilteredCategories(sortedCategories);
+        setFilteredChapters(sortedChapters);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     };
 
-    // Pagination Logic
-    const indexOfLastCategory = currentPage * categoriesPerPage;
-    const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
-    const currentCategories = filteredCategories.slice(
-        indexOfFirstCategory,
-        indexOfLastCategory
+    // Phân trang
+    const indexOfLastChapter = currentPage * chaptersPerPage;
+    const indexOfFirstChapter = indexOfLastChapter - chaptersPerPage;
+    const currentChapters = filteredChapters.slice(
+        indexOfFirstChapter,
+        indexOfLastChapter,
     );
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const handleCategoriesPerPageChange = (e) => {
-        setCategoriesPerPage(Number(e.target.value));
-        setCurrentPage(1); // Reset to first page when items per page changes
+    const handleChaptersPerPageChange = (e) => {
+        setChaptersPerPage(Number(e.target.value));
+        setCurrentPage(1);
     };
 
-    if (loading) return <div className="text-center text-blue-500">Loading...</div>;
-    if (error)
-        return <div className="text-center text-red-500">Error: {error}</div>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
 
     return (
         <div>
-            <section className="bg-purple-800 rounded-md shadow-cyan-500/50 p-4 md:p-6">
+            <section className="bg-white rounded-md shadow-cyan-500/50 p-4 md:p-6">
                 <div className="mb-3 flex items-center justify-between">
-                    <h4 className="text-[18px] text-sky-400">Category List</h4>
+                    <h4 className="text-[18px] text-sky-400">
+                        Danh sách chương anh
+                    </h4>
                     <div>
                         <input
                             type="text"
-                            placeholder="Search categories..."
+                            placeholder="Tìm kiếm chương..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="mt-2 p-2 w-full md:w-64 border border-gray-300 rounded"
@@ -100,10 +101,10 @@ function ListViewCategory() {
                 </div>
 
                 <div className="mb-3">
-                    <label className="text-sm">Categories per page: </label>
+                    <label className="text-sm">Chương mỗi trang: </label>
                     <select
-                        value={categoriesPerPage}
-                        onChange={handleCategoriesPerPageChange}
+                        value={chaptersPerPage}
+                        onChange={handleChaptersPerPageChange}
                         className="ml-2 p-2 border border-gray-300 rounded"
                     >
                         <option value="5">5</option>
@@ -112,7 +113,7 @@ function ListViewCategory() {
                     </select>
                 </div>
 
-                <div className="rounded-lg border border-gray-950 overflow-x-auto scrollbar-thin scrollbar-track-[var(--scroll-track-bg-color)] scrollbar-thumb-gray-200">
+                <div className="rounded-lg border border-gray-950 overflow-x-auto">
                     <table className="min-w-[900px] w-full border-collapse text-zinc-900">
                         <thead className="text-left text-[17px] bg-slate-400">
                             <tr>
@@ -129,19 +130,29 @@ function ListViewCategory() {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentCategories.length > 0 ? (
-                                currentCategories.map((category) => (
-                                    <tr key={category.idCategory}>
+                            {currentChapters.length > 0 ? (
+                                currentChapters.map((chapter) => (
+                                    <tr key={chapter.idChapter}>
                                         <td className="px-3 py-3">
-                                            {category.idCategory}
+                                            {chapter.idChapter}
                                         </td>
                                         <td className="px-3 py-3">
-                                            {category.nameCategory}
+                                            {chapter.titleChapter}
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            {chapter.numberChapter}
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            {chapter.viewChapter}
                                         </td>
                                         <td className="px-3 py-3">
                                             <button
                                                 onClick={() =>
-                                                    handleDelete(category.idCategory)
+                                                    dispatch(
+                                                        deleteChapters(
+                                                            chapter.idChapter,
+                                                        ),
+                                                    )
                                                 }
                                                 className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 transition duration-150"
                                             >
@@ -152,8 +163,11 @@ function ListViewCategory() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="3" className="text-center py-3">
-                                        No categories available.
+                                    <td
+                                        colSpan={TABLE_HEADS.length}
+                                        className="px-3 py-3 text-center text-gray-500"
+                                    >
+                                        Không có chương nào được tìm thấy
                                     </td>
                                 </tr>
                             )}
@@ -167,7 +181,10 @@ function ListViewCategory() {
                         <ul className="flex justify-center space-x-2">
                             {Array.from(
                                 {
-                                    length: Math.ceil(filteredCategories.length / categoriesPerPage),
+                                    length: Math.ceil(
+                                        filteredChapters.length /
+                                            chaptersPerPage,
+                                    ),
                                 },
                                 (_, index) => (
                                     <li key={index + 1}>
@@ -178,7 +195,7 @@ function ListViewCategory() {
                                             {index + 1}
                                         </button>
                                     </li>
-                                )
+                                ),
                             )}
                         </ul>
                     </nav>
@@ -188,4 +205,4 @@ function ListViewCategory() {
     );
 }
 
-export default ListViewCategory;
+export default ViewChapters;

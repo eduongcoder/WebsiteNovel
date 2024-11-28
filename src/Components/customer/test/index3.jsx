@@ -12,7 +12,7 @@ const TABLE_HEADS = [
     'action',
 ];
 
-function ProList() {
+function ProListt() {
     const dispatch = useDispatch();
     const { novels, loading, error } = useSelector((state) => state.novel);
 
@@ -83,7 +83,7 @@ function ProList() {
                                                 {novel.descriptionNovel}
                                             </td>
                                             <td className="px-3 py-3">
-                                                {novel.statusNovel}
+                                                {novel.imageNovel}
                                             </td>
                                             <td className="px-3 py-3">
                                                 <button
@@ -105,7 +105,10 @@ function ProList() {
                                                     colSpan={TABLE_HEADS.length}
                                                     className="bg-white px-3 py-3"
                                                 >
-                                                    {chapterData[novel.idNovel] ? (
+                                                    {chapterData[
+                                                        novel.idNovel
+                                                    ] ? (
+                                                        
                                                         <ViewChapters
                                                             chapters={
                                                                 chapterData[
@@ -115,7 +118,9 @@ function ProList() {
                                                             }
                                                         />
                                                     ) : (
-                                                        <div>Loading chapters...</div>
+                                                        <div>
+                                                            Loading chapters...
+                                                        </div>
                                                     )}
                                                 </td>
                                             </tr>
@@ -140,4 +145,4 @@ function ProList() {
     );
 }
 
-export default ProList;
+export default ProListt;

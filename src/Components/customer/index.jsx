@@ -6,7 +6,7 @@ import Register from './regiter';
 import FilterTable from '../Chapter/ListViewChap/products';
 import Modal from './Login';
 import AccordionUsage from './test';
-import ProList from './test/index3';
+import ProListt from './test/index3';
 import CCarousel from './test/index4';
 TTTe
 function Customer() {
@@ -20,8 +20,8 @@ function Customer() {
             {/* <Modal />  */}
              {/* <AccordionUsage />  */}
             {/* <Register /> */}
-            {/* <ProList /> */}
-            <CCarousel />
+            <ProListt />
+            {/* <CCarousel /> */}
         </div>
     );
 }

@@ -13,6 +13,7 @@ export const fetchChapters = createAsyncThunk(
             );
             return response.data.result; // Chỉ trả về mảng 'result'
         } catch (error) {
+            // Xử lý lỗi và trả về thông báo chi tiết nếu có lỗi
             return rejectWithValue(
                 error.response?.data?.message || 'Failed to fetch chapters',
             );
@@ -54,9 +55,11 @@ export const testChapter = createAsyncThunk(
 );
 export const deleteChapters = createAsyncThunk(
     'chapter/deleteChapters',
-    async (idChapter , { rejectWithValue }) => {
+    async (idChapter, { rejectWithValue }) => {
         try {
-            await axios.delete(`${BASE_URL}/deleteChapter?idChapter=${idChapter}`);
+            await axios.delete(
+                `${BASE_URL}/deleteChapter?idChapter=${idChapter}`,
+            );
             return idChapter;
         } catch (error) {
             return rejectWithValue(
@@ -109,7 +112,6 @@ export const createChapters = createAsyncThunk(
         }
     },
 );
-
 // Chapter slice to manage state
 const chapterSlice = createSlice({
     name: 'chapter',
@@ -120,6 +122,7 @@ const chapterSlice = createSlice({
         error: null,
         testResult: null,
     },
+    
     reducers: {},
     extraReducers: (builder) => {
         builder
@@ -129,8 +132,9 @@ const chapterSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchChapters.fulfilled, (state, action) => {
+                // Save the chapters directly in the state
+                state.chapters = action.payload; // action.payload is the array of chapters
                 state.loading = false;
-                state.chapters = action.payload;
             })
             .addCase(fetchChapters.rejected, (state, action) => {
                 state.loading = false;
@@ -143,7 +147,7 @@ const chapterSlice = createSlice({
             .addCase(deleteChapters.fulfilled, (state, action) => {
                 state.loading = false;
                 state.chapters = state.chapters.filter(
-                    (chapter) => chapter.idChapter !== action.payload
+                    (chapter) => chapter.idChapter !== action.payload,
                 );
             })
             .addCase(deleteChapters.rejected, (state, action) => {
@@ -166,5 +170,3 @@ const chapterSlice = createSlice({
 });
 
 export default chapterSlice.reducer;
-
-
