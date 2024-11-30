@@ -14,8 +14,7 @@ const TABLE_HEADS = [
 ];
 
 function ListViewAuthors() {
-    const dispatch = useDispatch();
-    const { authors, loading, error } = useSelector((state) => state.author);
+    
 
     // State cho tìm kiếm, lọc, phân trang, và sắp xếp
     const [searchQuery, setSearchQuery] = useState('');
@@ -29,6 +28,9 @@ function ListViewAuthors() {
     useEffect(() => {
         dispatch(fetchAuthors());
     }, [dispatch]);
+    
+    const dispatch = useDispatch();
+    const { authors, loading, error } = useSelector((state) => state.author);
 
     // Lọc dữ liệu theo tìm kiếm
     useEffect(() => {

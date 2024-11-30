@@ -1,13 +1,11 @@
 import Modal from '@/Components/customer/Login';
 import Register from '@/Components/customer/regiter';
+import { Link } from 'react-router-dom';
 function Navbar() {
     return (
         <nav className="bg-white mb-4 border-gray-200 dark:bg-gray-900 mx-auto  h-full max-w-[1280px] flex-1 py-0 px-8 md:px-24">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a
-                    href="https://flowbite.com/"
-                    className="flex items-center space-x-3 rtl:space-x-reverse"
-                >
+                <Link to="/">
                     <img
                         src="https://th.bing.com/th/id/OIP.7IB8knZlkf8V-E9-8vU4HgHaDn?w=412&h=170&c=7&r=0&o=5&pid=1.7"
                         className="h-8"
@@ -16,7 +14,7 @@ function Navbar() {
                     <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
                         Novel
                     </span>
-                </a>
+                </Link>
                 <div className="flex md:order-2">
                     <button
                         type="button"

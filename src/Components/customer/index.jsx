@@ -8,6 +8,7 @@ import Modal from './Login';
 import AccordionUsage from './test';
 import ProListt from './test/index3';
 import CCarousel from './test/index4';
+import PageNovel from '../Order/CardNovel/pageNovel';
 TTTe
 function Customer() {
     // 1a80d4ec-4dd1-4f36-b015-b5069f4b60ed
@@ -20,8 +21,9 @@ function Customer() {
             {/* <Modal />  */}
              {/* <AccordionUsage />  */}
             {/* <Register /> */}
-            <ProListt />
+            {/* <ProListt /> */}
             {/* <CCarousel /> */}
+            <PageNovel />
         </div>
     );
 }

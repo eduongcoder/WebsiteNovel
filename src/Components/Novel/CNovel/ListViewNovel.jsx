@@ -6,7 +6,7 @@ const TABLE_HEADS = [
     'id_Novel',
     'name_Novel',
     'description_Novel',
-    'status_Novel',
+    'images_Novel',
     'file',
     'action',
 ];
@@ -141,9 +141,6 @@ function ProductList() {
                                         </td>
                                         <td className="px-3 py-3">
                                             {novel.descriptionNovel}
-                                        </td>
-                                        <td className="px-3 py-3">
-                                            {novel.statusNovel}
                                         </td>
                                         <td className="px-3 py-3">
                                             <img

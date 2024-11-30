@@ -1,62 +1,134 @@
-import React, { useState } from 'react';
-import { createNovel } from '@/Redux/ReduxSlice/novelSlice';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    createNovel,
+    fetchNovels,
+    updateNovel,
+} from '@/Redux/ReduxSlice/novelSlice';
 
 const NovelForm = () => {
-    const [file, setFile] = useState(null); // Tệp ảnh
-    const [filePdf, setFilePdf] = useState(null); // Tệp PDF
+    const [file, setFile] = useState(null);
+    const [filePdf, setFilePdf] = useState(null);
     const [nameNovel, setNameNovel] = useState('');
     const [descriptionNovel, setDescriptionNovel] = useState('');
     const [statusNovel, setStatusNovel] = useState('');
-    const [totalChapter, setTotalChapter] = useState(0); // Tổng số chương
+    const [totalChapter, setTotalChapter] = useState(0);
+    const [selectedNovelId, setSelectedNovelId] = useState('');
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(fetchNovels());
+    }, [dispatch]);
+
+    const novels = useSelector((state) => state.novel.novels);
+
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+        setFile(e.target.files[0] || null);
     };
 
     const handlePdfChange = (e) => {
-        setFilePdf(e.target.files[0]);
+        setFilePdf(e.target.files[0] || null);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    
-        // Kiểm tra các trường bắt buộc
-        if (!file || !filePdf || !nameNovel || !descriptionNovel || !statusNovel || totalChapter <= 0) {
-            alert('Vui lòng điền đầy đủ thông tin và đính kèm tệp.');
-            return;
+    const handleNovelChange = (e) => {
+        const novelId = e.target.value;
+        setSelectedNovelId(novelId);
+
+        if (novelId) {
+            const selectedNovel = novels.find(
+                (novel) => novel.idNovel === novelId,
+            );
+            if (selectedNovel) {
+                setNameNovel(selectedNovel.nameNovel);
+                setDescriptionNovel(selectedNovel.descriptionNovel);
+                setStatusNovel(selectedNovel.statusNovel);
+                setTotalChapter(selectedNovel.totalChapter);
+                // Optionally set `file` and `filePdf` if you have URL references
+            }
+        } else {
+            // Clear form fields if no novel is selected
+            setNameNovel('');
+            setDescriptionNovel('');
+            setStatusNovel('');
+            setTotalChapter(0);
+            setFile(null);
+            setFilePdf(null);
         }
-    
-        // Tạo FormData để gửi dữ liệu
+    };
+
+    const validateForm = () => {
+        if (
+            !file ||
+            !filePdf ||
+            !nameNovel ||
+            !descriptionNovel ||
+            !statusNovel ||
+            totalChapter <= 0
+        ) {
+            alert('Please fill in all required fields and attach files.');
+            return false;
+        }
+        return true;
+    };
+
+    const prepareFormData = () => {
         const formData = new FormData();
-        formData.append('image', file, file.name); // Sử dụng 'image' theo yêu cầu API
-        formData.append('originalNovel', filePdf, filePdf.name); // Tệp PDF
-    
-        // Tạo object JSON
+        formData.append('image', file, file.name);
+        formData.append('originalFile', filePdf, filePdf.name);
+
         const payload = {
+            idNovel: selectedNovelId, // Thêm idNovel vào payload nếu có
             nameNovel,
             descriptionNovel,
             statusNovel,
             totalChapter: parseInt(totalChapter, 10),
         };
-    
-        // Thêm object JSON vào FormData
+
         formData.append(
             'request',
-            new Blob([JSON.stringify(payload)], { type: 'application/json' })
+            new Blob([JSON.stringify(payload)], { type: 'application/json' }),
         );
-    
-        // Gửi dữ liệu qua Redux
+
+        return formData;
+    };
+
+    const handleCreate = (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        const formData = prepareFormData();
         dispatch(createNovel(formData));
     };
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+
+        if (!selectedNovelId) {
+            alert('Please select a novel to update.');
+            return;
+        }
     
+        if (!validateForm()) return;
+    
+        const formData = prepareFormData();
+        dispatch(updateNovel(formData));
+    };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800"
-        >
+        <form className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
+            <select
+                onChange={handleNovelChange}
+                value={selectedNovelId}
+                className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+            >
+                <option value="">Select Novel</option>
+                {novels.map((novel) => (
+                    <option key={novel.idNovel} value={novel.idNovel}>
+                        {novel.nameNovel}
+                    </option>
+                ))}
+            </select>
+
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Upload Image
             </label>
@@ -64,7 +136,6 @@ const NovelForm = () => {
                 type="file"
                 onChange={handleFileChange}
                 accept="image/*"
-                required
                 className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
 
@@ -75,51 +146,62 @@ const NovelForm = () => {
                 type="file"
                 onChange={handlePdfChange}
                 accept="application/pdf"
-                required
                 className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
 
             <input
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="text"
                 value={nameNovel}
                 onChange={(e) => setNameNovel(e.target.value)}
                 placeholder="Novel Name"
-                required
+                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
+
             <textarea
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 value={descriptionNovel}
                 onChange={(e) => setDescriptionNovel(e.target.value)}
                 placeholder="Description"
-                required
+                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
+
             <select
-                className="block px-8 py-2.5 mt-2 leading-5 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 value={statusNovel}
                 onChange={(e) => setStatusNovel(e.target.value)}
-                required
+                className="block px-8 py-2.5 mt-2 leading-5 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             >
-                <option value="" disabled>Select Status</option>
+                <option value="" disabled>
+                    Select Status
+                </option>
                 <option value="COMPLETED">COMPLETED</option>
                 <option value="CONTINUE">CONTINUE</option>
                 <option value="DROP">DROP</option>
             </select>
+
             <input
                 type="number"
                 value={totalChapter}
                 onChange={(e) => setTotalChapter(e.target.value)}
                 placeholder="Total Chapters"
                 min="1"
-                required
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
-            <button
-                type="submit"
-                className="px-8 py-2.5 mt-4 leading-5 text-white bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-            >
-                Submit
-            </button>
+
+            <div className="flex justify-center mt-4 space-x-4">
+                <button
+                    type="button"
+                    onClick={handleCreate}
+                    className="px-8 py-2.5 leading-5 text-white bg-green-600 rounded-md hover:bg-green-500"
+                >
+                    Create
+                </button>
+                <button
+                    type="button"
+                    onClick={handleUpdate}
+                    className="px-8 py-2.5 leading-5 text-white bg-blue-600 rounded-md hover:bg-blue-500"
+                >
+                    Update
+                </button>
+            </div>
         </form>
     );
 };

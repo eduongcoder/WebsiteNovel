@@ -83,7 +83,11 @@ function ProListt() {
                                                 {novel.descriptionNovel}
                                             </td>
                                             <td className="px-3 py-3">
-                                                {novel.imageNovel}
+                                                <img
+                                                    src={novel.imageNovel}
+                                                    alt={`Novel ${novel.idNovel}`}
+                                                    className="w-20 h-auto"
+                                                />
                                             </td>
                                             <td className="px-3 py-3">
                                                 <button
@@ -108,7 +112,6 @@ function ProListt() {
                                                     {chapterData[
                                                         novel.idNovel
                                                     ] ? (
-                                                        
                                                         <ViewChapters
                                                             chapters={
                                                                 chapterData[

@@ -4,13 +4,12 @@ import axios from 'axios';
 const BASE_URL = 'http://26.232.136.42:8080/api/novel';
 
 // Utility function for error handling in async thunks
-const handleError = (error, rejectWithValue) => {
-    return rejectWithValue(
+const handleError = (error, rejectWithValue) =>
+    rejectWithValue(
         error.response?.data?.message || 'An unexpected error occurred',
     );
-};
 
-// Fetch all novels without chapters
+// Async Thunks
 export const fetchNovels = createAsyncThunk(
     'novel/fetchNovels',
     async (_, { rejectWithValue }) => {
@@ -22,6 +21,7 @@ export const fetchNovels = createAsyncThunk(
         }
     },
 );
+
 export const fetchNovelOnlyName = createAsyncThunk(
     'novel/fetchNovelOnlyName',
     async (_, { rejectWithValue }) => {
@@ -35,47 +35,40 @@ export const fetchNovelOnlyName = createAsyncThunk(
         }
     },
 );
-// Fetch images for carousel
-export const fetchImages = createAsyncThunk(
-    'carousel/fetchImages',
-    async (_, { rejectWithValue }) => {
+
+export const createNovel = createAsyncThunk(
+    'novel/createNovel',
+    async (formData, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`${BASE_URL}/getNovelsNoChapter`);
-            return response.data.result || [];
+            const response = await axios.post(
+                `${BASE_URL}/createNovel`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } },
+            );
+            return response.data.result || 'Novel created successfully';
         } catch (error) {
             return handleError(error, rejectWithValue);
         }
     },
 );
 
-const carouselSlice = createSlice({
-    name: 'carousel',
-    initialState: {
-        images: [],
-        currentIndex: 0,
-        error: null,
+export const updateNovel = createAsyncThunk(
+    'novel/updateNovel',
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await axios.put(
+                `${BASE_URL}/updateNovel`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } },
+            );
+            return response.data.result || {};
+        } catch (error) {
+            return handleError(error, rejectWithValue);
+        }
     },
-    reducers: {
-        setCurrentIndex: (state, action) => {
-            state.currentIndex = action.payload;
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchImages.fulfilled, (state, action) => {
-                state.images = action.payload;
-                state.error = null;
-            })
-            .addCase(fetchImages.rejected, (state, action) => {
-                console.error('Error fetching images:', action.error);
-                state.error = action.error.message || 'Failed to fetch images';
-            });
-    },
-});
+);
 
-export const { setCurrentIndex } = carouselSlice.actions;
-
-// Fetch a single novel by its name
+// Fetch novel by name
 export const fetchNovelByName = createAsyncThunk(
     'novel/fetchNovelByName',
     async (name, { rejectWithValue }) => {
@@ -90,67 +83,7 @@ export const fetchNovelByName = createAsyncThunk(
     },
 );
 
-// Create a new novel
-export const createNovel = createAsyncThunk(
-    'novel/createNovel',
-    async (formData, { rejectWithValue }) => {
-        try {
-            const response = await axios.post(
-                `${BASE_URL}/createNovel`,
-                formData,
-                {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                },
-            );
-            return response.data.result || 'Novel created successfully';
-        } catch (error) {
-            return rejectWithValue(
-                error.response?.data?.message || 'Error creating Novels',
-            );
-        }
-    },
-);
-
-// Add POV (Point of View) to a novel
-export const addPOV = createAsyncThunk(
-    'novel/addPOV',
-    async (data, { rejectWithValue }) => {
-        try {
-            const response = await axios.post(`${BASE_URL}/addPOV`, data);
-            return response.data.result || {};
-        } catch (error) {
-            return handleError(error, rejectWithValue);
-        }
-    },
-);
-
-// Add category to a novel
-export const addCategory = createAsyncThunk(
-    'novel/addCategory',
-    async (data, { rejectWithValue }) => {
-        try {
-            const response = await axios.post(`${BASE_URL}/addCategory`, data);
-            return response.data.result || {};
-        } catch (error) {
-            return handleError(error, rejectWithValue);
-        }
-    },
-);
-
-// Add author to a novel
-export const addAuthor = createAsyncThunk(
-    'novel/addAuthor',
-    async (data, { rejectWithValue }) => {
-        try {
-            const response = await axios.post(`${BASE_URL}/addAuthor`, data);
-            return response.data.result || {};
-        } catch (error) {
-            return handleError(error, rejectWithValue);
-        }
-    },
-);
-
-// Fetch novels without images
+// Additional Fetch Functions (Optional)
 export const fetchNovelsNoImage = createAsyncThunk(
     'novel/fetchNovelsNoImage',
     async (_, { rejectWithValue }) => {
@@ -163,25 +96,12 @@ export const fetchNovelsNoImage = createAsyncThunk(
     },
 );
 
-// Fetch novels with images
-export const fetchNovelsWithImage = createAsyncThunk(
-    'novel/fetchNovelsWithImage',
-    async (_, { rejectWithValue }) => {
+// Add Category/Author/POV
+export const addCategory = createAsyncThunk(
+    'novel/addCategory',
+    async (data, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`${BASE_URL}/getNovels`);
-            return response.data.result || [];
-        } catch (error) {
-            return handleError(error, rejectWithValue);
-        }
-    },
-);
-
-// Test image endpoint
-export const testImage = createAsyncThunk(
-    'novel/testImage',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/testImage`);
+            const response = await axios.post(`${BASE_URL}/addCategory`, data);
             return response.data.result || {};
         } catch (error) {
             return handleError(error, rejectWithValue);
@@ -189,13 +109,51 @@ export const testImage = createAsyncThunk(
     },
 );
 
+export const addAuthor = createAsyncThunk(
+    'novel/addAuthor',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${BASE_URL}/addAuthor`, data);
+            return response.data.result || {};
+        } catch (error) {
+            return handleError(error, rejectWithValue);
+        }
+    },
+);
+
+export const addPOV = createAsyncThunk(
+    'novel/addPOV',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${BASE_URL}/addPOV`, data);
+            return response.data.result || {};
+        } catch (error) {
+            return handleError(error, rejectWithValue);
+        }
+    },
+);
+
+// Carousel Images
+export const fetchImages = createAsyncThunk(
+    'carousel/fetchImages',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/getNovelsNoChapter`);
+            return response.data.result || [];
+        } catch (error) {
+            return handleError(error, rejectWithValue);
+        }
+    },
+);
+
+// Slice
 const novelSlice = createSlice({
     name: 'novel',
     initialState: {
         novels: [],
+        currentNovel: {},
         loading: false,
         error: null,
-        currentNovel: {},
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -219,17 +177,22 @@ const novelSlice = createSlice({
                 state.novels.push(action.payload);
                 state.loading = false;
             })
+            .addCase(updateNovel.fulfilled, (state, action) => {
+                const index = state.novels.findIndex(
+                    (novel) => novel.idNovel === action.payload.idNovel,
+                );
+                if (index !== -1) {
+                    state.novels[index] = {
+                        ...state.novels[index],
+                        ...action.payload,
+                    };
+                }
+            })
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),
                 (state) => {
                     state.loading = true;
                     state.error = null;
-                },
-            )
-            .addMatcher(
-                (action) => action.type.endsWith('/fulfilled'),
-                (state) => {
-                    state.loading = false;
                 },
             )
             .addMatcher(
