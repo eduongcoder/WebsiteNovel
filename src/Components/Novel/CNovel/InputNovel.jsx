@@ -80,7 +80,7 @@ const NovelForm = () => {
             idNovel: selectedNovelId, // Thêm idNovel vào payload nếu có
             nameNovel,
             descriptionNovel,
-            statusNovel,
+            statusNovel, 
             totalChapter: parseInt(totalChapter, 10),
         };
 
