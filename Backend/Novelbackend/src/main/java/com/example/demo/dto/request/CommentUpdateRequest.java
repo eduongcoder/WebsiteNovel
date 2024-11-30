@@ -1,7 +1,5 @@
 package com.example.demo.dto.request;
 
-import java.time.LocalDate;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,12 +12,15 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthorCreateionRequest {
+public class CommentUpdateRequest {
+	String idComment;
+	int likeComment;
+	int dislikeComment;
+	String content_Comment;
 
-	String descriptionAuthor;
-	String nameAuthor;
-	String nationality;
-	LocalDate dobAuthor;
-	LocalDate dodAuthor;
+	boolean reviewStatusComment;
 
+	String idchapter;
+
+	String iduser;
 }

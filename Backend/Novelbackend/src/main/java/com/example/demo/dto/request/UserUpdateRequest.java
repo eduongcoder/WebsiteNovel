@@ -18,6 +18,6 @@ import lombok.experimental.FieldDefaults;
 public class UserUpdateRequest {
 	String email;
 	String userName;
-	byte[] avatarUser;
+	String avatarUser;
 	LocalDate dobUser;
 }

@@ -40,15 +40,17 @@ public class Novel {
 	String descriptionNovel;
 	@Enumerated(EnumType.STRING)
 	Status statusNovel;
-	@Lob
-	@Column(name = "image_Novel",columnDefinition = "MEDIUMBLOB")
-	byte[] imageNovel;
+	
+	@Column(name = "image_Novel",length = 255)
+	String imageNovel;
 	
 	@Lob
 	@Column(name = "originalNovel",columnDefinition = "LONGBLOB")
 	byte[] originalNovel;
 	
 	int totalPage;
+	
+	String publicIDNovel;
 	
 	@OneToMany(mappedBy = "novel",fetch = FetchType.EAGER)
 	List<Chapter> chapter;

@@ -23,8 +23,7 @@ public class NovelCreationRequest {
 	String descriptionNovel;
 	@Enumerated(EnumType.STRING)
 	Status statusNovel;
-	byte[] imageNovel;
+
 	byte[] originalNovel;
-	int totalChapter;
 
 }

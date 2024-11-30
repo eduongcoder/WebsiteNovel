@@ -6,12 +6,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.ChapterCreationRequest;
 import com.example.demo.dto.request.ChaptersCreationRequest;
+import com.example.demo.dto.request.ChaptersUpdateRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
 import com.example.demo.dto.respone.PdfPageResponse;
 import com.example.demo.service.ChapterService;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +25,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
@@ -39,10 +42,10 @@ public class ChapterController {
 	public ApiRespone<List<ChapterRespone>> getAllChapterByNameNovel(@RequestParam String nameNovel) {
 
 		return ApiRespone.<List<ChapterRespone>>builder().result(chapterService.getAllChapterByIdNovel(nameNovel))
-				.build();
+				.build(); 
 	}
 
-	@GetMapping("/getAllChapterNoContent")
+	@GetMapping("/getAllChapterNoContent") 
 	public ApiRespone<List<ChapterNoContentRespone>> getAllChapterNoContentByNameNovel(@RequestParam String nameNovel) {
 
 		return ApiRespone.<List<ChapterNoContentRespone>>builder()
@@ -106,12 +109,17 @@ public class ChapterController {
 				.totalPages(pageNumber).totalPages(totalPages).build()).build();
 	}
 
-	@PostMapping(value = "/createChapters", consumes = { "multipart/form-data" })
+	@PostMapping("/createChapters")
 	public ApiRespone<Boolean> createChapters(
 			@RequestPart ChaptersCreationRequest request) throws IOException {
 
 		return ApiRespone.<Boolean>builder()
 				.result(chapterService.createChapters(request.getIdNovel(), request.getTotalChapter(), request.getArray()))
 				.build();
+	}
+	
+	@PutMapping(value = "/updateChapter")
+	public ApiRespone<ChapterRespone> updateChapter(@RequestBody ChaptersUpdateRequest request ) throws IOException{
+		return ApiRespone.<ChapterRespone>builder().result(chapterService.updateChapter(request)).build();
 	}
 }

@@ -80,9 +80,9 @@ public class UserController {
 	}
 	
 	@PutMapping(value = "updateUser",consumes = { "multipart/form-data"})
-	public ApiRespone<UserRespone> updateUser(@RequestParam MultipartFile image,@RequestPart UserUpdateRequest request) throws IOException{
-		request.setAvatarUser(image.getBytes());
-		return ApiRespone.<UserRespone>builder().result(userService.updateUser(request)).build();
+	public ApiRespone<UserRespone> updateUser(@RequestParam MultipartFile avatar,@RequestPart UserUpdateRequest request) throws IOException{
+	
+		return ApiRespone.<UserRespone>builder().result(userService.updateUser(avatar,request)).build();
 	}
 	
 	@DeleteMapping("/deleteUser")

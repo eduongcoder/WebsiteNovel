@@ -1,7 +1,5 @@
 package com.example.demo.dto.respone;
 
-import java.time.LocalDate;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,16 +12,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthorRespone {
+public class CommentRespone {
+	int likeComment;
+	int dislikeComment;
+	String content_Comment;
 
-	String idAuthor;
-	
-	String descriptionAuthor;
-	String nameAuthor;
-	String nationality;
-	String imageAuthor;
-	String dobAuthor;
-	String dodAuthor;
-	String publicID;
-	
+	boolean reviewStatusComment;
+
+	String idChapter;
+
+	String idUser;
 }

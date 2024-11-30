@@ -11,6 +11,7 @@ import com.example.demo.dto.request.PointOfViewUpdateRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.AuthorRespone;
 import com.example.demo.dto.respone.PointOfViewRespone;
+import com.example.demo.dto.respone.UploadFileRespone;
 import com.example.demo.service.PointOfViewService;
 import com.example.demo.service.UploadFileService;
 
@@ -65,11 +66,11 @@ public class POVController {
 	}
 	
 	@PostMapping(value = "/testAPI", consumes = { "multipart/form-data" })
-	public ApiRespone<String> testAPI(@RequestParam MultipartFile file) throws IOException{
-		return ApiRespone.<String>builder().result(uploadFileService.uploadFile(file)).build();
+	public ApiRespone<UploadFileRespone> testAPI(@RequestParam MultipartFile file) throws IOException{
+		return ApiRespone.<UploadFileRespone>builder().result(uploadFileService.uploadFile(file)).build();
 	}
 	
-	@DeleteMapping("/testAPI2")
+	@DeleteMapping("/testAPI2")  
 	public ApiRespone<String> testAPI2(@RequestParam String publicID) throws IOException{
 		return ApiRespone.<String>builder().result(uploadFileService.deleteImage(publicID)).build();
 	}

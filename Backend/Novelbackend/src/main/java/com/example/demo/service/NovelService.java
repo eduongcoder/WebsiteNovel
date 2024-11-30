@@ -9,14 +9,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dto.request.CategoryUpdateRequest;
 import com.example.demo.dto.request.NovelCreationRequest;
 import com.example.demo.dto.request.NovelUpdateRequest;
-import com.example.demo.dto.respone.CategoryRespone;
 import com.example.demo.dto.respone.NovelJustIdAndNameRespone;
 import com.example.demo.dto.respone.NovelNoChapterRespone;
 import com.example.demo.dto.respone.NovelNoImageRespone;
 import com.example.demo.dto.respone.NovelRespone;
+import com.example.demo.dto.respone.UploadFileRespone;
 import com.example.demo.entity.Author;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Chapter;
@@ -27,7 +26,6 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.INovelMapper;
 import com.example.demo.repository.IAuthorRepository;
 import com.example.demo.repository.ICategoryRepository;
-import com.example.demo.repository.IChapterRepository;
 import com.example.demo.repository.INovelRepository;
 import com.example.demo.repository.IPointOfViewRepository;
 
@@ -48,17 +46,18 @@ public class NovelService {
 	ICategoryRepository categoryRepository;
 	IPointOfViewRepository pointOfViewRepository;
 	IAuthorRepository authorRepository;
-
+	UploadFileService uploadFileService;
+	
 	public NovelRespone createNovel(MultipartFile image, MultipartFile orginalNovel, NovelCreationRequest request)
 			throws IOException {
 		isImageFIle(image);
-
-		request.setImageNovel(image.getBytes());
+	    UploadFileRespone respone= uploadFileService.uploadFile(image);
 		request.setOriginalNovel(orginalNovel.getBytes());
 		int totalPage=chapterService.getTotalPages(request.getOriginalNovel());
-		request.setTotalChapter(totalPage);
 		Novel novel = novelMapper.toNovel(request);
-
+		novel.setImageNovel(respone.getUrl());
+		novel.setPublicIDNovel(respone.getPublic_id());
+		novel.setTotalPage(totalPage);
 		return novelMapper.toNovelRespone(novelRepository.save(novel));
 
 	}
@@ -90,9 +89,7 @@ public class NovelService {
 
 		return novelRepository.findAll().stream().map(t -> {
 			NovelNoChapterRespone novelRespone = novelMapper.toNovelNoChapterRespone(t);
-			novelRespone
-					.setImageNovel("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(t.getImageNovel()));
-			return novelRespone;
+						return novelRespone;
 		}).toList();
 	}
 	
@@ -105,11 +102,10 @@ public class NovelService {
 	}
 
 	public List<NovelRespone> getAllNovel() {
-
+ 
 		return novelRepository.findAll().stream().map(t -> {
 			NovelRespone novelRespone = novelMapper.toNovelRespone(t);
-			novelRespone
-					.setImageNovel("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(t.getImageNovel()));
+			
 			return novelRespone;
 		}).toList();
 	}
@@ -127,8 +123,7 @@ public class NovelService {
 	public NovelRespone getNovelByName(String nameNovel) {
 		Novel novel = novelRepository.findByNameNovel(nameNovel);
 		NovelRespone novelRespone = novelMapper.toNovelRespone(novel);
-		novelRespone
-				.setImageNovel("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(novel.getImageNovel()));
+	
 		return novelRespone;
 	}
 
@@ -137,17 +132,21 @@ public class NovelService {
 		if (novel==null) {
 			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
 		}
-		
-		isImageFIle(originalFile);
-		
+
 		if (image!=null) {
-			request.setImageNovel(image.getBytes());
+//			uploadFileService.deleteImage(novel.getPublicIDNovel());
+			UploadFileRespone respone=uploadFileService.uploadFile(image);
+			request.setImageNovel(respone.getUrl());
+			request.setPublicIDNovel(respone.getPublic_id());
 		}else {
 			request.setImageNovel(novel.getImageNovel());
+			request.setPublicIDNovel(novel.getPublicIDNovel());
 		}
 		if (originalFile!=null) {
+	
 			request.setOriginalNovel(originalFile.getBytes());
 		}else {
+			
 			request.setOriginalNovel(novel.getOriginalNovel());
 		}
 		
@@ -163,7 +162,7 @@ public class NovelService {
 				throw new AppException(ErrorCode.UPLOAD_FILE_ERROR);
 			}
 			
-			
+			  
 			
 		});
 	}
@@ -240,5 +239,19 @@ public class NovelService {
 		} else {
 			throw new AppException(ErrorCode.NOT_IMAGE);
 		}
+	}
+	
+	public String delete(String idNovel) {
+		Novel novel=novelRepository.findByIdNovel(idNovel);
+		if (novel==null) {
+			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
+		}
+		List<Chapter> chapters=novel.getChapter();
+		
+		for (Chapter chapter : chapters) {
+			
+		}
+		
+		return null;
 	}
 }

@@ -23,7 +23,7 @@ public class NovelUpdateRequest {
 	String descriptionNovel;
 	@Enumerated(EnumType.STRING)
 	Status statusNovel;
-	byte[] imageNovel;
+	String imageNovel;
 	byte[] originalNovel;
-
+	String publicIDNovel;
 }

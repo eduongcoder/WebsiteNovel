@@ -1,16 +1,12 @@
 package com.example.demo.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,26 +14,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Data
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Author {
-
+public class Comment {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	String idAuthor;
-
-	String descriptionAuthor;
-	String nameAuthor;
-	String nationality;
-
-	@Column(name = "imageAuthor", length = 255)
-	String imageAuthor;
-	String publicIDAuthor;
-	LocalDate dobAuthor;
-	LocalDate dodAuthor;
-
+	String idComment;
+	
+	int likeComment;
+	int dislikeComment;
+	@Column(name = "contentComment",length = 255)
+	String content_Comment;
+	
+	boolean reviewStatusComment;
+	
+	@ManyToOne
+	@JoinColumn(name = "idChapter",nullable = false)
+	Chapter chapter;
+	
+	@ManyToOne
+	@JoinColumn(name = "idUser",nullable = false)
+	User user;
 }

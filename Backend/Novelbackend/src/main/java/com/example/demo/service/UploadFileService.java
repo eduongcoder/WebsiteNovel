@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.demo.dto.respone.UploadFileRespone;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 
@@ -29,7 +31,7 @@ public class UploadFileService {
 
 	Cloudinary cloudinary;
 	
-	public String uploadFile(MultipartFile file) throws IOException {
+	public UploadFileRespone uploadFile(MultipartFile file) throws IOException {
 		assert file.getOriginalFilename()!=null;
 		
 		String publicValue=generatePublicValue(file.getOriginalFilename());
@@ -43,12 +45,15 @@ public class UploadFileService {
 		File fileUpload=convert(file); 
 //		log.info("fileUpload is: {}",fileUpload);
 		
-		cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id",publicValue));
+		Map<String, Object> uploadResult= cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id",publicValue));
 		
-		cloudinary.uploader().destroy(publicValue,null);
+		String public_ID=(String) uploadResult.get("public_id");
+		String url=cloudinary.url().generate(StringUtils.join(publicValue,".",extension));
+		
+		
         cleanDisk(fileUpload);
 
-		return cloudinary.url().generate(StringUtils.join(publicValue,".",extension));
+		return  UploadFileRespone.builder().public_id(public_ID).url(url).build();
 	}
 	
 	public String deleteImage(String publicID)  {

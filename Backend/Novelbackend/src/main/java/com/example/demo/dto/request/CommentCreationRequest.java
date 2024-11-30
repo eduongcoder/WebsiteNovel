@@ -1,8 +1,4 @@
-package com.example.demo.dto.respone;
-
-import java.time.LocalDate;
-
-import com.example.demo.entity.HistoryRead;
+package com.example.demo.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,14 +12,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRespone {
-	String idUser;
+public class CommentCreationRequest {
+	int likeComment;
+	int dislikeComment;
+	String content_Comment;
 
-	String userName;
-	String password;
-	String avatarUser;
-	String email;
-	LocalDate dobUser;
-	HistoryReadRespone historyRead;
+	boolean reviewStatusComment;
 
+	String idchapter;
+
+	String iduser;
 }

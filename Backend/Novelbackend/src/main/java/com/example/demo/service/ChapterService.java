@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.request.ChapterCreationRequest;
+import com.example.demo.dto.request.ChaptersUpdateRequest;
 import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
 import com.example.demo.entity.Chapter;
+import com.example.demo.entity.Comment;
 import com.example.demo.entity.Novel;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
@@ -40,11 +42,11 @@ public class ChapterService {
 
 	public ChapterRespone createChapter(ChapterCreationRequest request) throws IOException {
 		Novel novel = novelRepository.findByNameNovel(request.getNovelName());
-		
-		int endPage=request.getEndPage()-request.getStartPage()+1;
-		
-		String content=getPdfPages(novel.getOriginalNovel(),request.getStartPage(),endPage);
-		
+
+		int endPage = request.getEndPage() - request.getStartPage() + 1;
+
+		String content = getPdfPages(novel.getOriginalNovel(), request.getStartPage(), endPage);
+
 		request.setContentChapter(content.getBytes());
 
 		request.setNovel(novel);
@@ -178,7 +180,7 @@ public class ChapterService {
 		try {
 			int count = 1;
 			for (int i = 0; i < array.size(); i += 2) {
-				String chapterContent = getPdfPages(filePdf, array.get(i), array.get(i + 1)-array.get(i)+1);
+				String chapterContent = getPdfPages(filePdf, array.get(i), array.get(i + 1) - array.get(i) + 1);
 				ChapterCreationRequest chapterCreationRequest = new ChapterCreationRequest();
 
 				createChapter(chapterContent.getBytes(),
@@ -193,8 +195,27 @@ public class ChapterService {
 		}
 
 	}
-//	public ChapterRespone name() {
-//		
-//	}
+
+	public ChapterRespone updateChapter(ChaptersUpdateRequest request) throws IOException {
+		Chapter chapter = chapterRepository.findByIdChapter(request.getIdChapter());
+		if (chapter == null) {
+			throw new AppException(ErrorCode.CHAPTER_NOT_EXISTED);
+
+		}
+		List<Comment> comment = chapter.getComment();
+		Novel novel = chapter.getNovel();
+
+		int endPage = request.getEndPage() - request.getStartPage() + 1;
+
+		String content = getPdfPages(novel.getOriginalNovel(), request.getStartPage(), endPage);
+
+		request.setContentChapter(content.getBytes());
+		
+		chapterMapper.updateChapterRequest(request, chapter);
+		chapter.setComment(comment);
+		chapter.setNovel(novel);
+
+		return chapterMapper.toChapterRespone(chapterRepository.save(chapter));
+	}
 
 }

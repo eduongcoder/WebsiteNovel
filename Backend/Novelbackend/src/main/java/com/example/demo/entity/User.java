@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,10 +36,13 @@ public class User {
 	@Column(name = "email",unique = true)
 	String email;
 	
-	@Lob
-	@Column(name = "avatarUser",columnDefinition = "MEDIUMBLOB")
-	byte[] avatarUser;
+	@Column(name = "avatarUser",length = 255)
+	String avatarUser;
 	
 	LocalDate dobUser;
+	String publicIDUser;
+	
+	@OneToMany(mappedBy = "user")
+	List<Comment> comments;
 	
 }

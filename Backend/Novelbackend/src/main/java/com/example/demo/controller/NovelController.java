@@ -68,7 +68,7 @@ public class NovelController {
 		NovelRespone novelRespone = novelService.createNovel(image,orginalNovel, request);
 
 		return ApiRespone.<NovelRespone>builder().result(novelRespone).build();
-	}
+	} 
 
 	@PostMapping(value = "/testImage", consumes = { "multipart/form-data" })
 	public boolean testImage(@RequestParam MultipartFile image) {
@@ -91,7 +91,7 @@ public class NovelController {
 	} 
 
 	@PutMapping(value = "/updateNovel",consumes = {"multipart/form-data"})
-	public ApiRespone<Optional<NovelRespone>> updateNovel(@RequestParam MultipartFile image, @RequestParam MultipartFile originalFile,@RequestPart NovelUpdateRequest request) throws IOException{
+	public ApiRespone<Optional<NovelRespone>> updateNovel(@RequestParam MultipartFile image, @RequestParam(required = false) MultipartFile originalFile,@RequestPart NovelUpdateRequest request) throws IOException{
 		return ApiRespone.<Optional<NovelRespone>>builder().result(novelService.updateNovel(image,originalFile,request)).build();
 	}
 }

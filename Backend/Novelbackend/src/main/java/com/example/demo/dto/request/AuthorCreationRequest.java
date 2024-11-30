@@ -1,4 +1,4 @@
-package com.example.demo.dto.respone;
+package com.example.demo.dto.request;
 
 import java.time.LocalDate;
 
@@ -10,20 +10,16 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthorRespone {
+public class AuthorCreationRequest {
 
-	String idAuthor;
-	
 	String descriptionAuthor;
 	String nameAuthor;
 	String nationality;
-	String imageAuthor;
-	String dobAuthor;
-	String dodAuthor;
-	String publicID;
-	
+	LocalDate dobAuthor;
+	LocalDate dodAuthor;
+
 }

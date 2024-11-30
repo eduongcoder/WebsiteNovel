@@ -26,7 +26,8 @@ public class NovelNoChapterRespone {
 	Status statusNovel;
 	String imageNovel;
 	
+	Set<AuthorNoImageRespone> authors;
 	Set<Category> categories;
-	Set<Author> authors;
+//	Set<Author> authors;
 	Set<PointOfView> pointOfViews;
 }

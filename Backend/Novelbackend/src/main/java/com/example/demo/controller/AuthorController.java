@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dto.request.AuthorCreateionRequest;
+import com.example.demo.dto.request.AuthorCreationRequest;
 import com.example.demo.dto.request.AuthorUpdateRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.AuthorRespone;
@@ -43,7 +43,7 @@ public class AuthorController {
 	}
 	
 	@PostMapping(value = "/createAuthor",consumes = { "multipart/form-data"})
-	public ApiRespone<AuthorRespone> createNovel(@RequestPart AuthorCreateionRequest request,@RequestParam MultipartFile image) throws IOException {
+	public ApiRespone<AuthorRespone> createNovel(@RequestPart AuthorCreationRequest request,@RequestParam MultipartFile image) throws IOException {
 		AuthorRespone authorRespone= authorService.createAuthor(request, image);
 
 		return ApiRespone.<AuthorRespone>builder().result(authorRespone).build();

@@ -20,13 +20,13 @@ public interface INovelMapper {
 	@Mapping(target = "categories",ignore = true)
 	@Mapping(target = "pointOfViews",ignore = true)
 	@Mapping(target = "originalNovel",ignore = true)
+	@Mapping(target = "imageNovel",ignore = true)
 	Novel toNovel(NovelCreationRequest request);
 	
 	NovelJustIdAndNameRespone toNovelJustIdAndNameRespone(Novel novel);
 	NovelNoImageRespone toNovelNoImageRespone(Novel novel);
-	@Mapping(target = "imageNovel",ignore = true)
+
 	NovelNoChapterRespone toNovelNoChapterRespone(Novel novel);
-	@Mapping(target = "imageNovel",ignore = true)
 	@Mapping(target = "originalNovel",ignore = true)
 	NovelRespone toNovelRespone(Novel novel);
 	

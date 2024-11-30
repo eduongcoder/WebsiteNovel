@@ -30,7 +30,7 @@ public class NovelRespone {
 	int totalPage;
 	
 	Set<Category> categories;
-	Set<ChapterRespone> chapter;
+	Set<ChapterNoContentRespone> chapter;
 	Set<Author> authors;
 	Set<PointOfView> pointOfViews;
 	
