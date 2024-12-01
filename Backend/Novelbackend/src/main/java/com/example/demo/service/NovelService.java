@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ import com.example.demo.dto.respone.UploadFileRespone;
 import com.example.demo.entity.Author;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Chapter;
+import com.example.demo.entity.Comment;
+import com.example.demo.entity.HistoryRead;
 import com.example.demo.entity.Novel;
 import com.example.demo.entity.PointOfView;
 import com.example.demo.exception.AppException;
@@ -26,6 +29,7 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.INovelMapper;
 import com.example.demo.repository.IAuthorRepository;
 import com.example.demo.repository.ICategoryRepository;
+import com.example.demo.repository.IHistoryReadRepository;
 import com.example.demo.repository.INovelRepository;
 import com.example.demo.repository.IPointOfViewRepository;
 
@@ -47,6 +51,9 @@ public class NovelService {
 	IPointOfViewRepository pointOfViewRepository;
 	IAuthorRepository authorRepository;
 	UploadFileService uploadFileService;
+	IHistoryReadRepository historyReadRepository;
+	HistoryReadService historyReadService;
+	CommentService commentService;
 	
 	public NovelRespone createNovel(MultipartFile image, MultipartFile orginalNovel, NovelCreationRequest request)
 			throws IOException {
@@ -249,9 +256,20 @@ public class NovelService {
 		List<Chapter> chapters=novel.getChapter();
 		
 		for (Chapter chapter : chapters) {
-			
+			List<HistoryRead> historyRead=historyReadRepository.findByChapter(chapter);
+			for(int i=0;i<historyRead.size();i++) {
+				historyReadService.deleteHistoryRead(historyRead.get(i).getId());
+
+			}
+			List<Comment> comments= chapter.getComment();
+			for(int i=0;i<comments.size();i++) {
+				commentService.deleteComment(comments.get(i).getIdComment());
+
+			}
+			chapterService.deleteChapter(chapter.getIdChapter());
 		}
+		novelRepository.deleteById(idNovel);
 		
-		return null;
+		return idNovel;
 	}
 }

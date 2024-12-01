@@ -40,6 +40,8 @@ public class Chapter {
 	@Column(name = "content_Chapter",columnDefinition = "LONGBLOB")
 	byte[] contentChapter;
 	
+	int totalPageChapter;
+	
 	@ManyToOne
 	@JoinColumn(name = "id_Novel",nullable = false)
 	Novel novel; 

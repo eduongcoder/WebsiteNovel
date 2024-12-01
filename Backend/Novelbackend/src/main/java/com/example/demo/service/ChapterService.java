@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -48,10 +49,14 @@ public class ChapterService {
 		String content = getPdfPages(novel.getOriginalNovel(), request.getStartPage(), endPage);
 
 		request.setContentChapter(content.getBytes());
-
+        
+		int totalPage=getTotalPages(request.getContentChapter()) ;
+		
+		
 		request.setNovel(novel);
 		Chapter chapter = chapterMapper.toChapter(request);
 		chapter.setViewChapter(0);
+		chapter.setTotalPageChapter(totalPage);
 		return chapterMapper.toChapterRespone(chapterRepository.save(chapter));
 
 	}
@@ -60,20 +65,28 @@ public class ChapterService {
 
 		Novel novel = novelRepository.findByNameNovel(request.getNovelName());
 		request.setContentChapter(file);
+		int totalPage=getTotalPages(request.getContentChapter()) ;
 
 		request.setNovel(novel);
 		Chapter chapter = chapterMapper.toChapter(request);
 		chapter.setViewChapter(0);
+		chapter.setTotalPageChapter(totalPage);
+
 		return chapterMapper.toChapterRespone(chapterRepository.save(chapter));
 
 	}
 
-	public List<ChapterRespone> getAllChapterByIdNovel(String nameNovel) {
-		Novel novel = novelRepository.findByNameNovel(nameNovel);
+	public List<ChapterRespone> getAllChapterByIdNovel(String idNovel) {
+		Novel novel = novelRepository.findByNameNovel(idNovel);
 
-		List<Chapter> chapterRespones = new ArrayList<>(novel.getChapter());
+		List<Chapter> chapterRespones = Optional.ofNullable(novel.getChapter())
+			    .map(ArrayList::new)
+			    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_DONT_HAVE_CHAPTER));
 
-		return chapterRespones.stream().map(t -> chapterMapper.toChapterRespone(t)).toList();
+		
+//		return chapterRespones.stream().map(t -> chapterMapper.toChapterRespone(t)).toList();
+		return chapterRespones.stream().map(chapterMapper::toChapterRespone).toList();
+
 	}
 
 	public List<ChapterNoContentRespone> getAllChapterNoContent(String nameNovel) {
@@ -119,6 +132,9 @@ public class ChapterService {
 	public ChapterRespone getChapter(String idChapter) {
 		Chapter chapter = chapterRepository.findByIdChapter(idChapter);
 
+		if (chapter==null) {
+			throw new AppException(ErrorCode.NOVEL_DONT_HAVE_CHAPTER);
+		}
 		return chapterMapper.toChapterRespone(chapter);
 	}
 
@@ -186,7 +202,9 @@ public class ChapterService {
 				createChapter(chapterContent.getBytes(),
 						chapterCreationRequest.builder().contentChapter(chapterContent.getBytes())
 								.titleChapter("Chương" + count)
-								.novelName(novelRepository.findByIdNovel(idNovel).getNameNovel()).build());
+								.novelName(novelRepository.findByIdNovel(idNovel).getNameNovel())
+								.startPage(array.get(i))
+								.endPage(array.get(i+1)).build());
 				count++;
 			}
 			return true;

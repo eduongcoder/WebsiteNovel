@@ -39,9 +39,9 @@ public class ChapterController {
 	ChapterService chapterService;
 
 	@GetMapping("/getAllChapter")
-	public ApiRespone<List<ChapterRespone>> getAllChapterByNameNovel(@RequestParam String nameNovel) {
+	public ApiRespone<List<ChapterRespone>> getAllChapterByNameNovel(@RequestParam String idNovel) {
 
-		return ApiRespone.<List<ChapterRespone>>builder().result(chapterService.getAllChapterByIdNovel(nameNovel))
+		return ApiRespone.<List<ChapterRespone>>builder().result(chapterService.getAllChapterByIdNovel(idNovel))
 				.build(); 
 	}
 

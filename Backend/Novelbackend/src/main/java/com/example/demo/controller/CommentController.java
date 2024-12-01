@@ -50,5 +50,5 @@ public class CommentController {
 	@DeleteMapping("/deleteComment")
 	public ApiRespone<String> deleteComment(@RequestParam String idComment ){
 		return ApiRespone.<String>builder().result(commentService.deleteComment(idComment)).build();
-	}
+	} 
 }

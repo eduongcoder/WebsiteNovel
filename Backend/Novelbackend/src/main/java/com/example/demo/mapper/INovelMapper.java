@@ -14,6 +14,7 @@ import com.example.demo.entity.Novel;
 
 @Mapper(componentModel = "spring")
 public interface INovelMapper {
+	
 	@Mapping(target = "chapter",ignore = true)
 	@Mapping(target = "idNovel",ignore = true)
 	@Mapping(target = "authors",ignore = true)
@@ -35,5 +36,4 @@ public interface INovelMapper {
 	@Mapping(target = "pointOfViews",ignore = true)
 	@Mapping(target = "chapter",ignore = true)
 	void updateNovelFormRequest(NovelUpdateRequest request,@MappingTarget Novel novel);
-	
 }

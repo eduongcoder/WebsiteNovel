@@ -18,4 +18,5 @@ public class ChapterRespone {
 	String titleChapter;
 	int viewChapter;
 	byte[] contentChapter;
+	int totalPageChapter;
 }
