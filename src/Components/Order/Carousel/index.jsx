@@ -7,7 +7,7 @@ import {
     HashNavigation,
     Autoplay,
 } from 'swiper/modules';
-
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -52,11 +52,16 @@ export default function Carousel() {
                             data-hash={`novel-${novel.idNovel}`}
                             className="flex justify-center items-center bg-white"
                         >
-                            <img
-                                src={novel.imageNovel}
-                                alt={novel.nameNovel}
-                                className="w-full h-full object-cover"
-                            />
+                            <Link
+                                to={`/Customer/:${novel.idNovel}`}
+                                className="w-full"
+                            >
+                                <img
+                                    src={novel.imageNovel}
+                                    alt={novel.nameNovel}
+                                    className="w-full h-full object-cover"
+                                />
+                            </Link>
                         </SwiperSlide>
                     ))
                 ) : (

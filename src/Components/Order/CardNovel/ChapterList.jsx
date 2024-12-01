@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChapters } from '@/Redux/ReduxSlice/chapterSlice';
-
+import { Link } from 'react-router-dom';
 
 export default function ChapterList() {
     const dispatch = useDispatch();
@@ -40,6 +40,10 @@ export default function ChapterList() {
             ) : (
                 <div>
                     {chapters.map((chapter, index) => (
+                        <Link
+                                to={`/ViewChap/:${chapter.idChapter}`}
+                                className="w-full"
+                            >
                         <div
                             key={chapter.idChapter}
                             className="flex justify-between items-center bg-gray-800 p-4 mb-2 rounded cursor-pointer hover:bg-gray-700"
@@ -53,6 +57,7 @@ export default function ChapterList() {
                                 ▼
                             </button>
                         </div>
+                        </Link>
                     ))}
                 </div>
             )}

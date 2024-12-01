@@ -7,7 +7,7 @@ function Chapter() {
         <div>
          
             <CreateChaptersForm />
-            <ListViewChapters />
+            {/* <ListViewChapters /> */}
         </div>
     );
 }

@@ -14,9 +14,10 @@ const TABLE_HEADS = [
 ];
 
 function ListViewAuthors() {
-    
+    // Define dispatch before using it
+    const dispatch = useDispatch();
 
-    // State cho tìm kiếm, lọc, phân trang, và sắp xếp
+    // State for search, filter, pagination, and sorting
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredAuthors, setFilteredAuthors] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,15 +25,14 @@ function ListViewAuthors() {
     const [sortOrder, setSortOrder] = useState('asc');
     const [sortColumn, setSortColumn] = useState('ID Author');
 
-    // Lấy danh sách tác giả
+    // Fetch authors when the component mounts
     useEffect(() => {
         dispatch(fetchAuthors());
     }, [dispatch]);
-    
-    const dispatch = useDispatch();
+
     const { authors, loading, error } = useSelector((state) => state.author);
 
-    // Lọc dữ liệu theo tìm kiếm
+    // Filter data based on search query
     useEffect(() => {
         const filterData = authors.filter(
             (author) =>
@@ -49,7 +49,7 @@ function ListViewAuthors() {
         setFilteredAuthors(filterData);
     }, [authors, searchQuery]);
 
-    // Sắp xếp dữ liệu
+    // Sort data by column
     const handleSort = (column) => {
         const sortedAuthors = [...filteredAuthors].sort((a, b) => {
             if (sortOrder === 'asc') {
@@ -62,7 +62,7 @@ function ListViewAuthors() {
         setSortColumn(column);
     };
 
-    // Phân trang
+    // Pagination
     const indexOfLastAuthor = currentPage * authorsPerPage;
     const indexOfFirstAuthor = indexOfLastAuthor - authorsPerPage;
     const currentAuthors = filteredAuthors.slice(
@@ -155,7 +155,7 @@ function ListViewAuthors() {
                                         <td className="px-3 py-3">
                                             {author.dodAuthor}
                                         </td>
-                                      
+
                                         <td className="px-3 py-3">
                                             <button
                                                 onClick={() =>
@@ -186,7 +186,7 @@ function ListViewAuthors() {
                     </table>
                 </div>
 
-                {/* Phân trang */}
+                {/* Pagination */}
                 <div className="mt-4">
                     <nav>
                         <ul className="flex justify-center space-x-2">

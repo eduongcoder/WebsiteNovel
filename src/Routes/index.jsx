@@ -15,8 +15,8 @@ const publicRoute = [
     { path: '/Chapter', component: Chapter },
     { path: '/Authors', component: Authors },
     { path: '/PointOfViews', component: PointOfViews },  //,layout: null
-    { path: '/ViewChap', component: ViewChap ,layout: null },
-    { path: '/Customer', component: Customer,layout: null },
+    { path: '/ViewChap/:idChapter', component: ViewChap ,layout: null },
+    { path: '/Customer/:idNovel', component: Customer, layout: null },
 ];
 
 const privateRoute = [];

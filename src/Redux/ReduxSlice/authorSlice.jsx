@@ -89,19 +89,18 @@ export const updateAuthor = createAsyncThunk(
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
-                }
+                },
             );
 
             // Trả về kết quả thành công
             return response.data.result || {}; // Xử lý phản hồi thành công
         } catch (error) {
             return rejectWithValue(
-                error.response?.data || 'Failed to update author' // Xử lý lỗi nếu có
+                error.response?.data || 'Failed to update author', // Xử lý lỗi nếu có
             );
         }
-    }
+    },
 );
-
 
 // Slice for author data
 const authorSlice = createSlice({

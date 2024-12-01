@@ -1,50 +1,29 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPdfData } from '@/Redux/ReduxSlice/chapterSlice';
 
-function PdfViewe({ pdfId, pageGet }) {
-    const [pdfData, setPdfData] = useState([]);
+function PdfViewe({ pdfId, pageGet = 1 }) {
+    const dispatch = useDispatch();
+    const { pdfData, loading, error, hasMore } = useSelector((state) => state.chapter); // Lấy dữ liệu từ Redux store
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
     const containerRef = useRef(null);
 
-    // Fetch dữ liệu PDF từ API
-    const fetchPdfData = async (pageNum) => {
-        try {
-            const response = await fetch(`http://26.232.136.42:8080/api/chapter/pages?id=${pdfId}&page=${pageNum}&pageGet=${pageGet}`);
-            const data = await response.json();
-            console.log(Array.from(data.result));
-
-            if (data.result.pageContent && data.result.totalPages > 0) {
-                setPdfData((prevData) => [...prevData, data.result.pageContent]);
-
-                // Kiểm tra còn trang nữa không
-                if (data.result.pageNumber < data.result.totalPages) {
-                    setHasMore(true);
-                } else {
-                    setHasMore(false);
-                }
-            } else {
-                setHasMore(false);
-            }
-        } catch (error) {
-            console.error('Error fetching PDF data:', error);
-        }
-    };
+    // Fetch dữ liệu PDF từ API khi thay đổi số trang
+    useEffect(() => {
+        dispatch(fetchPdfData({ pageNum: page, pdfId, pageGet }));
+    }, [dispatch, page, pdfId, pageGet]);
 
     // Hàm xử lý cuộn trang
     const handleScroll = () => {
         if (
             containerRef.current &&
-            containerRef.current.scrollTop + containerRef.current.clientHeight >= containerRef.current.scrollHeight
+            containerRef.current.scrollTop + containerRef.current.clientHeight >= containerRef.current.scrollHeight &&
+            hasMore &&
+            !loading // Kiểm tra đang tải dữ liệu hay không
         ) {
-            if (hasMore) {
-                setPage((prevPage) => prevPage + pageGet); // Tăng số trang để tải thêm
-            }
+            setPage((prevPage) => prevPage + 1); // Tăng số trang để tải thêm
         }
     };
-
-    useEffect(() => {
-        fetchPdfData(page);
-    }, [page]);
 
     return (
         <div
@@ -52,16 +31,24 @@ function PdfViewe({ pdfId, pageGet }) {
             onScroll={handleScroll}
             className="h-screen overflow-y-auto p-4"
         >
-            {pdfData.map((pageContent, index) => (
-                <iframe
-                    src={`data:application/pdf;base64,${pageContent}`}
-                    key={index}
-                    title={`PDF Page ${index + 1}`}
-                    className="w-full h-[1000px] mb-4"
-                    style={{ border: 'none' }}
-                />
-            ))}
-            {!hasMore && <p className="text-center text-gray-500">Đã tải hết dữ liệu PDF.</p>}
+            {pdfData.length > 0 ? (
+                pdfData.map((pageContent, index) => (
+                    <iframe
+                        src={`data:application/pdf;base64,${pageContent}`}
+                        key={index}
+                        title={`PDF Page ${index + 1}`}
+                        className="w-full h-[1000px] mb-4"
+                        style={{ border: 'none' }}
+                    />
+                ))
+            ) : (
+                !loading && <p className="text-center text-gray-500">Không có dữ liệu để hiển thị.</p>
+            )}
+            {loading && <p className="text-center text-blue-500">Đang tải...</p>}
+            {!hasMore && !loading && (
+                <p className="text-center text-gray-500">Đã tải hết dữ liệu PDF.</p>
+            )}
+            {error && <p className="text-center text-red-500">{error}</p>}
         </div>
     );
 }

@@ -7,7 +7,11 @@ const CreateChapterForm = () => {
     const [idNovel, setIdNovel] = useState('');
     const [totalChapter, setTotalChapter] = useState('');
     const [tilteChapters, setTitleChapters] = useState(['']);
-    const [chapterPagesArray, setChapterPagesArray] = useState([{ startPage: '', endPage: '' }]);
+    const [chapterPagesArray, setChapterPagesArray] = useState([
+        { startPage: '', endPage: '' },
+    ]);
+    const [selectedidNovel, setSelectedidNovel] = useState('');
+    const [errors, setErrors] = useState({});
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -24,8 +28,35 @@ const CreateChapterForm = () => {
     const loading = useSelector((state) => state.novel.loading);
     const error = useSelector((state) => state.novel.error);
 
+    const validate = () => {
+        const newErrors = {};
+        if (!idNovel) newErrors.idNovel = 'Vui lòng xác nhận tiểu thuyết.';
+        if (!totalChapter)
+            newErrors.totalChapter = 'Vui lòng nhập tổng số chương.';
+        if (tilteChapters.some((title) => !title))
+            newErrors.tilteChapters = 'Mỗi chương cần có tiêu đề.';
+        if (
+            chapterPagesArray.some((item) => !item.startPage || !item.endPage)
+        ) {
+            newErrors.chapterPagesArray = 'Vui lòng nhập đầy đủ các trang.';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleNovelChange = (e) => {
-        setIdNovel(e.target.value);
+        setSelectedidNovel(e.target.value);
+    };
+
+    const handleConfirmNovel = () => {
+        if (!selectedidNovel) {
+            setErrors({
+                idNovel: 'Vui lòng chọn một tiểu thuyết trước khi xác nhận.',
+            });
+            return;
+        }
+        setIdNovel(selectedidNovel);
+        setErrors((prev) => ({ ...prev, idNovel: '' })); // Xóa lỗi nếu có
     };
 
     const handleInputChange = (e, index, field) => {
@@ -41,78 +72,103 @@ const CreateChapterForm = () => {
     };
 
     const handleAddChapter = () => {
-        setChapterPagesArray([...chapterPagesArray, { startPage: '', endPage: '' }]);
+        setChapterPagesArray([
+            ...chapterPagesArray,
+            { startPage: '', endPage: '' },
+        ]);
         setTitleChapters([...tilteChapters, '']);
+    };
+
+    const handleRemoveChapter = (index) => {
+        setChapterPagesArray((prev) => prev.filter((_, i) => i !== index));
+        setTitleChapters((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-    
-        if (
-            !idNovel ||
-            !totalChapter ||
-            tilteChapters.some((title) => !title) ||
-            chapterPagesArray.some((item) => !item.startPage || !item.endPage)
-        ) {
-            alert('Vui lòng điền đầy đủ thông tin');
-            return;
-        }
-    
-        // Tạo mảng `array` từ các giá trị trang bắt đầu và kết thúc
+        if (!validate()) return;
+
         const array = chapterPagesArray.flatMap((item) => [
             parseInt(item.startPage, 10),
             parseInt(item.endPage, 10),
         ]);
-    
-        // Tạo payload theo định dạng API yêu cầu
+
         const payload = {
             idNovel,
             totalChapter: parseInt(totalChapter, 10),
             tilteChapters,
             array,
         };
-    
-        // Tạo FormData và thêm 'request' với payload JSON
+
         const formData = new FormData();
         formData.append(
             'request',
-            new Blob([JSON.stringify(payload)], { type: 'application/json' })
+            new Blob([JSON.stringify(payload)], { type: 'application/json' }),
         );
-    
-        // Gửi FormData qua Redux
+
         dispatch(createChapters(formData));
     };
-    
 
     return (
-        <form onSubmit={handleSubmit} className="p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
+        <form
+            onSubmit={handleSubmit}
+            className="p-4 bg-white shadow-md rounded-lg max-w-md mx-auto"
+        >
             <div className="mb-4">
-                <label htmlFor="idNovel" className="block text-sm font-medium text-gray-700">
+                <label
+                    htmlFor="idNovel"
+                    className="block text-sm font-medium text-gray-700"
+                >
                     Chọn Tiểu Thuyết
                 </label>
-                <select
-                    value={idNovel}
-                    onChange={handleNovelChange}
-                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40"
-                >
-                    <option value="">Chọn tiểu thuyết</option>
-                    {loading ? (
-                        <option value="">Đang tải...</option>
-                    ) : novels && novels.length > 0 ? (
-                        novels.map((novel) => (
+                {loading ? (
+                    <p>Đang tải danh sách tiểu thuyết...</p>
+                ) : (
+                    <select
+                        onChange={handleNovelChange}
+                        value={selectedidNovel}
+                        className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                    >
+                        <option value="">Chọn tác giả</option>
+                        {novels.map((novel) => (
                             <option key={novel.idNovel} value={novel.idNovel}>
                                 {novel.nameNovel}
                             </option>
-                        ))
-                    ) : (
-                        <option value="">Không có tiểu thuyết nào</option>
-                    )}
-                </select>
+                        ))}
+                    </select>
+                )}
+                <button
+                    type="button"
+                    onClick={handleConfirmNovel}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200"
+                >
+                    Xác Nhận Tiểu Thuyết
+                </button>
+                {errors.idNovel && (
+                    <p className="text-red-500 text-sm mt-2">
+                        {errors.idNovel}
+                    </p>
+                )}
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
 
+            {idNovel && (
+                <div className="mb-4">
+                    <p>
+                        <strong>Tiểu thuyết đã chọn:</strong>{' '}
+                        {
+                            novels.find((novel) => novel.idNovel === idNovel)
+                                ?.nameNovel
+                        }
+                    </p>
+                </div>
+            )}
+
             <div className="mb-4">
-                <label htmlFor="totalChapter" className="block text-sm font-medium text-gray-700">
+                <label
+                    htmlFor="totalChapter"
+                    className="block text-sm font-medium text-gray-700"
+                >
                     Tổng Số Chương
                 </label>
                 <input
@@ -122,6 +178,11 @@ const CreateChapterForm = () => {
                     onChange={(e) => setTotalChapter(e.target.value)}
                     className="mt-1 block w-full p-2 border rounded-md focus:outline-none"
                 />
+                {errors.totalChapter && (
+                    <p className="text-red-500 text-sm">
+                        {errors.totalChapter}
+                    </p>
+                )}
             </div>
 
             {chapterPagesArray.map((item, index) => (
@@ -143,7 +204,9 @@ const CreateChapterForm = () => {
                             <input
                                 type="number"
                                 value={item.startPage}
-                                onChange={(e) => handleInputChange(e, index, 'startPage')}
+                                onChange={(e) =>
+                                    handleInputChange(e, index, 'startPage')
+                                }
                                 className="mt-1 block w-full p-2 border rounded-md focus:outline-none"
                             />
                         </div>
@@ -154,13 +217,23 @@ const CreateChapterForm = () => {
                             <input
                                 type="number"
                                 value={item.endPage}
-                                onChange={(e) => handleInputChange(e, index, 'endPage')}
+                                onChange={(e) =>
+                                    handleInputChange(e, index, 'endPage')
+                                }
                                 className="mt-1 block w-full p-2 border rounded-md focus:outline-none"
                             />
                         </div>
                     </div>
+                    <button
+                        type="button"
+                        onClick={() => handleRemoveChapter(index)}
+                        className="text-red-500 hover:underline mt-2"
+                    >
+                        Xóa Chương
+                    </button>
                 </div>
             ))}
+
             <button
                 type="button"
                 onClick={handleAddChapter}
@@ -171,7 +244,7 @@ const CreateChapterForm = () => {
 
             <button
                 type="submit"
-                className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-200"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
             >
                 Tạo Chương
             </button>

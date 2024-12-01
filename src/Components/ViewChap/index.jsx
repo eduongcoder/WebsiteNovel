@@ -1,43 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import PdfViewe from './pdfview';
-import PdfViewer from './pdfview copy 2';
-
+import Navbar from '@/Layout/DefaultLayout/navbar';
 function ViewChap() {
-    // const pdfId = '93feaae0-38a1-4834-9296-78efdb4fd1a0';
-    // const [currentBase64Pdf, setCurrentBase64Pdf] = useState(null);
+    const { idChapter } = useParams();
 
-    // const handlePageChange = (newBase64Pdf) => {
-    //     setCurrentBase64Pdf(newBase64Pdf);
-    // };
+    if (!idChapter) {
+        return (
+            <div className="text-center mt-10 text-red-500">
+                <h1>Lỗi</h1>
+                <p>ID chương không hợp lệ. Vui lòng kiểm tra lại URL.</p>
+            </div>
+        );
+    }
 
-    // return (
-    //     <div className="flex flex-col md:flex-row">
-    //         <h1 className="w-full text-center text-xl font-semibold my-4">Xem file PDF</h1>
-            
-    //         {/* Sidebar chứa PdfViewe */}
-    //         <div className="w-full md:w-1/3 h-screen overflow-y-auto p-4 border-r">
-    //             <PdfViewe pdfId={pdfId} onPageChange={handlePageChange} />
-    //         </div>
-
-    //         {/* PdfViewer hiển thị trang PDF */}
-    //         <div className="w-full md:w-2/3 h-screen">
-    //             {currentBase64Pdf ? (
-    //                 <PdfViewer base64Pdf={currentBase64Pdf} />
-    //             ) : (
-    //                 <p className="text-center text-gray-500">Chọn một trang để xem.</p>
-    //             )}
-    //         </div>
-    //     </div>
-    // );
-    const pdfId = '93feaae0-38a1-4834-9296-78efdb4fd1a0'; // Thay 'your_pdf_id_here' bằng ID của file PDF bạn muốn tải
     return (
-     <div>
-       <h1>Xem file PDF</h1>
-       {/* <PdfViewer base64Pdf={pdfFile} /> */}
-       <PdfViewe pdfId={pdfId} pageGet={2} />
-     </div>
-   );
- 
+        <div className="p-4">
+        <Navbar />
+            <div className="mb-6 text-center">
+                <h1 className="text-2xl font-bold mb-2">Chi tiết chương</h1>
+                <p className="text-gray-600">Mã chương: {idChapter}</p>
+            </div>
+            <div className="bg-white shadow rounded-lg p-4">
+                <h2 className="text-lg font-semibold mb-4">Xem file PDF</h2>
+                <PdfViewe pdfId={idChapter} pageGet={2} />
+            </div>
+        </div>
+    );
 }
 
 export default ViewChap;

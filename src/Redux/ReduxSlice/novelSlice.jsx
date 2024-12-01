@@ -159,9 +159,9 @@ const novelSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchNovels.fulfilled, (state, action) => {
-                state.novels = action.payload;
+                console.log('Fetch novels fulfilled:', action.payload); // Log dữ liệu
+                state.novels = action.payload; // Gán dữ liệu vào novels
                 state.loading = false;
-                state.error = null;
             })
             .addCase(fetchNovelOnlyName.fulfilled, (state, action) => {
                 state.novels = action.payload;
