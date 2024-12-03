@@ -17,11 +17,11 @@ public interface IChapterMapper {
 	@Mapping(target = "comment",ignore = true)
 	@Mapping(target = "viewChapter",ignore = true)
 	Chapter toChapter(ChapterCreationRequest request);
-	ChapterRespone toChapterRespone(Chapter chapter);
+	ChapterRespone toChapterRespone(Chapter chapter); 
 	
 	@Mapping(target = "historyReads",ignore = true)
 	ChapterNoContentRespone toChapterNoContentRespone(Chapter chapter);
-
+ 
 	@Mapping(target = "comment",ignore = true)
 	@Mapping(target = "novel",ignore = true)
 	void updateChapterRequest(ChaptersUpdateRequest request,@MappingTarget Chapter chapter);

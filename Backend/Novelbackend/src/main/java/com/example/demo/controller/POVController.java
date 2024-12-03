@@ -60,7 +60,7 @@ public class POVController {
 	}
 	@DeleteMapping("/deletePOV")
 	public ApiRespone<String> deleteCategory(@RequestParam String idPOV) {
-		
+		 
 
 		return ApiRespone.<String>builder().result(pointOfViewService.deletePOV(idPOV)).build();
 	}

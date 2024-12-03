@@ -20,10 +20,10 @@ public interface IUserMapper {
 	@Mapping(target = "idUser",ignore = true)
 	@Mapping(target = "avatarUser",ignore = true)
 	@Mapping(target = "dobUser",ignore = true)
-	@Mapping(target = "password",ignore = true)
+	@Mapping(target = "password",ignore = true) 
 	User toUser(UserCreationByEmailRequest request);
 
 	UserRespone toUserRespone(User user);
 	@Mapping(target = "email",ignore = true)
-	User toUser2(UserUpdateRequest request);
+	User toUser2(UserUpdateRequest request); 
 }

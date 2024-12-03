@@ -49,10 +49,9 @@ public class ChapterService {
 		String content = getPdfPages(novel.getOriginalNovel(), request.getStartPage(), endPage);
 
 		request.setContentChapter(content.getBytes());
-        
-		int totalPage=getTotalPages(request.getContentChapter()) ;
-		
-		
+
+		int totalPage = getTotalPages(request.getContentChapter());
+
 		request.setNovel(novel);
 		Chapter chapter = chapterMapper.toChapter(request);
 		chapter.setViewChapter(0);
@@ -65,7 +64,7 @@ public class ChapterService {
 
 		Novel novel = novelRepository.findByNameNovel(request.getNovelName());
 		request.setContentChapter(file);
-		int totalPage=getTotalPages(request.getContentChapter()) ;
+		int totalPage = getTotalPages(request.getContentChapter());
 
 		request.setNovel(novel);
 		Chapter chapter = chapterMapper.toChapter(request);
@@ -79,12 +78,11 @@ public class ChapterService {
 	public List<ChapterRespone> getAllChapterByIdNovel(String idNovel) {
 		Novel novel = novelRepository.findByNameNovel(idNovel);
 
-		List<Chapter> chapterRespones = Optional.ofNullable(novel.getChapter())
-			    .map(ArrayList::new)
-			    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_DONT_HAVE_CHAPTER));
+		List<Chapter> chapterRespones = Optional.ofNullable(novel.getChapter()).map(ArrayList::new)
+				.orElseThrow(() -> new AppException(ErrorCode.NOVEL_DONT_HAVE_CHAPTER));
 
-		
-//		return chapterRespones.stream().map(t -> chapterMapper.toChapterRespone(t)).toList();
+		// return chapterRespones.stream().map(t ->
+		// chapterMapper.toChapterRespone(t)).toList();
 		return chapterRespones.stream().map(chapterMapper::toChapterRespone).toList();
 
 	}
@@ -132,7 +130,7 @@ public class ChapterService {
 	public ChapterRespone getChapter(String idChapter) {
 		Chapter chapter = chapterRepository.findByIdChapter(idChapter);
 
-		if (chapter==null) {
+		if (chapter == null) {
 			throw new AppException(ErrorCode.NOVEL_DONT_HAVE_CHAPTER);
 		}
 		return chapterMapper.toChapterRespone(chapter);
@@ -180,6 +178,33 @@ public class ChapterService {
 			}
 		}
 	}
+	
+	public byte[] getPdfPagesByByte(byte[] pdfBytes, int pageNumber, int pageGet) throws IOException {
+
+		try (PDDocument document = PDDocument.load(pdfBytes)) {
+			int totalPage = document.getNumberOfPages();
+			if (pageNumber < 0 || pageNumber >= totalPage) {
+				throw new IllegalArgumentException("Invalid page number");
+			}
+
+			if (pageGet <= 0) {
+				throw new IllegalArgumentException("Page get must be greater than 0");
+			}
+
+			int endPage = Math.min(pageGet + pageNumber, totalPage);
+
+			try (PDDocument multiPageDoc = new PDDocument()) {
+				for (int i = pageNumber; i < endPage; i++) {
+					PDPage page = document.getPage(i);
+					multiPageDoc.addPage(page);
+
+				}
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				multiPageDoc.save(outputStream);
+				return outputStream.toByteArray();
+			}
+		}
+	}
 
 	public int getTotalPages(byte[] pdfBytes) throws IOException {
 		try (PDDocument document = PDDocument.load(pdfBytes)) {
@@ -187,28 +212,48 @@ public class ChapterService {
 		}
 	}
 
-	public boolean createChapters(String idNovel, int totalChapter, List<Integer> array) throws IOException {
+	public boolean createChapters(String idNovel, int totalChapter, List<Integer> array, List<String> totalTitle)
+			throws IOException {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		byte[] filePdf = novel.getOriginalNovel();
 		if (filePdf.length < 0) {
 			throw new AppException(ErrorCode.NO_ORIGIN_FILE);
 		}
 		try {
-			int count = 1;
+			int count = 0;
 			for (int i = 0; i < array.size(); i += 2) {
-				String chapterContent = getPdfPages(filePdf, array.get(i), array.get(i + 1) - array.get(i) + 1);
-				ChapterCreationRequest chapterCreationRequest = new ChapterCreationRequest();
 
-				createChapter(chapterContent.getBytes(),
-						chapterCreationRequest.builder().contentChapter(chapterContent.getBytes())
-								.titleChapter("Chương" + count)
-								.novelName(novelRepository.findByIdNovel(idNovel).getNameNovel())
-								.startPage(array.get(i))
-								.endPage(array.get(i+1)).build());
-				count++;
+				byte[] chapterContent = getPdfPagesByByte(filePdf, array.get(i), array.get(i + 1) - array.get(i) + 1);
+				ChapterCreationRequest chapterCreationRequest = new ChapterCreationRequest();
+				try {
+//					byte[] contentTest=chapterContent.get();
+					byte[] contentTest=chapterContent;
+					chapterCreationRequest.setContentChapter(contentTest);
+					chapterCreationRequest.setTitleChapter(totalTitle.get(count));
+					chapterCreationRequest.setNovelName(novel.getNameNovel());
+					chapterCreationRequest.setNovel(novel);
+					chapterCreationRequest.setEndPage(array.get(i + 1));
+					chapterCreationRequest.setStartPage(array.get(i));
+					
+					Chapter chapter=chapterMapper.toChapter(chapterCreationRequest);
+					chapter.setViewChapter(0);
+					chapter.setTotalPageChapter(getTotalPages(contentTest)); 
+//					createChapter(chapterContent.getBytes(),
+//							chapterCreationRequest.builder().titleChapter(totalTitle.get(count))
+//									.novelName(novelRepository.findByIdNovel(idNovel).getNameNovel())
+//									.startPage(array.get(i)).endPage(array.get(i + 1)).build());
+					chapterRepository.save(chapter);
+					log.info("Tổng trang "+chapter.getTitleChapter()+"là: "+chapter.getTotalPageChapter());
+					count++;
+				} catch (Exception e) {
+					log.info("huhu");
+					throw e;
+				}
+
 			}
 			return true;
 		} catch (Exception e) {
+
 			throw e;
 		}
 
@@ -228,12 +273,19 @@ public class ChapterService {
 		String content = getPdfPages(novel.getOriginalNovel(), request.getStartPage(), endPage);
 
 		request.setContentChapter(content.getBytes());
-		
+
 		chapterMapper.updateChapterRequest(request, chapter);
 		chapter.setComment(comment);
 		chapter.setNovel(novel);
 
 		return chapterMapper.toChapterRespone(chapterRepository.save(chapter));
+	}
+
+	public String testChapterPdf(String idChapter) {
+		Chapter chapter = chapterRepository.findByIdChapter(idChapter);
+//		"data:application/pdf;base64," + 
+		return Base64.getEncoder().encodeToString(chapter.getContentChapter());
+
 	}
 
 }

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -114,12 +115,17 @@ public class ChapterController {
 			@RequestPart ChaptersCreationRequest request) throws IOException {
 
 		return ApiRespone.<Boolean>builder()
-				.result(chapterService.createChapters(request.getIdNovel(), request.getTotalChapter(), request.getArray()))
+				.result(chapterService.createChapters(request.getIdNovel(), request.getTotalChapter(), request.getArray(),request.getTilteChapters()))
 				.build();
 	}
 	
 	@PutMapping(value = "/updateChapter")
 	public ApiRespone<ChapterRespone> updateChapter(@RequestBody ChaptersUpdateRequest request ) throws IOException{
 		return ApiRespone.<ChapterRespone>builder().result(chapterService.updateChapter(request)).build();
+	}
+	
+	@GetMapping(value = "/testPDFChapter/{idChapter}")
+	public ApiRespone<String> testPDFChapter(@PathVariable String idChapter){
+		return ApiRespone.<String>builder().result(chapterService.testChapterPdf(idChapter)).build();
 	}
 }

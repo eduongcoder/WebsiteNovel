@@ -22,11 +22,11 @@ public interface INovelMapper {
 	@Mapping(target = "pointOfViews",ignore = true)
 	@Mapping(target = "originalNovel",ignore = true)
 	@Mapping(target = "imageNovel",ignore = true)
-	Novel toNovel(NovelCreationRequest request);
+	Novel toNovel(NovelCreationRequest request); 
 	
 	NovelJustIdAndNameRespone toNovelJustIdAndNameRespone(Novel novel);
 	NovelNoImageRespone toNovelNoImageRespone(Novel novel);
-
+ 
 	NovelNoChapterRespone toNovelNoChapterRespone(Novel novel);
 	@Mapping(target = "originalNovel",ignore = true)
 	NovelRespone toNovelRespone(Novel novel);

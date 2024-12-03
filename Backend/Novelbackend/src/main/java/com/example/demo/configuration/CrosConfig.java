@@ -11,13 +11,13 @@ public class CrosConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		// TODO Auto-generated method stub
 		registry.addMapping("/**")
-		.allowedOrigins("http://localhost:3000","http://localhost:5174","http://localhost:8080","http://localhost:5173") // Thay thế bằng URL của frontend
-        .allowedMethods("GET", "POST", "PUT", "DELETE") // Cho phép các phương thức HTTP cụ thể
-        .allowedHeaders("*") 
-        .allowCredentials(true);
-		
+				.allowedOrigins("http://localhost:3000", "http://localhost:5174", "http://localhost:8080",
+						"http://localhost:5173")
+				.allowedMethods("GET", "POST", "PUT", "DELETE")
+				.allowedHeaders("*")
+				.allowCredentials(true);
+
 	}
-	
+
 }
