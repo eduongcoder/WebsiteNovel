@@ -3,16 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchChapters } from '@/Redux/ReduxSlice/chapterSlice';
 import { Link } from 'react-router-dom';
 
-export default function ChapterList() {
+export default function ChapterList({ idNovel }) {
     const dispatch = useDispatch();
     const { chapters, loading } = useSelector((state) => state.chapter);
 
-    // idNovel được định nghĩa cố định ở đây
-    const idNovel = '004e521d-98fb-43f4-a8fb-4f0c7054de93';
-
-    // Gọi API fetch chapters khi component mount
     useEffect(() => {
-        dispatch(fetchChapters(idNovel));
+        if (idNovel) {
+            const cleanedIdNovel = idNovel.replace(/^:/, ''); // Loại bỏ dấu `:`
+            dispatch(fetchChapters(cleanedIdNovel));
+        }
     }, [dispatch, idNovel]);
 
     return (
@@ -41,22 +40,20 @@ export default function ChapterList() {
                 <div>
                     {chapters.map((chapter, index) => (
                         <Link
-                                to={`/ViewChap/:${chapter.idChapter}`}
-                                className="w-full"
-                            >
-                        <div
+                            to={`/ViewChap/${chapter.idChapter}`}
+                            className="w-full"
                             key={chapter.idChapter}
-                            className="flex justify-between items-center bg-gray-800 p-4 mb-2 rounded cursor-pointer hover:bg-gray-700"
                         >
-                            <div>
-                                <p className="text-sm font-medium">
-                                    Book {index + 1} — {chapter.titleChapter}
-                                </p>
+                            <div className="flex justify-between items-center bg-gray-800 p-4 mb-2 rounded cursor-pointer hover:bg-gray-700">
+                                <div>
+                                    <p className="text-sm font-medium">
+                                        Book {index + 1} — {chapter.titleChapter}
+                                    </p>
+                                </div>
+                                <button className="text-gray-400 hover:text-white">
+                                    ▼
+                                </button>
                             </div>
-                            <button className="text-gray-400 hover:text-white">
-                                ▼
-                            </button>
-                        </div>
                         </Link>
                     ))}
                 </div>
@@ -64,4 +61,3 @@ export default function ChapterList() {
         </section>
     );
 }
-

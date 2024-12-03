@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import NovelDetails from './NovelDetails';
 import ChapterList from './ChapterList';
 
-export default function TabNovel() {
+export default function TabNovel({ idNovel }) {
     // State để lưu tab hiện tại (default là "chapters")
     const [activeTab, setActiveTab] = useState('chapters');
     return (
@@ -41,7 +41,7 @@ export default function TabNovel() {
 
             {/* Nội dung hiển thị dựa trên tab hiện tại */}
             {activeTab === 'about' && <NovelDetails />}
-            {activeTab === 'chapters' && <ChapterList />}
+            {activeTab === 'chapters' && <ChapterList idNovel={idNovel} />}
         </div>
     );
 }

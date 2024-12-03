@@ -1,5 +1,6 @@
-import Modal from '@/Components/customer/Login';
-import Register from '@/Components/customer/regiter';
+import Modal from '@/Components/PagesNovel/Login';
+import Register from '@/Components/PagesNovel/regiter';
+import Login from '@/Components/PagesNovel/Login';
 import { Link } from 'react-router-dom';
 import SearchComponent from './SearchComponent';
 function Navbar() {
@@ -142,6 +143,12 @@ function Navbar() {
                             >
                                 Services
                             </a>
+                        </li>
+                        <li>
+                            <Register />
+                        </li>
+                        <li>
+                            <Login />
                         </li>
                     </ul>
                 </div>

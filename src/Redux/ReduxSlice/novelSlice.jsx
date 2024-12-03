@@ -99,10 +99,10 @@ export const fetchNovelsNoImage = createAsyncThunk(
 // Add Category/Author/POV
 export const addCategory = createAsyncThunk(
     'novel/addCategory',
-    async (data, { rejectWithValue }) => {
+    async (nameCategory, idNovel ,{ rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/addCategory`, data);
-            return response.data.result || {};
+            const response = await axios.post(`${BASE_URL}/addCategory?nameCategory=${nameCategory}&idNovel=${idNovel}`);
+            return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
         }
@@ -176,6 +176,15 @@ const novelSlice = createSlice({
             .addCase(createNovel.fulfilled, (state, action) => {
                 state.novels.push(action.payload);
                 state.loading = false;
+            })
+            .addCase(addCategory.fulfilled, (state, action) => {
+                state.currentNovel.categories = [...state.currentNovel.categories,...action.payload];
+            })
+            .addCase(addAuthor.fulfilled, (state, action) => {
+                state.currentNovel.authors = [...state.currentNovel.authors,...action.payload];
+            })
+            .addCase(addPOV.fulfilled, (state, action) => {
+                state.currentNovel.pov = [...state.currentNovel.pov,...action.payload];
             })
             .addCase(updateNovel.fulfilled, (state, action) => {
                 const index = state.novels.findIndex(

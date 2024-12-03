@@ -1,11 +1,9 @@
 import React from 'react';
-import OrderTTable from './AreaTableProduct/OrderTable';
-import OrderTable from '../Home/AreaTable/ODTable';
-import Carousel from '@/Components/Order/Carousel';
+
+import Carousel from '@/Components/PagesHomeUser/Carousel';
 import Navbar from '@/Layout/DefaultLayout/navbar';
-import CardNovel from './CardNovel';
-import CardN from './CardNovel/index1';
-import FooterUser from './CardNovel/footerUser';
+import CardN from '../PagesNovel/CardNovel/CardN';
+import FooterUser from '../PagesNovel/CardNovel/footerUser';
 function Order() {
     return (
         <div>
@@ -16,7 +14,6 @@ function Order() {
                 <CardN />
             </div>
             <FooterUser />
-            
         </div>
     );
 }

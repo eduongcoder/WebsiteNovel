@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPdfData } from '@/Redux/ReduxSlice/chapterSlice';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 
 function PdfViewe({ pdfId, pageGet = 1 }) {
     const dispatch = useDispatch();
-    const { pdfData, loading, error, hasMore } = useSelector((state) => state.chapter); // Lấy dữ liệu từ Redux store
+    const { pdfData, loading, error, hasMore } = useSelector(
+        (state) => state.chapter,
+    );
     const [page, setPage] = useState(1);
     const containerRef = useRef(null);
 
@@ -17,11 +21,13 @@ function PdfViewe({ pdfId, pageGet = 1 }) {
     const handleScroll = () => {
         if (
             containerRef.current &&
-            containerRef.current.scrollTop + containerRef.current.clientHeight >= containerRef.current.scrollHeight &&
+            containerRef.current.scrollTop +
+                containerRef.current.clientHeight >=
+                containerRef.current.scrollHeight &&
             hasMore &&
-            !loading // Kiểm tra đang tải dữ liệu hay không
+            !loading
         ) {
-            setPage((prevPage) => prevPage + 1); // Tăng số trang để tải thêm
+            setPage((prevPage) => prevPage + 1);
         }
     };
 
@@ -32,21 +38,27 @@ function PdfViewe({ pdfId, pageGet = 1 }) {
             className="h-screen overflow-y-auto p-4"
         >
             {pdfData.length > 0 ? (
-                pdfData.map((pageContent, index) => (
-                    <iframe
-                        src={`data:application/pdf;base64,${pageContent}`}
-                        key={index}
-                        title={`PDF Page ${index + 1}`}
-                        className="w-full h-[1000px] mb-4"
-                        style={{ border: 'none' }}
+                <Worker
+                    workerUrl={`https://unpkg.com/pdfjs-dist@3.0.279/es5/build/pdf.worker.min.js`}
+                >
+                    <Viewer
+                        fileUrl={`data:application/pdf;base64,${pdfData}`}
                     />
-                ))
+                </Worker>
             ) : (
-                !loading && <p className="text-center text-gray-500">Không có dữ liệu để hiển thị.</p>
+                !loading && (
+                    <p className="text-center text-gray-500">
+                        Không có dữ liệu để hiển thị.
+                    </p>
+                )
             )}
-            {loading && <p className="text-center text-blue-500">Đang tải...</p>}
+            {loading && (
+                <p className="text-center text-blue-500">Đang tải...</p>
+            )}
             {!hasMore && !loading && (
-                <p className="text-center text-gray-500">Đã tải hết dữ liệu PDF.</p>
+                <p className="text-center text-gray-500">
+                    Đã tải hết dữ liệu PDF.
+                </p>
             )}
             {error && <p className="text-center text-red-500">{error}</p>}
         </div>

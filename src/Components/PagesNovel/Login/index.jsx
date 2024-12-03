@@ -35,7 +35,7 @@ import { BiSolidCategory } from 'react-icons/bi';
 import { MdBorderColor } from 'react-icons/md';
 import { FaGoogle ,FaFacebook  } from 'react-icons/fa';
 import { AiOutlineCustomerService } from 'react-icons/ai';
-function Modal() {
+function Login() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const toggleModal = () => {
@@ -193,4 +193,4 @@ function Modal() {
     );
 }
 
-export default Modal;
+export default Login;

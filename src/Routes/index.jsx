@@ -1,12 +1,12 @@
 import Home from '../Components/Home/index.jsx';
-import Order from '../Components/Order/index.jsx';
+import Order from '../Components/PagesHomeUser/index.jsx';
 import Category from '../Components/Category/index.jsx';
 import Product from '../Components/Novel/index.jsx';
 import Chapter from '../Components/Chapter/index.jsx';
 import Authors from '@/Components/Authors/index.jsx';
 import PointOfViews from '@/Components/PointOfViews/index.jsx';
 import ViewChap from '@/Components/ViewChap/index.jsx';
-import Customer from '@/Components/customer/index.jsx';
+import Customer from '@/Components/PagesNovel/index.jsx';
 const publicRoute = [
     { path: '/', component: Home },
     { path: '/Order', component: Order ,layout: null },
