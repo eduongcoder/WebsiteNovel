@@ -1,25 +1,11 @@
 import React, { useState } from 'react';
-import AddCategory from './addCa/addcate';
-import ShowCa from './ShowCa/showCa';
-function AreaAddCate() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordMatch, setPasswordMatch] = useState(true);
-
+import AddPOV from './addPOV/AreaAddPOV';
+import ShowPOV from './showPOV/AreaShowPOV';
+function AreaPOV() {
+    const [isModalOpen, setIsModalOpen] = useState(false); 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-    };
-
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-        setPasswordMatch(e.target.value === password);
-    };
-
     return (
         <>
             {/* Modal toggle button */}
@@ -45,7 +31,7 @@ function AreaAddCate() {
                             {/* Modal header */}
                             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Add Category
+                                    Add POV
                                 </h3>
                                 <button
                                     onClick={toggleModal}
@@ -73,8 +59,8 @@ function AreaAddCate() {
                             {/* Modal body */}
                             <div className="p-4">
                                 <form className="space-y-4">
-                                    <AddCategory />
-                                    <ShowCa />
+                                    <AddPOV />
+                                    <ShowPOV />
                                 </form>
                             </div>
                         </div>
@@ -85,4 +71,4 @@ function AreaAddCate() {
     );
 }
 
-export default AreaAddCate;
+export default AreaPOV;

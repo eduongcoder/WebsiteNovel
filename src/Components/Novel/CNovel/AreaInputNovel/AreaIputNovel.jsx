@@ -1,24 +1,14 @@
 import React, { useState } from 'react';
-import AddCategory from './addCa/addcate';
-import ShowCa from './ShowCa/showCa';
-function AreaAddCate() {
+import NovelForm from './InputNovel';
+function AreaAddInputNOvel() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordMatch, setPasswordMatch] = useState(true);
+ 
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-    };
-
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-        setPasswordMatch(e.target.value === password);
-    };
+   
 
     return (
         <>
@@ -28,7 +18,7 @@ function AreaAddCate() {
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 type="button"
             >
-                Add Category
+                Input Novel
             </button>
 
             {/* Modal */}
@@ -73,8 +63,7 @@ function AreaAddCate() {
                             {/* Modal body */}
                             <div className="p-4">
                                 <form className="space-y-4">
-                                    <AddCategory />
-                                    <ShowCa />
+                                 <NovelForm />
                                 </form>
                             </div>
                         </div>
@@ -85,4 +74,4 @@ function AreaAddCate() {
     );
 }
 
-export default AreaAddCate;
+export default AreaAddInputNOvel;

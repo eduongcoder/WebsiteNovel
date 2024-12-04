@@ -21,7 +21,6 @@ export const fetchChapters = createAsyncThunk(
     },
 );
 
-
 // Thunk to fetch all chapters without content
 export const fetchChaptersNoContent = createAsyncThunk(
     'chapter/fetchChaptersNoContent',
@@ -69,7 +68,8 @@ export const deleteChapters = createAsyncThunk(
         }
     },
 );
-export const updateChapter = createAsyncThunk('chapter/updateChapter',
+export const updateChapter = createAsyncThunk(
+    'chapter/updateChapter',
     async (formData, { rejectWithValue }) => {
         try {
             const response = await axios.put(
@@ -88,7 +88,7 @@ export const updateChapter = createAsyncThunk('chapter/updateChapter',
             );
         }
     },
-)
+);
 // Thunk to create a new chapter
 export const createChapter = createAsyncThunk(
     'chapter/createChapter',
@@ -97,7 +97,9 @@ export const createChapter = createAsyncThunk(
             const formData = new FormData();
             formData.append(
                 'request',
-                new Blob([JSON.stringify(newChapter.request)], { type: 'application/json' })
+                new Blob([JSON.stringify(newChapter.request)], {
+                    type: 'multipart/form-data',
+                }),
             );
 
             const response = await axios.post(
@@ -114,15 +116,19 @@ export const createChapter = createAsyncThunk(
     },
 );
 
-
 // Thunk to create multiple chapters with PDF and other info
 export const createChapters = createAsyncThunk(
     'chapter/createChapters',
-    async (formData, { rejectWithValue }) => {
+    async (requestBody, { rejectWithValue }) => {
         try {
             const response = await axios.post(
                 `${BASE_URL}/createChapters`,
-                formData
+                requestBody, // Send the requestBody containing the 'request' field
+                {
+                    headers: {
+                        'Content-Type': 'application/json', // Use application/json for JSON payload
+                    },
+                },
             );
             return response.data.result || 'Chapters created successfully';
         } catch (error) {
@@ -132,6 +138,7 @@ export const createChapters = createAsyncThunk(
         }
     },
 );
+
 export const fetchPdfData = createAsyncThunk(
     'chapter/fetchPdfData',
     async ({ pageNum, pdfId, pageGet }, { rejectWithValue }) => {
@@ -143,8 +150,7 @@ export const fetchPdfData = createAsyncThunk(
 
             if (data.result?.pageContent && data.result.totalPages > 0) {
                 return {
-                    pageContent: data.result.pageContent,
-                    pageNumber: data.result.pageNumber,
+                    pageContent: data.result.pageContent, // Mảng Base64 của từng trang
                     totalPages: data.result.totalPages,
                 };
             } else {
@@ -178,16 +184,14 @@ const chapterSlice = createSlice({
             // Fetch chapters by novel ID
             .addCase(fetchChapters.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
             .addCase(fetchChapters.fulfilled, (state, action) => {
-                state.chapters = action.payload || []; // Đảm bảo không null
                 state.loading = false;
-                state.lastUpdated = new Date().toISOString();
+                state.chapters = action.payload;
             })
             .addCase(fetchChapters.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload || 'Failed to fetch chapters';
+                state.error = action.error.message;
             })
             // Fetch chapters without content
             .addCase(fetchChaptersNoContent.pending, (state) => {
@@ -223,20 +227,20 @@ const chapterSlice = createSlice({
             // Handle PDF data fetching
             .addCase(fetchPdfData.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
             .addCase(fetchPdfData.fulfilled, (state, action) => {
                 state.loading = false;
                 state.pdfData = [
                     ...state.pdfData,
                     ...action.payload.pageContent,
-                ];
+                ]; // Append dữ liệu mới
                 state.hasMore =
-                    action.payload.pageNumber < action.payload.totalPages;
-                // Logic xử lý PDF data tại đây (nếu cần bổ sung)
+                    state.pdfData.length < action.payload.totalPages; // Kiểm tra nếu còn trang
             })
             .addCase(fetchPdfData.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload || 'Failed to fetch PDF data';
+                state.error = action.payload;
             });
     },
 });

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChapters, deleteChapters } from '@/Redux/ReduxSlice/chapterSlice';
 
-const TABLE_HEADS = ['idChapter', 'titleChapter', 'viewChapter', 'Action'];
+const TABLE_HEADS = ['idChapter', 'titleChapter', 'historyReads', 'Action'];
 
 function ViewChapters({ idNovel }) {
     const dispatch = useDispatch();
@@ -11,20 +11,31 @@ function ViewChapters({ idNovel }) {
     const { chapters, loading, error } = useSelector((state) => state.chapter);
 
     useEffect(() => {
-       
-        // Fetch chapters when idNovel changes
         if (idNovel) {
-            dispatch(fetchChapters(idNovel));
-            console.log(" idNovel",idNovel);
+            dispatch(fetchChapters(idNovel))
+                .then((result) => {
+                    console.log('Fetched chapters:', result);
+                })
+                .catch((error) => {
+                    console.error('Error fetching chapters:', error);
+                });
         }
     }, [dispatch, idNovel]);
-
-    // Log chapters data for debugging
-    console.log("chapters",chapters);
 
     if (loading) return <p className="text-center">Loading...</p>;
     if (error)
         return <p className="text-center text-red-500">Error: {error}</p>;
+
+    // Handle chapter deletion
+    const handleDelete = async (idChapter) => {
+        try {
+            await dispatch(deleteChapters(idChapter)).unwrap(); // assuming deleteChapters is a thunk that returns a promise
+            alert('Chapter deleted successfully.');
+        } catch (error) {
+            console.error('Failed to delete chapter:', error);
+            alert('Error deleting chapter');
+        }
+    };
 
     return (
         <div>
@@ -56,15 +67,13 @@ function ViewChapters({ idNovel }) {
                                             {chapter.titleChapter}
                                         </td>
                                         <td className="px-3 py-3">
-                                            {chapter.viewChapter}
+                                            {chapter.historyReads}
                                         </td>
                                         <td className="px-3 py-3">
                                             <button
                                                 onClick={() =>
-                                                    dispatch(
-                                                        deleteChapters(
-                                                            chapter.idChapter,
-                                                        ),
+                                                    handleDelete(
+                                                        chapter.idChapter,
                                                     )
                                                 }
                                                 className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 transition duration-150"

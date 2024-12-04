@@ -5,7 +5,7 @@ import {
     fetchNovels,
     updateNovel,
 } from '@/Redux/ReduxSlice/novelSlice';
-import AddCategory from '../AddCate/addCa/addcate'; 
+
 const NovelForm = () => {
     const [file, setFile] = useState(null);
     const [filePdf, setFilePdf] = useState(null);
@@ -185,7 +185,7 @@ const NovelForm = () => {
                 min="1"
                 className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
-            <AddCategory />
+         
             <div className="flex justify-center mt-4 space-x-4">
                 <button
                     type="button"

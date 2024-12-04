@@ -1,11 +1,12 @@
 
 import ProductList from "./CNovel/ListViewNovel";
-import NovelForm from "./CNovel/InputNovel";
+import NovelForm from "./CNovel/AreaInputNovel/InputNovel";
 import ProListt from "../PagesNovel/test/index3";
+import ANCP from "./CNovel/AreaANCP";
 function Product() {
     return (  
      <div >
-         <NovelForm />
+         <ANCP />
         {/* <ProductList/> */}
         <ProListt/>
      </div>

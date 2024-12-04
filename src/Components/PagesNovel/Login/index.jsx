@@ -1,45 +1,35 @@
-// import React, { useEffect, useState, useRef } from 'react';
-// import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-
-// import { jwtDecode } from 'jwt-decode';
-
-// function LoginU() {
-//     return (
-//         <>
-//             <GoogleOAuthProvider clientId="626774493944-i3o0bcoou3v2u4nlg3etlpe6ccjcibmi.apps.googleusercontent.com">
-//                 <div>
-//                     <h2>Đăng nhập để xem tác giả</h2>
-//                     <GoogleLogin
-//                         onSuccess={(credentialResponse) => {
-//                             const decoded = jwtDecode(
-//                                 credentialResponse?.credential,
-//                             );
-
-//                             console.log(decoded);
-//                         }}
-//                         onError={() => {
-//                             console.log('Login Failed');
-//                         }}
-//                     />
-//                     ;
-//                 </div>
-//             </GoogleOAuthProvider>
-//         </>
-//     );
-// }
-
-// export default LoginU;
-
 import React, { useState } from 'react';
-import { BiSolidCategory } from 'react-icons/bi';
-import { MdBorderColor } from 'react-icons/md';
-import { FaGoogle ,FaFacebook  } from 'react-icons/fa';
-import { AiOutlineCustomerService } from 'react-icons/ai';
+import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { login } from '@/Redux/ReduxSlice/userSlice'; // Giả sử bạn đã tạo action login trong Redux
+
 function Login() {
+    const dispatch = useDispatch();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState('');
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        // Xử lý đăng nhập (gửi email và password đến backend)
+        const userCredentials = { password , email  };
+
+        // Giả sử bạn sử dụng action login trong Redux để gửi API request
+        const result = await dispatch(login(userCredentials)); // login là một action creator của Redux
+
+        if (result.error) {
+            alert('User login successfully');
+            // Nếu đăng nhập thành công, có thể chuyển hướng hoặc cập nhật trạng thái đăng nhập
+            toggleModal(); // Đóng modal khi đăng nhập thành công
+            
+        } else {
+            setError('Invalid email or password');
+        }
     };
 
     return (
@@ -94,7 +84,10 @@ function Login() {
                             </div>
                             {/* Modal body */}
                             <div className="p-4">
-                                <form className="space-y-4">
+                                <form
+                                    className="space-y-4"
+                                    onSubmit={handleSubmit}
+                                >
                                     <div>
                                         <label
                                             htmlFor="email"
@@ -108,6 +101,10 @@ function Login() {
                                             id="email"
                                             className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                             placeholder="name@company.com"
+                                            value={email}
+                                            onChange={(e) =>
+                                                setEmail(e.target.value)
+                                            }
                                             required
                                         />
                                     </div>
@@ -124,6 +121,10 @@ function Login() {
                                             id="password"
                                             placeholder="••••••••"
                                             className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            value={password}
+                                            onChange={(e) =>
+                                                setPassword(e.target.value)
+                                            }
                                             required
                                         />
                                     </div>
@@ -135,7 +136,6 @@ function Login() {
                                                     type="checkbox"
                                                     value=""
                                                     className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                                                    required
                                                 />
                                             </div>
                                             <label
@@ -158,6 +158,11 @@ function Login() {
                                     >
                                         Login to your account
                                     </button>
+                                    {error && (
+                                        <p className="text-red-500 text-sm">
+                                            {error}
+                                        </p>
+                                    )}
                                     <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
                                         Not registered?{' '}
                                         <a

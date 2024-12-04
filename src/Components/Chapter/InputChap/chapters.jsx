@@ -30,16 +30,34 @@ const CreateChapterForm = () => {
 
     const validate = () => {
         const newErrors = {};
+
+        // Validate for novel, chapter count, and chapter titles
         if (!idNovel) newErrors.idNovel = 'Vui lòng xác nhận tiểu thuyết.';
         if (!totalChapter)
             newErrors.totalChapter = 'Vui lòng nhập tổng số chương.';
         if (tilteChapters.some((title) => !title))
             newErrors.tilteChapters = 'Mỗi chương cần có tiêu đề.';
-        if (
-            chapterPagesArray.some((item) => !item.startPage || !item.endPage)
-        ) {
-            newErrors.chapterPagesArray = 'Vui lòng nhập đầy đủ các trang.';
+
+        // Validate chapter pages
+        for (let i = 0; i < chapterPagesArray.length; i++) {
+            const { startPage, endPage } = chapterPagesArray[i];
+            if (!startPage || !endPage)
+                newErrors.chapterPagesArray = 'Vui lòng nhập đầy đủ các trang.';
+            if (parseInt(startPage, 10) >= parseInt(endPage, 10))
+                newErrors.chapterPagesArray =
+                    'Trang bắt đầu phải nhỏ hơn trang kết thúc.';
+
+            // Check if the next chapter starts after the previous chapter ends
+            if (i > 0) {
+                const prevChapter = chapterPagesArray[i - 1];
+                if (
+                    parseInt(startPage, 10) <= parseInt(prevChapter.endPage, 10)
+                )
+                    newErrors.chapterPagesArray =
+                        'Trang bắt đầu của chương này phải lớn hơn trang kết thúc của chương trước.';
+            }
         }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -227,27 +245,34 @@ const CreateChapterForm = () => {
                     <button
                         type="button"
                         onClick={() => handleRemoveChapter(index)}
-                        className="text-red-500 hover:underline mt-2"
+                        className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200"
                     >
                         Xóa Chương
                     </button>
+                    {errors.chapterPagesArray && (
+                        <p className="text-red-500 text-sm mt-2">
+                            {errors.chapterPagesArray}
+                        </p>
+                    )}
                 </div>
             ))}
 
             <button
                 type="button"
                 onClick={handleAddChapter}
-                className="mb-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200"
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200"
             >
                 Thêm Chương
             </button>
 
-            <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
-            >
-                Tạo Chương
-            </button>
+            <div className="mt-6">
+                <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-200 w-full"
+                >
+                    Tạo Chương
+                </button>
+            </div>
         </form>
     );
 };

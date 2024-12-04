@@ -23,7 +23,7 @@ function ViewChap() {
             </div>
             <div className="bg-white shadow rounded-lg p-4">
                 <h2 className="text-lg font-semibold mb-4">Xem file PDF</h2>
-                <PdfViewe pdfId={idChapter} pageGet={2} />
+                <PdfViewe pdfId={idChapter}  />
             </div>
         </div>
     );

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNovels } from '@/Redux/ReduxSlice/novelSlice';
 import { fetchChapters } from '@/Redux/ReduxSlice/chapterSlice';
 import ViewChapters from './index2';
-
+import ANCP from '@/Components/Novel/CNovel/AreaANCP';
 const TABLE_HEADS = [
     'id_Novel',
     'name_Novel',
@@ -33,13 +33,26 @@ function ProListt() {
             // Mở nội dung và tải dữ liệu nếu chưa có
             setOpenedId(idNovel);
             if (!chapterData[idNovel]) {
-                const result = await dispatch(fetchChapters(idNovel)).unwrap();
-                setChapterData((prev) => ({
-                    ...prev,
-                    [idNovel]: result, // Lưu dữ liệu chương theo idNovel
-                }));
+                try {
+                    const result = await dispatch(
+                        fetchChapters(idNovel),
+                    ).unwrap();
+                    setChapterData((prev) => ({
+                        ...prev,
+                        [idNovel]: result, // Lưu dữ liệu chương theo idNovel
+                    }));
+                } catch (error) {
+                    console.error('Failed to fetch chapters:', error);
+                }
             }
         }
+    };
+
+    // Xử lý xóa novel
+    const handleDelete = (idNovel, e) => {
+        e.stopPropagation();
+        // Logic xử lý xóa
+        console.log(`Deleting novel with ID: ${idNovel}`);
     };
 
     if (loading)
@@ -92,10 +105,12 @@ function ProListt() {
                                             <td className="px-3 py-3">
                                                 <button
                                                     className="text-red-500 hover:underline"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        // Logic xử lý xóa
-                                                    }}
+                                                    onClick={(e) =>
+                                                        handleDelete(
+                                                            novel.idNovel,
+                                                            e,
+                                                        )
+                                                    }
                                                 >
                                                     Delete
                                                 </button>

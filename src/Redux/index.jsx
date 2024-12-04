@@ -4,8 +4,7 @@ import authorReducer from './ReduxSlice/authorSlice';
 import novelReducer from './ReduxSlice/novelSlice';
 import povReducer from './ReduxSlice/povSlice';
 import chapterReducer from './ReduxSlice/chapterSlice';
-
-
+import userReducer from './ReduxSlice/userSlice';
 const store = configureStore({
   reducer: {
     category: categoryReducer,
@@ -13,7 +12,13 @@ const store = configureStore({
     novel: novelReducer,
     pov: povReducer,
     chapter: chapterReducer,
+    user: userReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: process.env.NODE_ENV === 'development' ? false : true,
+    }),
+  devTools: process.env.NODE_ENV === 'development',
 });
 
 export default store;

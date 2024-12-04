@@ -91,7 +91,9 @@ export const fetchNovelsNoImage = createAsyncThunk(
             const response = await axios.get(`${BASE_URL}/getNovelsNoImage`);
             return response.data.result || [];
         } catch (error) {
-            return handleError(error, rejectWithValue);
+            return rejectWithValue(
+                error.response?.data || 'Error fetching novels',
+            );
         }
     },
 );
@@ -99,9 +101,11 @@ export const fetchNovelsNoImage = createAsyncThunk(
 // Add Category/Author/POV
 export const addCategory = createAsyncThunk(
     'novel/addCategory',
-    async (nameCategory, idNovel ,{ rejectWithValue }) => {
+    async ({ nameCategory, idNovel }, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/addCategory?nameCategory=${nameCategory}&idNovel=${idNovel}`);
+            const response = await axios.post(
+                `${BASE_URL}/addCategory?nameCategory=${nameCategory}&idNovel=${idNovel}`,
+            );
             return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
@@ -111,10 +115,10 @@ export const addCategory = createAsyncThunk(
 
 export const addAuthor = createAsyncThunk(
     'novel/addAuthor',
-    async (data, { rejectWithValue }) => {
+    async ({idAuthor , idNovel}, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/addAuthor`, data);
-            return response.data.result || {};
+            const response = await axios.post(`${BASE_URL}/addAuthor?idAuthor=${idAuthor}&idNovel=${idNovel}`);
+            return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
         }
@@ -123,10 +127,10 @@ export const addAuthor = createAsyncThunk(
 
 export const addPOV = createAsyncThunk(
     'novel/addPOV',
-    async (data, { rejectWithValue }) => {
+    async ({namePointOfView , idNovel}, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/addPOV`, data);
-            return response.data.result || {};
+            const response = await axios.post(`${BASE_URL}/addPOV?namePOV=${namePointOfView}&idNovel=${idNovel}`);
+            return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
         }
@@ -168,23 +172,31 @@ const novelSlice = createSlice({
                 state.loading = false;
                 state.error = null;
             })
-            .addCase(fetchNovelByName.fulfilled, (state, action) => {
-                state.currentNovel = action.payload;
-                state.loading = false;
-                state.error = null;
+            .addCase(fetchNovelsNoImage.fulfilled, (state, action) => {
+                state.novelsNoImage = action.payload;
             })
             .addCase(createNovel.fulfilled, (state, action) => {
                 state.novels.push(action.payload);
                 state.loading = false;
             })
             .addCase(addCategory.fulfilled, (state, action) => {
-                state.currentNovel.categories = [...state.currentNovel.categories,...action.payload];
+                state.currentNovel.categories = [
+                    ...state.currentNovel.categories,
+                    ...action.payload,
+                ];
             })
+
             .addCase(addAuthor.fulfilled, (state, action) => {
-                state.currentNovel.authors = [...state.currentNovel.authors,...action.payload];
+                state.currentNovel.authors = [
+                    ...state.currentNovel.authors,
+                    ...action.payload,
+                ];
             })
             .addCase(addPOV.fulfilled, (state, action) => {
-                state.currentNovel.pov = [...state.currentNovel.pov,...action.payload];
+                state.currentNovel.pov = [
+                    ...state.currentNovel.pov,
+                    ...action.payload,
+                ];
             })
             .addCase(updateNovel.fulfilled, (state, action) => {
                 const index = state.novels.findIndex(

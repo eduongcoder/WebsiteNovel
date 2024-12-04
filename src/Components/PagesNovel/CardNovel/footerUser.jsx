@@ -5,7 +5,7 @@ import { AiFillApple, AiFillAndroid } from 'react-icons/ai'; // Biểu tượng 
 const FooterUser = () => {
     return (
         <footer class="bg-white dark:bg-gray-900">
-                <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+                <div className="bg-white mb-4 border-gray-200 dark:bg-gray-900 mx-auto  h-full max-w-[1280px] flex-1 py-0 px-8 md:px-24">
                     <div class="md:flex md:justify-between">
                         <div class="mb-6 md:mb-0">
                             <a
