@@ -21,6 +21,7 @@ public class NovelCreationRequest {
 	// String id_Novel;
 	String nameNovel;
 	String descriptionNovel;
+	int totalChapter;
 	@Enumerated(EnumType.STRING)
 	Status statusNovel;
 

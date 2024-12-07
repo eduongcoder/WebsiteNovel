@@ -26,4 +26,5 @@ public class NovelUpdateRequest {
 	String imageNovel;
 	byte[] originalNovel;
 	String publicIDNovel;
+	int totalChapter;
 }

@@ -123,6 +123,9 @@ public class UserService {
 		if (user == null) {
 			throw new AppException(ErrorCode.USER_NOT_EXISTED);
 		}
+		if (user.getAvatarUser()!=null) {
+			uploadFileService.deleteImage(user.getPublicIDUser());
+		}
 		UploadFileRespone respone=uploadFileService.uploadFile(avatar);
 		user.setAvatarUser(respone.getUrl());
 		user.setPublicIDUser(respone.getPublic_id());

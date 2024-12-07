@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.http.MediaType;
@@ -212,7 +211,7 @@ public class ChapterService {
 		}
 	}
 
-	public boolean createChapters(String idNovel, int totalChapter, List<Integer> array, List<String> totalTitle)
+	public boolean createChapters(String idNovel, List<Integer> array, List<String> totalTitle)
 			throws IOException {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		byte[] filePdf = novel.getOriginalNovel();
@@ -227,21 +226,29 @@ public class ChapterService {
 				ChapterCreationRequest chapterCreationRequest = new ChapterCreationRequest();
 				try {
 //					byte[] contentTest=chapterContent.get();
-					byte[] contentTest=chapterContent;
-					chapterCreationRequest.setContentChapter(contentTest);
-					chapterCreationRequest.setTitleChapter(totalTitle.get(count));
-					chapterCreationRequest.setNovelName(novel.getNameNovel());
-					chapterCreationRequest.setNovel(novel);
-					chapterCreationRequest.setEndPage(array.get(i + 1));
-					chapterCreationRequest.setStartPage(array.get(i));
+//					byte[] contentTest=chapterContent;
+//					chapterCreationRequest.setContentChapter(contentTest);
+//					chapterCreationRequest.setTitleChapter(totalTitle.get(count));
+//					chapterCreationRequest.setNovelName(novel.getNameNovel());
+//					chapterCreationRequest.setNovel(novel);
+//					chapterCreationRequest.setEndPage(array.get(i + 1));
+//					chapterCreationRequest.setStartPage(array.get(i));
 					
-					Chapter chapter=chapterMapper.toChapter(chapterCreationRequest);
+					
+					
+					Chapter chapter=chapterMapper.toChapter(chapterCreationRequest.builder()
+							.contentChapter(chapterContent)
+							.titleChapter(totalTitle.get(count))
+							.novelName(novel.getNameNovel())
+							.novel(novel)
+							.endPage(array.get(i+1))
+							.startPage(array.get(i))
+							.build());
 					chapter.setViewChapter(0);
-					chapter.setTotalPageChapter(getTotalPages(contentTest)); 
-//					createChapter(chapterContent.getBytes(),
-//							chapterCreationRequest.builder().titleChapter(totalTitle.get(count))
-//									.novelName(novelRepository.findByIdNovel(idNovel).getNameNovel())
-//									.startPage(array.get(i)).endPage(array.get(i + 1)).build());
+					chapter.setTotalPageChapter(getTotalPages(chapterContent)); 
+
+
+					
 					chapterRepository.save(chapter);
 					log.info("Tổng trang "+chapter.getTitleChapter()+"là: "+chapter.getTotalPageChapter());
 					count++;
@@ -286,6 +293,18 @@ public class ChapterService {
 //		"data:application/pdf;base64," + 
 		return Base64.getEncoder().encodeToString(chapter.getContentChapter());
 
+	}
+	
+	public boolean upView(String idChapter ) {
+		
+		try {
+			Chapter chapter=chapterRepository.findByIdChapter(idChapter);
+			chapter.setViewChapter(chapter.getViewChapter()+1);
+			chapterRepository.save(chapter);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

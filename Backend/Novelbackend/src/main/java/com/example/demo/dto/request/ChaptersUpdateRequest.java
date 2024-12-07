@@ -16,7 +16,6 @@ public class ChaptersUpdateRequest {
 	String idChapter;
 	String idNovel;
 	String titleChapter;
-	int totalChapter;
 	int viewChapter;
 	byte[] contentChapter;
 	int startPage;

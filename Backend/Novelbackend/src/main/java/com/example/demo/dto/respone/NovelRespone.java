@@ -26,10 +26,11 @@ public class NovelRespone {
 	String descriptionNovel;
 	Status statusNovel;
 	String imageNovel;
-	String originalNovel;
+	int totalChapter;
+	String originalNovel; 
 	int totalPage;
 	
-	Set<Category> categories;
+	Set<Category> categories; 
 	Set<ChapterNoContentRespone> chapter;
 	Set<Author> authors;
 	Set<PointOfView> pointOfViews;

@@ -44,6 +44,7 @@ public class Novel {
 	@Column(name = "image_Novel",length = 255)
 	String imageNovel;
 	
+	int totalChapter;
 	@Lob
 	@Column(name = "originalNovel",columnDefinition = "LONGBLOB")
 	byte[] originalNovel;

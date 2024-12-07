@@ -25,6 +25,7 @@ public class NovelNoImageRespone {
 	String nameNovel;
 	String descriptionNovel;
 	Status statusNovel;
+	int totalChapter;
 
 	Set<Category> categories;
 //	Set<ChapterRespone> chapter;

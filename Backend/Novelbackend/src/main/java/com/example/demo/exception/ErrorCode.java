@@ -15,7 +15,7 @@ public enum ErrorCode {
 	UPLOAD_FILE_ERROR(1014,"The uploaded file was corrupted"),NO_FILE_UPLOAD(1015,"There no file has been uploaded"),
 	CHAPTER_NOT_EXISTED(1016,"Chapter not existed"),NO_ORIGIN_FILE(1017,"There no origin file has been uploaded"),
 	ERROR_PUBLICID(1018,"The public id is error"), COMMENT_NOT_EXISTED(1019,"The comment is not exist"),
-	NOVEL_DONT_HAVE_CHAPTER(1020,"The novel dont have any chapter"),
+	NOVEL_DONT_HAVE_CHAPTER(1020,"The novel dont have any chapter"),NEED_TO_DELETE_CHAPTER(1021,"Total chapter update is more than total chapter of novel"),
 	UNKNOW_ERROR(9999, "Unknow error");
 
 	private int code;

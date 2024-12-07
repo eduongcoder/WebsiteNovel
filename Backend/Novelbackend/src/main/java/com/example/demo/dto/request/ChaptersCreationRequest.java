@@ -17,7 +17,6 @@ import lombok.experimental.FieldDefaults;
 @Data
 public class ChaptersCreationRequest {
 	String idNovel;
-	int totalChapter;
 	List<String> tilteChapters;
 	List<Integer> array;
 }

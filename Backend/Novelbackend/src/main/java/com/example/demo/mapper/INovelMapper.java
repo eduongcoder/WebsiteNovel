@@ -20,8 +20,9 @@ public interface INovelMapper {
 	@Mapping(target = "authors",ignore = true)
 	@Mapping(target = "categories",ignore = true)
 	@Mapping(target = "pointOfViews",ignore = true)
-	@Mapping(target = "originalNovel",ignore = true)
 	@Mapping(target = "imageNovel",ignore = true)
+	@Mapping(target = "totalPage",ignore = true)
+	@Mapping(target = "publicIDNovel",ignore = true)
 	Novel toNovel(NovelCreationRequest request); 
 	
 	NovelJustIdAndNameRespone toNovelJustIdAndNameRespone(Novel novel);

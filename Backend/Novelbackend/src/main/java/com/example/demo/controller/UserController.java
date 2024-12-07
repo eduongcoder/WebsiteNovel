@@ -79,11 +79,11 @@ public class UserController {
 		return ApiRespone.<UserRespone>builder().result(userService.uploadUser(image, email)).build();
 	}
 	
-	@PutMapping(value = "updateUser",consumes = { "multipart/form-data"})
+	@PutMapping(value = "/updateUser",consumes = { "multipart/form-data"})
 	public ApiRespone<UserRespone> updateUser(@RequestParam MultipartFile avatar,@RequestPart UserUpdateRequest request) throws IOException{
 	
 		return ApiRespone.<UserRespone>builder().result(userService.updateUser(avatar,request)).build();
-	}
+	} 
 	
 	@DeleteMapping("/deleteUser")
 	public ApiRespone<String> deleteUser(@RequestParam String idUser){
