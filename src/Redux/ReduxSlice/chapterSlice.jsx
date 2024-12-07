@@ -119,11 +119,11 @@ export const createChapter = createAsyncThunk(
 // Thunk to create multiple chapters with PDF and other info
 export const createChapters = createAsyncThunk(
     'chapter/createChapters',
-    async (requestBody, { rejectWithValue }) => {
+    async (formData, { rejectWithValue }) => {
         try {
             const response = await axios.post(
                 `${BASE_URL}/createChapters`,
-                requestBody, // Send the requestBody containing the 'request' field
+                formData, // Send the requestBody containing the 'request' field
                 {
                     headers: {
                         'Content-Type': 'application/json', // Use application/json for JSON payload
@@ -231,6 +231,8 @@ const chapterSlice = createSlice({
             })
             .addCase(fetchPdfData.fulfilled, (state, action) => {
                 state.loading = false;
+                console.log('pdf', action.pdfData);
+                console.log('pageContent', action.payload.pageContent);
                 state.pdfData = [
                     ...state.pdfData,
                     ...action.payload.pageContent,

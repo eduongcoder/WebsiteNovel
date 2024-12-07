@@ -116,15 +116,8 @@ const CreateChapterForm = () => {
             totalChapter: parseInt(totalChapter, 10),
             tilteChapters,
             array,
-        };
-
-        const formData = new FormData();
-        formData.append(
-            'request',
-            new Blob([JSON.stringify(payload)], { type: 'application/json' }),
-        );
-
-        dispatch(createChapters(formData));
+        }; 
+        dispatch(createChapters(payload));
     };
 
     return (

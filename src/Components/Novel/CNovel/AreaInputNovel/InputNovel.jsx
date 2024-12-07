@@ -7,13 +7,15 @@ import {
 } from '@/Redux/ReduxSlice/novelSlice';
 
 const NovelForm = () => {
-    const [file, setFile] = useState(null);
-    const [filePdf, setFilePdf] = useState(null);
+    const [file, setFile] = useState(null); // Image file
+    const [filePdf, setFilePdf] = useState(null); // PDF file
     const [nameNovel, setNameNovel] = useState('');
     const [descriptionNovel, setDescriptionNovel] = useState('');
     const [statusNovel, setStatusNovel] = useState('');
     const [totalChapter, setTotalChapter] = useState(0);
     const [selectedNovelId, setSelectedNovelId] = useState('');
+    const [originalNovel, setOriginalNovel] = useState(''); // State for originalNovel
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -71,23 +73,44 @@ const NovelForm = () => {
         return true;
     };
 
+    const handleOriginalNovelChange = (e) => {
+        setOriginalNovel(e.target.value);
+    };
+
+    const logFormData = (formData) => {
+        // Duyệt qua tất cả các entry trong FormData và log chúng
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+    };
+
     const prepareFormData = () => {
         const formData = new FormData();
         formData.append('image', file, file.name);
         formData.append('originalFile', filePdf, filePdf.name);
 
+        // Nếu có giá trị trong originalNovel
+        originalNovelValues.forEach((novel) => {
+            formData.append('originalNovel[]', novel); // Thêm mỗi phần tử vào FormData
+        });
+
+        // Payload của bạn
         const payload = {
-            idNovel: selectedNovelId, // Thêm idNovel vào payload nếu có
+            idNovel: selectedNovelId || '', // Nếu chưa có ID, hãy để trống hoặc thêm giá trị mặc định
             nameNovel,
             descriptionNovel,
-            statusNovel, 
+            statusNovel,
             totalChapter: parseInt(totalChapter, 10),
+            originalNovel: originalNovelValues, // Truyền dữ liệu hợp lệ
         };
-
+        console.log(' gia tri payload:', payload);
+        // Thêm request dưới dạng Blob
         formData.append(
             'request',
             new Blob([JSON.stringify(payload)], { type: 'application/json' }),
         );
+
+        console.log('Prepared FormData:', formData);
 
         return formData;
     };
@@ -95,9 +118,7 @@ const NovelForm = () => {
     const handleCreate = (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
-        const formData = prepareFormData();
-        dispatch(createNovel(formData));
+        dispatch(createNovel(payload)); // Gửi yêu cầu API để tạo tiểu thuyết mới
     };
 
     const handleUpdate = (e) => {
@@ -107,11 +128,11 @@ const NovelForm = () => {
             alert('Please select a novel to update.');
             return;
         }
-    
+
         if (!validateForm()) return;
-    
+
         const formData = prepareFormData();
-        dispatch(updateNovel(formData));
+        dispatch(updateNovel(formData)); // Gửi yêu cầu API để cập nhật tiểu thuyết
     };
 
     return (
@@ -149,6 +170,17 @@ const NovelForm = () => {
                 className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
 
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Original Novel (comma-separated)
+            </label>
+            <input
+                type="text"
+                value={originalNovel}
+                onChange={handleOriginalNovelChange}
+                placeholder="e.g., Novel 1, Novel 2"
+                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+            />
+
             <input
                 type="text"
                 value={nameNovel}
@@ -182,24 +214,21 @@ const NovelForm = () => {
                 value={totalChapter}
                 onChange={(e) => setTotalChapter(e.target.value)}
                 placeholder="Total Chapters"
-                min="1"
                 className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
-         
-            <div className="flex justify-center mt-4 space-x-4">
+
+            <div className="flex justify-between gap-4">
                 <button
-                    type="button"
                     onClick={handleCreate}
-                    className="px-8 py-2.5 leading-5 text-white bg-green-600 rounded-md hover:bg-green-500"
+                    className="block w-full px-8 py-2.5 mt-2 text-white bg-blue-600 border border-transparent rounded-md dark:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                    Create
+                    Create Novel
                 </button>
                 <button
-                    type="button"
                     onClick={handleUpdate}
-                    className="px-8 py-2.5 leading-5 text-white bg-blue-600 rounded-md hover:bg-blue-500"
+                    className="block w-full px-8 py-2.5 mt-2 text-white bg-yellow-600 border border-transparent rounded-md dark:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                 >
-                    Update
+                    Update Novel
                 </button>
             </div>
         </form>
