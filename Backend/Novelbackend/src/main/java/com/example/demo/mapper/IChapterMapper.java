@@ -20,8 +20,9 @@ public interface IChapterMapper {
 	ChapterRespone toChapterRespone(Chapter chapter); 
 	
 	@Mapping(target = "historyReads",ignore = true)
-	ChapterNoContentRespone toChapterNoContentRespone(Chapter chapter);
- 
+	@Mapping(target  = "idNovel",source ="idNovel" )
+	ChapterNoContentRespone toChapterNoContentRespone(Chapter chapter,String idNovel);
+  
 	@Mapping(target = "comment",ignore = true)
 	@Mapping(target = "novel",ignore = true)
 	void updateChapterRequest(ChaptersUpdateRequest request,@MappingTarget Chapter chapter);

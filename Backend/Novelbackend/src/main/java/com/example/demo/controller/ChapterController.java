@@ -10,8 +10,12 @@ import com.example.demo.dto.request.ChaptersUpdateRequest;
 import com.example.demo.dto.respone.ApiRespone;
 import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
+import com.example.demo.dto.respone.NovelRespone;
 import com.example.demo.dto.respone.PdfPageResponse;
+import com.example.demo.entity.Novel;
+import com.example.demo.repository.INovelRepository;
 import com.example.demo.service.ChapterService;
+import com.example.demo.service.NovelService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +43,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 public class ChapterController {
 
 	ChapterService chapterService;
-
+	INovelRepository novelRepository;
+	
 	@GetMapping("/getAllChapter")
 	public ApiRespone<List<ChapterRespone>> getAllChapterByNameNovel(@RequestParam String idNovel) {
 
@@ -61,6 +67,8 @@ public class ChapterController {
 	}
 	
 
+	
+	
 	@PostMapping(value = "/createChapter", consumes = { "multipart/form-data" })
 	public ApiRespone<ChapterRespone> createChapter(
 			@RequestPart("request") ChapterCreationRequest request) throws IOException {
@@ -102,7 +110,9 @@ public class ChapterController {
 	public ApiRespone<PdfPageResponse> getPdfPages(@RequestParam("id") String pdfId,
 			@RequestParam("page") int pageNumber, @RequestParam("pageGet") int pageGet) throws IOException {
 		byte[] pdfBytes = chapterService.getChapter(pdfId).getContentChapter();
-
+//		byte[] pdfBytesNovel=novelRepository.findById(pdfId).get().getOriginalNovel();
+		
+//		String pageContent = chapterService.getPdfPages(pdfBytesNovel, pageNumber, pageGet);
 		String pageContent = chapterService.getPdfPages(pdfBytes, pageNumber, pageGet);
 		int totalPages = chapterService.getTotalPages(pdfBytes);
 

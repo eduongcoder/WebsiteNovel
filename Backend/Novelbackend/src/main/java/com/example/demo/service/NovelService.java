@@ -143,8 +143,8 @@ public class NovelService {
 		if (novel == null) {
 			throw new AppException(ErrorCode.NOVEL_NOT_EXISTED);
 		}
-
-		if (!image.isEmpty() && image!=null) {
+	
+		if ( image!=null   ) {
 			uploadFileService.deleteImage(novel.getPublicIDNovel());
 			UploadFileRespone respone = uploadFileService.uploadFile(image);
 			request.setImageNovel(respone.getUrl());
@@ -153,11 +153,12 @@ public class NovelService {
 			request.setImageNovel(novel.getImageNovel());
 			request.setPublicIDNovel(novel.getPublicIDNovel());
 		}
-		if (!originalFile.isEmpty() && originalFile!=null) {
-
+		if ( originalFile!=null) {
+			log.info("file không null");
 			request.setOriginalNovel(originalFile.getBytes());
 			
 		} else {
+			log.info("file null");
 
 			request.setOriginalNovel(novel.getOriginalNovel());
 			
@@ -262,19 +263,28 @@ public class NovelService {
 		}
 		List<Chapter> chapters = novel.getChapter();
 
-		for (Chapter chapter : chapters) {
-			List<HistoryRead> historyRead = historyReadRepository.findByChapter(chapter);
-			for (int i = 0; i < historyRead.size(); i++) {
-				historyReadService.deleteHistoryRead(historyRead.get(i).getId());
+		if (!chapters.isEmpty()) {
+			for (Chapter chapter : chapters) {
+				List<HistoryRead> historyRead = historyReadRepository.findByChapter(chapter);
+				if (!historyRead.isEmpty()) {
+					for (int i = 0; i < historyRead.size(); i++) {
+						historyReadService.deleteHistoryRead(historyRead.get(i).getId());
 
-			}
-			List<Comment> comments = chapter.getComment();
-			for (int i = 0; i < comments.size(); i++) {
-				commentService.deleteComment(comments.get(i).getIdComment());
+					}
+				}
+				
+				List<Comment> comments = chapter.getComment();
+				if (!comments.isEmpty()) {
+					for (int i = 0; i < comments.size(); i++) {
+						commentService.deleteComment(comments.get(i).getIdComment());
 
+					}
+				}
+				
+				chapterService.deleteChapter(chapter.getIdChapter());
 			}
-			chapterService.deleteChapter(chapter.getIdChapter());
 		}
+		
 		novelRepository.deleteById(idNovel);
 
 		return idNovel;

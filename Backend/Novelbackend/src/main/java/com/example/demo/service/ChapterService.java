@@ -91,7 +91,8 @@ public class ChapterService {
 
 		List<Chapter> chapterRespones = new ArrayList<>(novel.getChapter());
 
-		return chapterRespones.stream().map(t -> chapterMapper.toChapterNoContentRespone(t)).toList();
+		return chapterRespones.stream().map(t -> chapterMapper.toChapterNoContentRespone(t, t.getNovel().getIdNovel()))
+				.toList();
 	}
 
 	public List<ChapterNoContentRespone> getAllChapterNoContentByIdNovel(String idNovel) {
@@ -99,7 +100,8 @@ public class ChapterService {
 
 		List<Chapter> chapterRespones = new ArrayList<>(novel.getChapter());
 
-		return chapterRespones.stream().map(t -> chapterMapper.toChapterNoContentRespone(t)).toList();
+		return chapterRespones.stream().map(t -> chapterMapper.toChapterNoContentRespone(t, t.getNovel().getIdNovel()))
+				.toList();
 	}
 
 	public String deleteChapter(String idChapter) {
@@ -155,8 +157,12 @@ public class ChapterService {
 
 		try (PDDocument document = PDDocument.load(pdfBytes)) {
 			int totalPage = document.getNumberOfPages();
-			if (pageNumber < 0 || pageNumber >= totalPage) {
+			if (pageNumber < 0) {
 				throw new IllegalArgumentException("Invalid page number");
+			}
+
+			if (pageNumber >= totalPage) {
+				throw new IllegalArgumentException("Invalid page number totalPage");
 			}
 
 			if (pageGet <= 0) {
@@ -177,7 +183,7 @@ public class ChapterService {
 			}
 		}
 	}
-	
+
 	public byte[] getPdfPagesByByte(byte[] pdfBytes, int pageNumber, int pageGet) throws IOException {
 
 		try (PDDocument document = PDDocument.load(pdfBytes)) {
@@ -211,8 +217,7 @@ public class ChapterService {
 		}
 	}
 
-	public boolean createChapters(String idNovel, List<Integer> array, List<String> totalTitle)
-			throws IOException {
+	public boolean createChapters(String idNovel, List<Integer> array, List<String> totalTitle) throws IOException {
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		byte[] filePdf = novel.getOriginalNovel();
 		if (filePdf.length < 0) {
@@ -225,32 +230,15 @@ public class ChapterService {
 				byte[] chapterContent = getPdfPagesByByte(filePdf, array.get(i), array.get(i + 1) - array.get(i) + 1);
 				ChapterCreationRequest chapterCreationRequest = new ChapterCreationRequest();
 				try {
-//					byte[] contentTest=chapterContent.get();
-//					byte[] contentTest=chapterContent;
-//					chapterCreationRequest.setContentChapter(contentTest);
-//					chapterCreationRequest.setTitleChapter(totalTitle.get(count));
-//					chapterCreationRequest.setNovelName(novel.getNameNovel());
-//					chapterCreationRequest.setNovel(novel);
-//					chapterCreationRequest.setEndPage(array.get(i + 1));
-//					chapterCreationRequest.setStartPage(array.get(i));
-					
-					
-					
-					Chapter chapter=chapterMapper.toChapter(chapterCreationRequest.builder()
-							.contentChapter(chapterContent)
-							.titleChapter(totalTitle.get(count))
-							.novelName(novel.getNameNovel())
-							.novel(novel)
-							.endPage(array.get(i+1))
-							.startPage(array.get(i))
-							.build());
+					Chapter chapter = chapterMapper
+							.toChapter(chapterCreationRequest.builder().contentChapter(chapterContent)
+									.titleChapter(totalTitle.get(count)).novelName(novel.getNameNovel()).novel(novel)
+									.endPage(array.get(i + 1)).startPage(array.get(i)).build());
 					chapter.setViewChapter(0);
-					chapter.setTotalPageChapter(getTotalPages(chapterContent)); 
+					chapter.setTotalPageChapter(getTotalPages(chapterContent));
 
-
-					
 					chapterRepository.save(chapter);
-					log.info("Tổng trang "+chapter.getTitleChapter()+"là: "+chapter.getTotalPageChapter());
+					log.info("Tổng trang " + chapter.getTitleChapter() + "là: " + chapter.getTotalPageChapter());
 					count++;
 				} catch (Exception e) {
 					log.info("huhu");
@@ -284,7 +272,7 @@ public class ChapterService {
 		chapterMapper.updateChapterRequest(request, chapter);
 		chapter.setComment(comment);
 		chapter.setNovel(novel);
-
+		chapter.setTotalPageChapter(endPage);
 		return chapterMapper.toChapterRespone(chapterRepository.save(chapter));
 	}
 
@@ -294,12 +282,12 @@ public class ChapterService {
 		return Base64.getEncoder().encodeToString(chapter.getContentChapter());
 
 	}
-	
-	public boolean upView(String idChapter ) {
-		
+
+	public boolean upView(String idChapter) {
+
 		try {
-			Chapter chapter=chapterRepository.findByIdChapter(idChapter);
-			chapter.setViewChapter(chapter.getViewChapter()+1);
+			Chapter chapter = chapterRepository.findByIdChapter(idChapter);
+			chapter.setViewChapter(chapter.getViewChapter() + 1);
 			chapterRepository.save(chapter);
 			return true;
 		} catch (Exception e) {

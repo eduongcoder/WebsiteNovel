@@ -29,7 +29,6 @@ public class CommentService {
 
 	ICommentRepository commentRepository; 
 	IChapterRepository chapterRepository;
-	ChapterService chapterService;
 	IUserRepository userRepository;
 	ICommentMapper commentMapper;
 	

@@ -21,5 +21,9 @@ public class ChapterNoContentRespone {
 	String idChapter;
 	String titleChapter;
 	int viewChapter;
+	int startPage;
+	int endPage;
+	int totalPageChapter;
 	Set<HistoryRead> historyReads;
+	String idNovel;
 }

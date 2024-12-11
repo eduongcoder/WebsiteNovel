@@ -1,10 +1,5 @@
 package com.example.demo.dto.respone;
 
-import java.util.Set;
-
-import com.example.demo.entity.Author;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.PointOfView;
 import com.example.demo.enums.Status;
 
 import lombok.AccessLevel;
@@ -25,6 +20,6 @@ public class NovelJustIdAndNameRespone {
 	String nameNovel;
 	String descriptionNovel;
 	Status statusNovel;
-
+	int totalPage;
 
 }

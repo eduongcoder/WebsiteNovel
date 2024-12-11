@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,9 +71,9 @@ public class NovelController {
 	}
 
 	@PostMapping(value = "/createNovel", consumes = { "multipart/form-data" })
-	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,@RequestParam MultipartFile orginalNovel,
+	public ApiRespone<NovelRespone> createNovel(@RequestParam MultipartFile image,@RequestParam MultipartFile originalNovel,
 			@RequestPart NovelCreationRequest request) throws IOException {
-		NovelRespone novelRespone = novelService.createNovel(image,orginalNovel, request);
+		NovelRespone novelRespone = novelService.createNovel(image,originalNovel, request);
 
 		return ApiRespone.<NovelRespone>builder().result(novelRespone).build();
 	} 
@@ -98,7 +99,13 @@ public class NovelController {
 	} 
 
 	@PutMapping(value = "/updateNovel",consumes = {"multipart/form-data"})
-	public ApiRespone<Optional<NovelRespone>> updateNovel(@RequestParam(required = false) MultipartFile image, @RequestParam(required = false) MultipartFile originalFile,@RequestPart NovelUpdateRequest request) throws IOException{
-		return ApiRespone.<Optional<NovelRespone>>builder().result(novelService.updateNovel(image,originalFile,request)).build();
+	public ApiRespone<Optional<NovelRespone>> updateNovel(@RequestParam(required = false) MultipartFile image, @RequestParam(required = false) MultipartFile originalNovel,@RequestPart NovelUpdateRequest request) throws IOException{
+
+		return ApiRespone.<Optional<NovelRespone>>builder().result(novelService.updateNovel(image,originalNovel,request)).build();
+	}
+	
+	@DeleteMapping("/deleteNovel")
+	public ApiRespone<String> deleteNovel(@RequestParam String idNovel) {
+		return ApiRespone.<String>builder().result(novelService.delete(idNovel)).build();
 	}
 }
