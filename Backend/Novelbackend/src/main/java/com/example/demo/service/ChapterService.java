@@ -16,6 +16,7 @@ import com.example.demo.dto.request.ChapterCreationRequest;
 import com.example.demo.dto.request.ChaptersUpdateRequest;
 import com.example.demo.dto.respone.ChapterNoContentRespone;
 import com.example.demo.dto.respone.ChapterRespone;
+import com.example.demo.dto.respone.StatisticsViewRespone;
 import com.example.demo.entity.Chapter;
 import com.example.demo.entity.Comment;
 import com.example.demo.entity.Novel;
@@ -161,7 +162,7 @@ public class ChapterService {
 				throw new IllegalArgumentException("Invalid page number");
 			}
 
-			if (pageNumber >= totalPage) {
+			if (pageNumber > totalPage) {
 				throw new IllegalArgumentException("Invalid page number totalPage");
 			}
 
@@ -188,7 +189,7 @@ public class ChapterService {
 
 		try (PDDocument document = PDDocument.load(pdfBytes)) {
 			int totalPage = document.getNumberOfPages();
-			if (pageNumber < 0 || pageNumber >= totalPage) {
+			if (pageNumber < 0 || pageNumber > totalPage) {
 				throw new IllegalArgumentException("Invalid page number");
 			}
 
@@ -294,5 +295,7 @@ public class ChapterService {
 			return false;
 		}
 	}
+	
+	
 
 }

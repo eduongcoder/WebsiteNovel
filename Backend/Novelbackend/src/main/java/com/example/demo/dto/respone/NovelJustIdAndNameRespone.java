@@ -21,5 +21,6 @@ public class NovelJustIdAndNameRespone {
 	String descriptionNovel;
 	Status statusNovel;
 	int totalPage;
+	int totalChapter;
 
 }
