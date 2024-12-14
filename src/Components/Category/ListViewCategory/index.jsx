@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories, deleteCategory } from '@/Redux/ReduxSlice/categorySlice';
+import {
+    fetchCategories,
+    deleteCategory,
+} from '@/Redux/ReduxSlice/categorySlice';
+import { Category } from '@/Redux/ReduxSlice/Seletor';
 
-const TABLE_HEADS = ['Id Point Of View', 'Name Point Of View', 'Action'];
+const TABLE_HEADS = ['id category', 'Name category', 'Action'];
 
 function ListViewCategory() {
     const dispatch = useDispatch();
-    const { pov: categorys, loading, error } = useSelector((state) => state.category);
+    const categorys = useSelector(Category);
 
     // State for filtering and searchnameCategory
     const [searchQuery, setSearchQuery] = useState('');
@@ -20,25 +24,22 @@ function ListViewCategory() {
         dispatch(fetchCategories());
     }, [dispatch]);
 
-
     useEffect(() => {
-        setFilteredPovs(
-            povs.filter((pov) =>
-                pov.namePointOfView
+        setFilteredCategory(
+            categorys.filter((category) =>
+                category.nameCategory
                     .toLowerCase()
                     .includes(searchQuery.toLowerCase()),
             ),
         );
-    }, [povs, searchQuery]);
+    }, [categorys, searchQuery]);
 
-   
-    const handleDelete = (povId) => {
-        dispatch(deleteCategory(povId));
+    const handleDelete = (cateId) => {
+        dispatch(deleteCategory(cateId));
     };
 
-   
     const handleSort = (column) => {
-        const sortedPovs = [...filteredPovs].sort((a, b) => {
+        const sortedPovs = [...filteredCategory].sort((a, b) => {
             if (column === 'Id Point Of View') {
                 return sortOrder === 'asc'
                     ? a.idPointOfView - b.idPointOfView
@@ -51,14 +52,14 @@ function ListViewCategory() {
             return 0;
         });
 
-        setFilteredPovs(sortedPovs);
+        setFilteredCategory(sortedPovs);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     };
 
     // Pagination Logic
     const indexOfLastPov = currentPage * povsPerPage;
     const indexOfFirstPov = indexOfLastPov - povsPerPage;
-    const currentPovs = filteredPovs.slice(indexOfFirstPov, indexOfLastPov);
+    const currentPovs = filteredCategory.slice(indexOfFirstPov, indexOfLastPov);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -66,11 +67,6 @@ function ListViewCategory() {
         setPovsPerPage(Number(e.target.value));
         setCurrentPage(1); // Reset to first page when items per page changes
     };
-
-    if (loading)
-        return <div className="text-center text-blue-500">Loading...</div>;
-    if (error)
-        return <div className="text-center text-red-500">Error: {error}</div>;
 
     return (
         <div>
@@ -120,20 +116,20 @@ function ListViewCategory() {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentPovs.length > 0 ? (
-                                currentPovs.map((pov) => (
-                                    <tr key={pov.idPointOfView}>
+                            {categorys.length > 0 ? (
+                                categorys.map((category) => (
+                                    <tr key={category.idCategory}>
                                         <td className="px-3 py-3">
-                                            {pov.idPointOfView}
+                                            {category.idCategory}
                                         </td>
                                         <td className="px-3 py-3">
-                                            {pov.namePointOfView}
+                                            {category.nameCategory}
                                         </td>
                                         <td className="px-3 py-3">
                                             <button
                                                 onClick={() =>
                                                     handleDelete(
-                                                        pov.idPointOfView,
+                                                        category.idCategory,
                                                     )
                                                 }
                                                 className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 transition duration-150"
@@ -164,7 +160,7 @@ function ListViewCategory() {
                             {Array.from(
                                 {
                                     length: Math.ceil(
-                                        filteredPovs.length / povsPerPage,
+                                        filteredCategory.length / povsPerPage,
                                     ),
                                 },
                                 (_, index) => (

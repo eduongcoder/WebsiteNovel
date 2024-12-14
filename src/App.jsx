@@ -14,6 +14,7 @@ function App() {
                         route.layout === null ? Fragment : DefaultLayout;
                     const Page = route.component;
                     return (
+                        
                         <Route
                             path={route.path}
                             key={index}

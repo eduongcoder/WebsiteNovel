@@ -14,15 +14,13 @@ const NovelForm = () => {
     const [statusNovel, setStatusNovel] = useState('');
     const [totalChapter, setTotalChapter] = useState(0);
     const [selectedNovelId, setSelectedNovelId] = useState('');
-    const [originalNovel, setOriginalNovel] = useState(''); // State for originalNovel
 
     const dispatch = useDispatch();
+    const { novels, loading, error } = useSelector((state) => state.novel);
 
     useEffect(() => {
         dispatch(fetchNovels());
     }, [dispatch]);
-
-    const novels = useSelector((state) => state.novel.novels);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0] || null);
@@ -45,17 +43,19 @@ const NovelForm = () => {
                 setDescriptionNovel(selectedNovel.descriptionNovel);
                 setStatusNovel(selectedNovel.statusNovel);
                 setTotalChapter(selectedNovel.totalChapter);
-                // Optionally set `file` and `filePdf` if you have URL references
             }
         } else {
-            // Clear form fields if no novel is selected
-            setNameNovel('');
-            setDescriptionNovel('');
-            setStatusNovel('');
-            setTotalChapter(0);
-            setFile(null);
-            setFilePdf(null);
+            clearForm();
         }
+    };
+
+    const clearForm = () => {
+        setNameNovel('');
+        setDescriptionNovel('');
+        setStatusNovel('');
+        setTotalChapter(0);
+        setFile(null);
+        setFilePdf(null);
     };
 
     const validateForm = () => {
@@ -72,71 +72,94 @@ const NovelForm = () => {
         }
         return true;
     };
-
-    const handleOriginalNovelChange = (e) => {
-        setOriginalNovel(e.target.value);
-    };
-
-    const logFormData = (formData) => {
-        // Duyệt qua tất cả các entry trong FormData và log chúng
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
+    const validateupdateForm = () => {
+        if (
+          
+            !nameNovel ||
+            !descriptionNovel ||
+            !statusNovel ||
+            totalChapter <= 0
+        ) {
+            alert('Please fill in all required fields and attach files.');
+            return false;
         }
+        return true;
     };
 
     const prepareFormData = () => {
         const formData = new FormData();
-        formData.append('image', file, file.name);
-        formData.append('originalFile', filePdf, filePdf.name);
+        formData.append('image', file); // Đúng tên field mà API yêu cầu
+        formData.append('originalNovel', filePdf); // Sửa lại tên đúng theo yêu cầu API
 
-        // Nếu có giá trị trong originalNovel
-        originalNovelValues.forEach((novel) => {
-            formData.append('originalNovel[]', novel); // Thêm mỗi phần tử vào FormData
-        });
-
-        // Payload của bạn
         const payload = {
-            idNovel: selectedNovelId || '', // Nếu chưa có ID, hãy để trống hoặc thêm giá trị mặc định
+            idNovel: selectedNovelId || '',
             nameNovel,
             descriptionNovel,
             statusNovel,
             totalChapter: parseInt(totalChapter, 10),
-            originalNovel: originalNovelValues, // Truyền dữ liệu hợp lệ
         };
-        console.log(' gia tri payload:', payload);
-        // Thêm request dưới dạng Blob
+
+        // Đảm bảo tên `request` phù hợp với API
         formData.append(
             'request',
             new Blob([JSON.stringify(payload)], { type: 'application/json' }),
         );
 
-        console.log('Prepared FormData:', formData);
+        // In ra từng phần trong formData
+        formData.forEach((value, key) => {
+            console.log(`${key}:`, value);
+        });
 
         return formData;
     };
 
-    const handleCreate = (e) => {
+    const handleCreate = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-        dispatch(createNovel(payload)); // Gửi yêu cầu API để tạo tiểu thuyết mới
+
+        const formData = prepareFormData();
+        try {
+            await dispatch(createNovel(formData)).unwrap();
+            alert('Novel created successfully!');
+            clearForm();
+        } catch (error) {
+            alert('Failed to create novel. Please try again.');
+            console.error(error);
+        }
     };
 
-    const handleUpdate = (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
 
         if (!selectedNovelId) {
             alert('Please select a novel to update.');
             return;
         }
-
-        if (!validateForm()) return;
+        if (!validateupdateForm()) return;
 
         const formData = prepareFormData();
-        dispatch(updateNovel(formData)); // Gửi yêu cầu API để cập nhật tiểu thuyết
+
+        // Debug: Log all formData content
+        formData.forEach((value, key) => {
+            console.log(`${key}:`, value);
+        });
+
+        try {
+            await dispatch(updateNovel(formData)).unwrap();
+            alert('Novel updated successfully!');
+        } catch (error) {
+            alert('Failed to update novel. Please try again.');
+            console.error(error);
+        }
     };
 
     return (
         <form className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
+            {loading && <p className="text-blue-500">Loading...</p>}
+            {error && (
+                <p className="text-red-500">Error: {error.message || error}</p>
+            )}
+
             <select
                 onChange={handleNovelChange}
                 value={selectedNovelId}
@@ -170,17 +193,6 @@ const NovelForm = () => {
                 className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
 
-            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Original Novel (comma-separated)
-            </label>
-            <input
-                type="text"
-                value={originalNovel}
-                onChange={handleOriginalNovelChange}
-                placeholder="e.g., Novel 1, Novel 2"
-                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-            />
-
             <input
                 type="text"
                 value={nameNovel}
@@ -199,7 +211,7 @@ const NovelForm = () => {
             <select
                 value={statusNovel}
                 onChange={(e) => setStatusNovel(e.target.value)}
-                className="block px-8 py-2.5 mt-2 leading-5 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             >
                 <option value="" disabled>
                     Select Status
@@ -214,7 +226,7 @@ const NovelForm = () => {
                 value={totalChapter}
                 onChange={(e) => setTotalChapter(e.target.value)}
                 placeholder="Total Chapters"
-                className="block w-full px-4 py-2 mt-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
             />
 
             <div className="flex justify-between gap-4">

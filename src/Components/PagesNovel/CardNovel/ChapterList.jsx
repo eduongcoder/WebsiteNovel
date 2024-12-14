@@ -40,14 +40,19 @@ export default function ChapterList({ idNovel }) {
                 <div>
                     {chapters.map((chapter, index) => (
                         <Link
-                            to={`/ViewChap/${chapter.idChapter}`}
+                            to={`/ViewChap/${
+                                chapter.idChapter
+                            }?startPage=${1}&totalPageChapter=${
+                                chapter.totalPageChapter
+                            }&titleChapter=
+                            ${chapter.titleChapter}`}
                             className="w-full"
                             key={chapter.idChapter}
                         >
                             <div className="flex justify-between items-center bg-gray-800 p-4 mb-2 rounded cursor-pointer hover:bg-gray-700">
                                 <div>
                                     <p className="text-sm font-medium">
-                                        Book {index + 1} — {chapter.titleChapter}
+                                        {chapter.titleChapter}
                                     </p>
                                 </div>
                                 <button className="text-gray-400 hover:text-white">

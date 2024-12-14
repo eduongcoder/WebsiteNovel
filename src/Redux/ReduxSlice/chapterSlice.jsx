@@ -11,7 +11,8 @@ export const fetchChapters = createAsyncThunk(
             const response = await axios.get(
                 `${BASE_URL}/getAllChapterNoContentByNameNovel?idNovel=${idNovel}`,
             );
-            return response.data.result; // Chỉ trả về mảng 'result'
+            console.log(response);
+            return response; // Chỉ trả về mảng 'result'
         } catch (error) {
             // Xử lý lỗi và trả về thông báo chi tiết nếu có lỗi
             return rejectWithValue(
@@ -77,7 +78,7 @@ export const updateChapter = createAsyncThunk(
                 formData,
                 {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'application/json',
                     },
                 },
             );
@@ -143,11 +144,10 @@ export const fetchPdfData = createAsyncThunk(
     'chapter/fetchPdfData',
     async ({ pageNum, pdfId, pageGet }, { rejectWithValue }) => {
         try {
-            const response = await fetch(
+            const response = await axios.get(
                 `${BASE_URL}/pages?id=${pdfId}&page=${pageNum}&pageGet=${pageGet}`,
             );
-            const data = await response.json();
-
+            const data = response.data; // Chỉnh sửa để lấy đúng dữ liệu
             if (data.result?.pageContent && data.result.totalPages > 0) {
                 return {
                     pageContent: data.result.pageContent, // Mảng Base64 của từng trang
@@ -170,15 +170,13 @@ const chapterSlice = createSlice({
         chapters: [],
         chaptersNoContent: [],
         pdfData: [],
-        loading: false, // Trạng thái chung
+        loading: false,
         error: null,
         hasMore: true,
         testResult: null,
         lastUpdated: null,
     },
-    reducers: {
-        // Nếu cần các reducers sync, bạn có thể thêm vào đây
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             // Fetch chapters by novel ID
@@ -187,7 +185,9 @@ const chapterSlice = createSlice({
             })
             .addCase(fetchChapters.fulfilled, (state, action) => {
                 state.loading = false;
-                state.chapters = action.payload;
+                const chapter = action.payload.data.result;
+                console.log('', typeof chapter);
+                Array.from(chapter).map((el)=>state.chapters.push(el));
             })
             .addCase(fetchChapters.rejected, (state, action) => {
                 state.loading = false;
@@ -224,6 +224,17 @@ const chapterSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload || 'Failed to delete chapter';
             })
+            .addCase(updateChapter.fulfilled, (state, action) => {
+                const index = state.chapters.findIndex(
+                    (chapter) => chapter.idChapter === action.payload.idChapter,
+                );
+                if (index !== -1) {
+                    state.chapters[index] = {
+                        ...state.chapters[index],
+                        ...action.payload,
+                    };
+                }
+            })
             // Handle PDF data fetching
             .addCase(fetchPdfData.pending, (state) => {
                 state.loading = true;
@@ -231,14 +242,9 @@ const chapterSlice = createSlice({
             })
             .addCase(fetchPdfData.fulfilled, (state, action) => {
                 state.loading = false;
-                console.log('pdf', action.pdfData);
-                console.log('pageContent', action.payload.pageContent);
-                state.pdfData = [
-                    ...state.pdfData,
-                    ...action.payload.pageContent,
-                ]; // Append dữ liệu mới
+                state.pdfData = action.payload.pageContent; // Lưu trực tiếp chuỗi Base64
                 state.hasMore =
-                    state.pdfData.length < action.payload.totalPages; // Kiểm tra nếu còn trang
+                    action.payload.totalPages > state.pdfData.length;
             })
             .addCase(fetchPdfData.rejected, (state, action) => {
                 state.loading = false;

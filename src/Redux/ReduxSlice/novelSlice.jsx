@@ -21,7 +21,19 @@ export const fetchNovels = createAsyncThunk(
         }
     },
 );
-
+export const deleteNovel = createAsyncThunk(
+    'novel/deleteNovel',
+    async (idNovel, { rejectWithValue }) => {
+        try {
+            await axios.delete(`${BASE_URL}/deleteNovel?idNovel=${idNovel}`);
+            return idNovel;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || 'Failed to delete novel',
+            );
+        }
+    },
+);
 export const fetchNovelOnlyName = createAsyncThunk(
     'novel/fetchNovelOnlyName',
     async (_, { rejectWithValue }) => {
@@ -51,7 +63,6 @@ export const createNovel = createAsyncThunk(
         }
     },
 );
-
 
 export const updateNovel = createAsyncThunk(
     'novel/updateNovel',
@@ -116,9 +127,11 @@ export const addCategory = createAsyncThunk(
 
 export const addAuthor = createAsyncThunk(
     'novel/addAuthor',
-    async ({idAuthor , idNovel}, { rejectWithValue }) => {
+    async ({ idAuthor, idNovel }, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/addAuthor?idAuthor=${idAuthor}&idNovel=${idNovel}`);
+            const response = await axios.post(
+                `${BASE_URL}/addAuthor?idAuthor=${idAuthor}&idNovel=${idNovel}`,
+            );
             return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
@@ -128,9 +141,11 @@ export const addAuthor = createAsyncThunk(
 
 export const addPOV = createAsyncThunk(
     'novel/addPOV',
-    async ({namePointOfView , idNovel}, { rejectWithValue }) => {
+    async ({ namePointOfView, idNovel }, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${BASE_URL}/addPOV?namePOV=${namePointOfView}&idNovel=${idNovel}`);
+            const response = await axios.post(
+                `${BASE_URL}/addPOV?namePOV=${namePointOfView}&idNovel=${idNovel}`,
+            );
             return response.data.result || [];
         } catch (error) {
             return handleError(error, rejectWithValue);
@@ -163,10 +178,17 @@ const novelSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            .addCase(fetchNovels.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
             .addCase(fetchNovels.fulfilled, (state, action) => {
-                console.log('Fetch novels fulfilled:', action.payload); // Log dữ liệu
-                state.novels = action.payload; // Gán dữ liệu vào novels
                 state.loading = false;
+                state.novels = action.payload;
+            })
+            .addCase(fetchNovels.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
             })
             .addCase(fetchNovelOnlyName.fulfilled, (state, action) => {
                 state.novels = action.payload;
@@ -186,7 +208,17 @@ const novelSlice = createSlice({
                     ...action.payload,
                 ];
             })
-
+            .addCase(deleteNovel.fulfilled, (state, action) => {
+                state.loading = false;
+                state.novels = state.novels.filter(
+                    (novel) => novel.idNovel !== action.payload,
+                );
+                state.lastUpdated = new Date().toISOString();
+            })
+            .addCase(deleteNovel.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || 'Failed to delete chapter';
+            })
             .addCase(addAuthor.fulfilled, (state, action) => {
                 state.currentNovel.authors = [
                     ...state.currentNovel.authors,

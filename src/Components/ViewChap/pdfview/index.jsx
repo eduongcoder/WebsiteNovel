@@ -1,81 +1,50 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPdfData } from '@/Redux/ReduxSlice/chapterSlice';
-import { Document, Page } from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
-// Cấu hình worker cho pdf.js
-import { pdfjs } from 'react-pdf';
-pdfjs.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.0.279/pdf.worker.min.js';
-
-function PdfViewer({ pdfId, pageGet = 1 }) {
+const PdfViewer = ({ pdfId, page, pageGet }) => {
     const dispatch = useDispatch();
-    const { pdfData,pageContent, loading, error, hasMore } = useSelector(
-        (state) => state.chapter,
-    );
-    console.log("PdfViewer  pagecontent", pageContent);
-    const [page, setPage] = useState(1);
-    const containerRef = useRef(null);
-    // Fetch dữ liệu từ API khi thay đổi số trang
+
+    // Lấy dữ liệu từ Redux store
+    const { pdfData, error } = useSelector((state) => state.chapter);
+    const pageContent = pdfData; // Sử dụng trực tiếp pdfData vì đây là chuỗi Base64
+    // Gọi API khi component mount hoặc khi các props thay đổi
     useEffect(() => {
-        dispatch(fetchPdfData({ pageNum: page, pdfId, pageGet }));
-    }, [dispatch, page, pdfId, pageGet]);
-
-    // Xử lý cuộn trang
-    const handleScroll = () => {
-        if (
-            containerRef.current &&
-            containerRef.current.scrollTop +
-                containerRef.current.clientHeight >=
-                containerRef.current.scrollHeight &&
-            hasMore &&
-            !loading
-        ) {
-            setPage((prevPage) => prevPage + 1);
+        if (pdfId && page) {
+            dispatch(fetchPdfData({ pageNum: page, pdfId, pageGet }));
         }
-    };
-    console.log(" console.log(pdfData?.pageContent?.length)",pdfData )
-    return (
-        <div
-            ref={containerRef}
-            onScroll={handleScroll}
-            className="h-screen overflow-y-auto p-4"
-        >
-       
-            {pdfData?.pageContent?.length > 0
+    }, [dispatch, pdfId, page, pageGet]);
 
-                ? pdfData.pageContent.map(
-                  
-                      (pageContent, index) => (
-                          console.log(pageContent),
-                          (
-                              <div key={index} className="mb-4">
-                                  <Document
-                                      file={`data:application/pdf;base64,${pageContent}`}
-                                  >
-                                      <Page pageNumber={index + 1} />
-                                  </Document>
-                              </div>
-                          )
-                      ),
-                  )
-                : !loading && (
-                      <p className="text-center text-gray-500">
-                          Không có dữ liệu để hiển thị.
-                      </p>
-                  )}
-            {loading && (
-                <p className="text-center text-blue-500">Đang tải...</p>
-            )}
-            {!hasMore && !loading && (
-                <p className="text-center text-gray-500">
-                    Đã tải hết dữ liệu PDF.
-                </p>
-            )}
-            {error && <p className="text-center text-red-500">{error}</p>}
+    return (
+        <div>
+            <div  className="   dark:bg-gray-900 mx-auto  h-full max-w-[1280px] flex-1 py-0 px-8 md:px-24">
+                <button
+                    onClick={() =>
+                        dispatch(
+                            fetchPdfData({ pageNum: page, pdfId, pageGet }),
+                        )
+                    }
+                >
+                    Xem Trang {page}
+                </button>
+                {error && <p className="text-red-500">Error: {error}</p>}
+                {console.log(' giá trị pageContent : ', pageContent)}
+                {pageContent ? (
+                    <iframe
+                        src={'data:application/pdf;base64,' + pageContent}
+                        style={{
+                            width: '100%',
+                            height: '1000px',
+                            border: 'none',
+                        }}
+                        title="PDF Viewer"
+                    ></iframe>
+                ) : (
+                    <p className="text-red-500">Loading PDF content...</p>
+                )}
+            </div>
         </div>
     );
-}
+};
 
 export default PdfViewer;
