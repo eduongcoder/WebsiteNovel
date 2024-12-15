@@ -38,14 +38,14 @@ const InputAuthor = () => {
         const dobDate = new Date(dob);
         const dodDate = new Date(dod);
 
-        if (!dob || !dod) {
-            setError('Ngày sinh và ngày mất không được để trống.');
-            return false;
-        }
+        const isDefaultDate = (date) =>
+            date.getTime() === new Date('').getTime();
 
-        if (dobDate > dodDate) {
-            setError('Ngày sinh phải nhỏ hơn ngày mất.');
-            return false;
+        if (dodDate && isDefaultDate(dodDate)) {
+            if (dobDate > dodDate) {
+                setError('Ngày sinh phải nhỏ hơn ngày mất.');
+                return false;
+            }
         }
 
         if (dobDate > today || dodDate > today) {
@@ -64,10 +64,10 @@ const InputAuthor = () => {
             return;
         }
 
-        if (!file) {
-            alert('Vui lòng chọn file ảnh.');
-            return;
-        }
+        // if (!file) {
+        //     alert('Vui lòng chọn file ảnh.');
+        //     return;
+        // }
 
         dispatch(
             createAuthor({
@@ -77,7 +77,7 @@ const InputAuthor = () => {
                 dobAuthor,
                 dodAuthor,
                 file,
-            })
+            }),
         );
     };
 
@@ -105,10 +105,13 @@ const InputAuthor = () => {
 
         formData.append(
             'request',
-            new Blob([JSON.stringify(authorData)], { type: 'application/json' })
+            new Blob([JSON.stringify(authorData)], {
+                type: 'application/json',
+            }),
         );
 
         dispatch(updateAuthor(formData));
+        
     };
 
     const handleAuthorChange = (e) => {
@@ -126,14 +129,23 @@ const InputAuthor = () => {
         }
 
         const selectedAuthor = authors.find(
-            (author) => author.idAuthor === selectedAuthorId
+            (author) => author.idAuthor === selectedAuthorId,
         );
 
         if (selectedAuthor) {
             setNameAuthor(selectedAuthor.nameAuthor);
             setDescriptionAuthor(selectedAuthor.descriptionAuthor);
             setNationality(selectedAuthor.nationality);
-            setDobAuthor(selectedAuthor.dobAuthor);
+            // console.log(typeof selectedAuthor.dobAuthor);
+            // setDobAuthor(selectedAuthor.dobAuthor);
+            try {
+                const dob = new Date(selectedAuthor.dobAuthor)
+                    .toISOString()
+                    .split('T')[0];
+                setDobAuthor(dob);
+            } catch (error) {
+                console.error('Invalid date format:', error);
+            }
             setDodAuthor(selectedAuthor.dodAuthor);
             setFile(selectedAuthor.imageUrl || null);
         }

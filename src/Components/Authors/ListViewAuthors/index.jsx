@@ -78,7 +78,7 @@ function ListViewAuthors() {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    // if (error) return <div>Error: {error.message}</div>;
 
     return (
         <div>
@@ -145,7 +145,7 @@ function ListViewAuthors() {
                                         <td className="px-3 py-3">
                                             <img
                                                 src={author.imageAuthor}
-                                                alt={`Novel ${author.idAuthor}`}
+                                                alt={'Chờ cập nhật'}
                                                 className="w-20 h-auto"
                                             />
                                         </td>

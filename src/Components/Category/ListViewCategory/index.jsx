@@ -8,58 +8,58 @@ import { Category } from '@/Redux/ReduxSlice/Seletor';
 
 const TABLE_HEADS = ['id category', 'Name category', 'Action'];
 
-function ListViewCategory() {
+const ListViewCategory = () => {
     const dispatch = useDispatch();
-    const categorys = useSelector(Category);
+    const categories = useSelector(Category); // Directly using the categories from Redux store
 
-    // State for filtering and searchnameCategory
+    // State for search query and pagination
     const [searchQuery, setSearchQuery] = useState('');
-    const [nameCategory, setnameCategory] = useState(categorys);
     const [currentPage, setCurrentPage] = useState(1);
-    const [povsPerPage, setPovsPerPage] = useState(5); // Default 5 POV per page
+    const [povsPerPage, setPovsPerPage] = useState(5); // Default 5 categories per page
     const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
 
-    // Fetch POVs when the component mounts
+    // Fetch categories when the component mounts
     useEffect(() => {
         dispatch(fetchCategories());
     }, [dispatch]);
 
-    useEffect(() => {
-        setFilteredCategory(
-            categorys.filter((category) =>
-                category.nameCategory
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()),
-            ),
-        );
-    }, [categorys, searchQuery]);
-
     const handleDelete = (cateId) => {
-        dispatch(deleteCategory(cateId));
+        try {
+            dispatch(deleteCategory(cateId));
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     const handleSort = (column) => {
-        const sortedPovs = [...filteredCategory].sort((a, b) => {
-            if (column === 'Id Point Of View') {
+        const sortedCategories = [...categories].sort((a, b) => {
+            if (column === 'id category') {
                 return sortOrder === 'asc'
-                    ? a.idPointOfView - b.idPointOfView
-                    : b.idPointOfView - a.idPointOfView;
-            } else if (column === 'Name Point Of View') {
+                    ? a.idCategory - b.idCategory
+                    : b.idCategory - a.idCategory;
+            } else if (column === 'Name category') {
                 return sortOrder === 'asc'
-                    ? a.namePointOfView.localeCompare(b.namePointOfView)
-                    : b.namePointOfView.localeCompare(a.namePointOfView);
+                    ? a.nameCategory.localeCompare(b.nameCategory)
+                    : b.nameCategory.localeCompare(a.nameCategory);
             }
             return 0;
         });
 
-        setFilteredCategory(sortedPovs);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     };
 
+    // Filter categories based on the search query
+    const filteredCategories = categories.filter((category) =>
+        category.nameCategory.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+
     // Pagination Logic
-    const indexOfLastPov = currentPage * povsPerPage;
-    const indexOfFirstPov = indexOfLastPov - povsPerPage;
-    const currentPovs = filteredCategory.slice(indexOfFirstPov, indexOfLastPov);
+    const indexOfLastCategory = currentPage * povsPerPage;
+    const indexOfFirstCategory = indexOfLastCategory - povsPerPage;
+    const currentCategories = filteredCategories.slice(
+        indexOfFirstCategory,
+        indexOfLastCategory,
+    );
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -72,13 +72,11 @@ function ListViewCategory() {
         <div>
             <section className="bg-cyan-600 rounded-md shadow-cyan-500/50 p-4 md:p-6">
                 <div className="mb-3 flex items-center justify-between">
-                    <h4 className="text-[18px] text-sky-100">
-                        Point of View List
-                    </h4>
+                    <h4 className="text-[18px] text-sky-100">Category List</h4>
                     <div>
                         <input
                             type="text"
-                            placeholder="Search POV..."
+                            placeholder="Search categories..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="mt-2 p-2 w-full md:w-64 border border-gray-300 rounded"
@@ -87,7 +85,7 @@ function ListViewCategory() {
                 </div>
 
                 <div className="mb-3">
-                    <label className="text-sm">Povs per page: </label>
+                    <label className="text-sm">Categories per page: </label>
                     <select
                         value={povsPerPage}
                         onChange={handlePovsPerPageChange}
@@ -116,8 +114,8 @@ function ListViewCategory() {
                             </tr>
                         </thead>
                         <tbody>
-                            {categorys.length > 0 ? (
-                                categorys.map((category) => (
+                            {filteredCategories.length > 0 ? (
+                                currentCategories.map((category) => (
                                     <tr key={category.idCategory}>
                                         <td className="px-3 py-3">
                                             {category.idCategory}
@@ -145,7 +143,7 @@ function ListViewCategory() {
                                         colSpan="3"
                                         className="text-center py-3"
                                     >
-                                        No POVs available.
+                                        No categories available.
                                     </td>
                                 </tr>
                             )}
@@ -160,7 +158,7 @@ function ListViewCategory() {
                             {Array.from(
                                 {
                                     length: Math.ceil(
-                                        filteredCategory.length / povsPerPage,
+                                        filteredCategories.length / povsPerPage,
                                     ),
                                 },
                                 (_, index) => (
@@ -180,6 +178,6 @@ function ListViewCategory() {
             </section>
         </div>
     );
-}
+};
 
 export default ListViewCategory;

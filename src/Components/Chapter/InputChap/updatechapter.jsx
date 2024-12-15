@@ -12,7 +12,6 @@ function UpdateChapter() {
     const [selectedNovel, setSelectedNovel] = useState('');
     const [updatedChapters, setUpdatedChapters] = useState({});
     const [errors, setErrors] = useState({});
-
     useEffect(() => {
         dispatch(fetchNovelOnlyName());
     }, [dispatch]);
@@ -20,9 +19,15 @@ function UpdateChapter() {
     const handleNovelChange = async (e) => {
         const idNovel = e.target.value;
         setSelectedNovel(idNovel);
-
-        if (idNovel) {
-            await dispatch(fetchChapters(idNovel));
+        if (
+            chapters.filter((chapter) => chapter.idNovel === idNovel).length != 0) {
+            
+        } else {
+            try {
+                await dispatch(fetchChapters(idNovel));
+            } catch (error) {
+                console.error('Failed to fetch');
+            }
         }
     };
 
@@ -185,10 +190,9 @@ function UpdateChapter() {
                     ))}
                 </select>
             </div>
-
             {chapters.length > 0 ? (
                 <div className="space-y-4">
-                    {chapters.map((chapter) => (
+                    {chapters.filter(chapter => chapter.idNovel === selectedNovel).map((chapter) => (
                         <div
                             key={chapter.idChapter}
                             className="p-4 border rounded-lg shadow-sm"

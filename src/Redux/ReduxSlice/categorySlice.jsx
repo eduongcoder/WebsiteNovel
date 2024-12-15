@@ -1,4 +1,3 @@
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -120,19 +119,23 @@ const categorySlice = createSlice({
                 state.error = action.payload || 'Failed to load categories';
             })
             .addCase(deleteCategory.fulfilled, (state, action) => {
-                // Kiểm tra state.categories có phải là mảng không trước khi thao tác
-                const categoriesArray = Object.values(state.categories); // Chuyển đối tượng thành mảng
-                categoriesArray.filter(
-                    (category) => category.idCategory !== action.payload,
+                const categoriesArray = Object.values(state.categories);
+                state.categories = categoriesArray.filter(
+                    (category) => Object.values(category)[0] != action.payload,
                 );
+                alert('Xóa thành công');
             })
             .addCase(deleteCategory.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to delete category';
+                state.error =
+                    action.payload.message || 'Failed to delete category';
+
+                alert('Error: ' + state.error);
             })
             .addCase(createCategory.fulfilled, (state, action) => {
                 // Kiểm tra và thêm mới category vào mảng categories
                 if (Array.isArray(state.categories)) {
                     state.categories.push(action.payload);
+                    alert('Thêm thể loại thành công');
                 } else {
                     console.error(
                         'state.categories is not an array:',
@@ -154,6 +157,7 @@ const categorySlice = createSlice({
                     if (index !== -1) {
                         state.categories[index] = action.payload; // Cập nhật category
                     }
+                    alert('Sửa thể loại thành công');
                 } else {
                     console.error(
                         'state.categories is not an array:',

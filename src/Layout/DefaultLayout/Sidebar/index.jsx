@@ -117,15 +117,6 @@ function Sidebar() {
                         </li>
                         <li>
                             <Link
-                                to="/ViewChap"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
-                                <MdGridView />
-                                <span className="ms-3">ViewChap</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
                                 to="/Authors"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
@@ -140,15 +131,6 @@ function Sidebar() {
                             >
                                 <FaProductHunt />
                                 <span className="ms-3">Point Of Views</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to="/Customer"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
-                                <AiOutlineCustomerService />
-                                <span className="ms-3">Pages Novel</span>
                             </Link>
                         </li>
                         <li>

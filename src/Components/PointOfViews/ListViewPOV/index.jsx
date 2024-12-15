@@ -69,8 +69,8 @@ function ListViewPOV() {
 
     if (loading)
         return <div className="text-center text-blue-500">Loading...</div>;
-    if (error)
-        return <div className="text-center text-red-500">Error: {error}</div>;
+    // if (error)
+    //     return <div className="text-center text-red-500">Error: {error}</div>;
 
     return (
         <div>

@@ -129,12 +129,15 @@ const authorSlice = createSlice({
                 state.authors = state.authors.filter(
                     (author) => author.idAuthor !== action.payload,
                 );
+                alert('Xóa thành công');
             })
             .addCase(deleteAuthor.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to delete author';
+                state.error = action.payload.message || 'Failed to delete author';
+                alert('Error: ' + state.error);
             })
             .addCase(createAuthor.fulfilled, (state, action) => {
                 state.authors.push(action.payload);
+                alert('Thêm thành công');
             })
             .addCase(createAuthor.rejected, (state, action) => {
                 state.error = action.payload || 'Failed to create author';
@@ -150,6 +153,7 @@ const authorSlice = createSlice({
                         ...action.payload,
                     };
                 }
+                alert(' cập thành công');
             })
             .addCase(updateAuthor.rejected, (state, action) => {
                 console.error('Update rejected error:', action.payload);

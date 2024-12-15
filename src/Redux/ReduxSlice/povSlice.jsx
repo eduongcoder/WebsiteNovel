@@ -25,28 +25,31 @@ export const deletePov = createAsyncThunk(
     async (povId, { rejectWithValue }) => {
         try {
             // Kiểm tra xem idPOV có hợp lệ hay không trước khi gửi yêu cầu
-            if (!povId) {
-                return rejectWithValue('Invalid POV ID');
-            }
+            // if (!povId) {
+            //     return rejectWithValue('Invalid POV ID');
+            // }
 
-            const response = await axios.delete(`${BASE_URL}/deletePOV?idPOV=${povId}`);
-            
-            // Kiểm tra phản hồi của API để xác định thành công
-            if (response.data && response.data.result) {
-                return povId;
-            }
-            throw new Error('Failed to delete POV');  // Nếu không có kết quả hợp lệ từ API, ném lỗi
+            // const response = await axios.delete(
+            //     `${BASE_URL}/deletePOV?idPOV=${povId}`,
+            // );
 
+            // // Kiểm tra phản hồi của API để xác định thành công
+            // if (response.data && response.data.result) {
+            //     return povId;
+            // }
+            // throw new Error('Failed to delete POV'); // Nếu không có kết quả hợp lệ từ API, ném lỗi
+
+            await axios.delete(`${BASE_URL}/deletePOV?idPOV=${povId}`);
+
+            return povId;
         } catch (error) {
             // Thêm thông tin lỗi chi tiết vào lỗi trả về
-            const errorMessage = error.response?.data?.message || error.message || 'Failed to delete POV';
-            console.error('Delete POV error:', error.response?.data);  // In lỗi ra console để kiểm tra
-            return rejectWithValue(errorMessage);
+            return rejectWithValue(
+                error.response?.data || 'Failed to delete category',
+            );
         }
     },
 );
-
-
 
 // Thunk to create a new POV
 export const createPov = createAsyncThunk(
@@ -105,6 +108,7 @@ const povSlice = createSlice({
             .addCase(fetchPov.fulfilled, (state, action) => {
                 state.loading = false;
                 state.pov = action.payload;
+                console.log('POV fulfilled', action.payload);
             })
             // Fetch POV rejected state
             .addCase(fetchPov.rejected, (state, action) => {
@@ -119,7 +123,8 @@ const povSlice = createSlice({
             })
             // Delete POV rejected state
             .addCase(deletePov.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to delete POV';
+                state.error = action.payload.message || 'Failed to delete POV';
+                alert('Error: ' + state.error);
             })
             // Create POV pending state
             .addCase(createPov.pending, (state) => {
