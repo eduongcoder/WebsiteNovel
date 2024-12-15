@@ -23,23 +23,25 @@ const CreateChapterForm = () => {
     console.log(novels);
     const validateChapterPages = (chapters) => {
         const chapterErrors = [];
-    
+
         for (let i = 0; i < chapters.length; i++) {
             const { startPage, endPage } = chapters[i];
             const prevChapter = chapters[i - 1] || null;
-    
+
             // Nếu startPage hoặc endPage không có giá trị
             if (!startPage || !endPage) {
                 chapterErrors.push('Vui lòng nhập đầy đủ các trang.');
                 continue;
             }
-    
+
             // Kiểm tra startPage nhỏ hơn endPage
             if (parseInt(startPage, 10) >= parseInt(endPage, 10)) {
-                chapterErrors.push('Trang bắt đầu phải nhỏ hơn trang kết thúc.');
+                chapterErrors.push(
+                    'Trang bắt đầu phải nhỏ hơn trang kết thúc.',
+                );
                 continue;
             }
-    
+
             // Kiểm tra ràng buộc giữa chương hiện tại và chương trước đó
             if (
                 prevChapter &&
@@ -50,33 +52,32 @@ const CreateChapterForm = () => {
                 );
                 continue;
             }
-    
+
             // Nếu không có lỗi
             chapterErrors.push(null);
         }
-    
+
         return chapterErrors;
     };
-    
+
     const validate = () => {
         const newErrors = {};
-    
+
         if (!idNovel) newErrors.idNovel = 'Vui lòng xác nhận tiểu thuyết.';
         if (tilteChapters.some((title) => !title)) {
             newErrors.tilteChapters = 'Mỗi chương cần có tiêu đề.';
         }
-    
+
         const chapterErrors = validateChapterPages(chapterPagesArray);
         if (chapterErrors.some((error) => error)) {
             newErrors.chapterPagesArray = chapterErrors;
         }
-    
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-    
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
 
@@ -90,8 +91,13 @@ const CreateChapterForm = () => {
             tilteChapters,
             array,
         };
-
-        dispatch(createChapters(payload));
+        try {
+            await dispatch(createChapters(payload));
+            alert(`Chapters đã tạo  thành công!`);
+        } catch (error) {
+            console.error('Cập nhật thất bại:', error);
+            alert('Có lỗi xảy ra.');
+        }
     };
 
     return (

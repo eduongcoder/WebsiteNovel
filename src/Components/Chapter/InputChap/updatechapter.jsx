@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNovelOnlyName } from '@/Redux/ReduxSlice/novelSlice';
 import { fetchChapters, updateChapter } from '@/Redux/ReduxSlice/chapterSlice';
@@ -9,9 +9,9 @@ function UpdateChapter() {
     const novels = useSelector(novel);
     const chapters = useSelector(chapter);
 
-    // Lưu trạng thái của các chương đã thay đổi
-    const [updatedChapters, setUpdatedChapters] = useState([]);
     const [selectedNovel, setSelectedNovel] = useState('');
+    const [updatedChapters, setUpdatedChapters] = useState({});
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         dispatch(fetchNovelOnlyName());
@@ -22,76 +22,143 @@ function UpdateChapter() {
         setSelectedNovel(idNovel);
 
         if (idNovel) {
-            const response = await dispatch(fetchChapters(idNovel));
-            const fetchedChapters = response.payload;
-
-            if (fetchedChapters.length > 0) {
-                // Khi tải các chương, lưu lại thông tin đã thay đổi trong state `updatedChapters`
-                setUpdatedChapters(fetchedChapters.map(chapter => ({
-                    ...chapter,
-                    titleChapter: chapter.titleChapter || '',
-                    startPage: chapter.startPage || 0,
-                    endPage: chapter.endPage || 0,
-                    contentChapter: chapter.contentChapter || null,
-                })));
-            } else {
-                setUpdatedChapters([]); // Không có chương nào
-            }
-        } else {
-            setUpdatedChapters([]); // Reset nếu không chọn tiểu thuyết nào
+            await dispatch(fetchChapters(idNovel));
         }
     };
 
-    const handleInputChange = (e, idChapter) => {
+    // const handleInputChange = (e, idChapter) => {
+    //     const { name, value } = e.target;
+
+    //     setUpdatedChapters({
+    //         [idChapter]: {
+    //             [name]: value,
+    //         },
+    //     });
+    //     setUpdatedChapters(newUpdatedChapters);
+
+    //     // Validate startPage and endPage
+    //     if (name === 'startPage' || name === 'endPage') {
+    //         validateChapterOrder(idChapter);
+    //     }
+    // };
+
+    const handleInputChange = (e, idChapter, otherName, otherPage) => {
         const { name, value } = e.target;
+        const newUpdatedChapters = {
+            ...updatedChapters,
+            [idChapter]: {
+                ...updatedChapters[idChapter],
+                [name]: value,
+                [otherName]: otherPage,
+            },
+        };
 
-        setUpdatedChapters(prevChapters =>
-            prevChapters.map(chapter =>
-                chapter.idChapter === idChapter
-                    ? { ...chapter, [name]: value }
-                    : chapter
-            )
-        );
+        // Cập nhật updatedChapters
+        setUpdatedChapters(newUpdatedChapters);
+
+        // Gọi validate với giá trị mới
+        if (name === 'startPage' || name === 'endPage') {
+            validateChapterOrder(idChapter, newUpdatedChapters); // Truyền giá trị mới
+        }
     };
 
-    const handleFileChange = (e, idChapter) => {
-        const file = e.target.files[0];
-        if (file) {
-            setUpdatedChapters(prevChapters =>
-                prevChapters.map(chapter =>
-                    chapter.idChapter === idChapter
-                        ? { ...chapter, contentChapter: file }
-                        : chapter
-                )
-            );
+    const validateChapterOrder = (idChapter, updatedChapters) => {
+        // Lấy thông tin chương hiện tại từ updatedChapters
+        const updatedChapter = updatedChapters[idChapter];
+
+        // Tìm chỉ số chương trong danh sách chapters
+        const chapterIndex = chapters.findIndex(
+            (chapter) => chapter.idChapter === idChapter,
+        );
+
+        // Lấy chương trước và chương sau
+        const previousChapter = chapters[chapterIndex - 1];
+        const nextChapter = chapters[chapterIndex + 1];
+
+        // Sao chép errors để chỉnh sửa
+        let newErrors = { ...errors };
+
+        // Kiểm tra startPage < endPage
+        if (updatedChapter.startPage >= updatedChapter.endPage) {
+            newErrors[idChapter] = {
+                ...newErrors[idChapter],
+                pageError: 'Trang bắt đầu phải nhỏ hơn trang kết thúc.',
+            };
+        } else {
+            delete newErrors[idChapter]?.pageError;
         }
+
+        // Kiểm tra thứ tự với chương trước
+        if (
+            previousChapter &&
+            updatedChapter.startPage <= previousChapter.endPage
+        ) {
+            newErrors[idChapter] = {
+                ...newErrors[idChapter],
+                orderError:
+                    'Trang bắt đầu của chương này phải lớn hơn trang kết thúc của chương trước.',
+            };
+        } else {
+            delete newErrors[idChapter]?.orderError;
+        }
+
+        // Kiểm tra thứ tự với chương sau
+        if (nextChapter && updatedChapter.endPage >= nextChapter.startPage) {
+            newErrors[idChapter] = {
+                ...newErrors[idChapter],
+                nextOrderError:
+                    'Trang kết thúc của chương này phải nhỏ hơn trang bắt đầu của chương sau.',
+            };
+        } else {
+            delete newErrors[idChapter]?.nextOrderError;
+        }
+
+        // Cập nhật lại errors
+        setErrors(newErrors);
     };
 
     const handleUpdateChapter = async (idChapter) => {
-        const updatedChapter = updatedChapters.find(
-            (chapter) => chapter.idChapter === idChapter
+        const chapter = chapters.find(
+            (chapter) => chapter.idChapter === idChapter,
         );
 
-        if (!updatedChapter) {
-            console.error('Không tìm thấy chapter cần cập nhật.');
+        if (!chapter) {
+            alert('Chương không tồn tại hoặc không có thay đổi.');
             return;
         }
 
-        const formData = new FormData();
-        formData.append('titleChapter', updatedChapter.titleChapter);
-        formData.append('startPage', updatedChapter.startPage);
-        formData.append('endPage', updatedChapter.endPage);
-
-        if (updatedChapter.contentChapter instanceof File) {
-            formData.append('contentChapter', updatedChapter.contentChapter); // Thêm file PDF nếu có
+        // Check if there are any validation errors
+        if (errors[idChapter] && Object.keys(errors[idChapter]).length > 0) {
+            alert('Vui lòng sửa lỗi trước khi cập nhật.');
+            return;
         }
 
+        const updatedChapter = updatedChapters[idChapter];
+        const formData = new FormData();
+        formData.append('idChapter', chapter.idChapter);
+        formData.append('idNovel', chapter.idNovel);
+        formData.append(
+            'titleChapter',
+            updatedChapter.titleChapter || chapter.titleChapter,
+        );
+        formData.append(
+            'startPage',
+            updatedChapter.startPage || chapter.startPage,
+        );
+        formData.append('endPage', updatedChapter.endPage || chapter.endPage);
+        formData.append('contentChapter', ''); // Empty when updating
+
         try {
-            await dispatch(updateChapter(formData)); // Thực hiện update
-            alert(`Chapter ${updatedChapter.titleChapter} đã được cập nhật thành công!`);
+            await dispatch(updateChapter(formData));
+            alert(`Chapter ${chapter.titleChapter} đã cập nhật thành công!`);
+            setUpdatedChapters((prevState) => {
+                const newState = { ...prevState };
+                delete newState[idChapter];
+                return newState;
+            });
         } catch (error) {
-            console.error('Lỗi khi cập nhật chương:', error);
-            alert('Không thể cập nhật chương. Vui lòng thử lại.');
+            console.error('Cập nhật thất bại:', error);
+            alert('Có lỗi xảy ra.');
         }
     };
 
@@ -101,14 +168,13 @@ function UpdateChapter() {
                 Update Chapters
             </h2>
 
-            {/* Combobox for selecting novel */}
             <div className="mb-4">
                 <label className="block text-lg text-gray-700 mb-2">
                     Chọn tiểu thuyết
                 </label>
                 <select
                     onChange={handleNovelChange}
-                    value={selectedNovel}
+                    defaultValue={selectedNovel}
                     className="block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                     <option value="">Chọn tiểu thuyết</option>
@@ -120,7 +186,6 @@ function UpdateChapter() {
                 </select>
             </div>
 
-            {/* Chapter details list */}
             {chapters.length > 0 ? (
                 <div className="space-y-4">
                     {chapters.map((chapter) => (
@@ -138,62 +203,81 @@ function UpdateChapter() {
                                 <input
                                     type="text"
                                     name="titleChapter"
-                                    defaultValue={chapter.titleChapter || ''} // Sử dụng defaultValue thay vì value
+                                    defaultValue={chapter.titleChapter}
                                     onChange={(e) =>
                                         handleInputChange(e, chapter.idChapter)
                                     }
                                     className="block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4 mt-4">
-                                <div>
-                                    <label className="block text-gray-700 mb-1">
-                                        Trang bắt đầu
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="startPage"
-                                        defaultValue={chapter.startPage || 0} // Sử dụng defaultValue thay vì value
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                e,
-                                                chapter.idChapter
-                                            )
-                                        }
-                                        className="block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 mb-1">
-                                        Trang kết thúc
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="endPage"
-                                        defaultValue={chapter.endPage || 0} // Sử dụng defaultValue thay vì value
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                e,
-                                                chapter.idChapter
-                                            )
-                                        }
-                                        className="block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    />
-                                </div>
-                            </div>
-                            <div className="mt-4">
+                            <div>
                                 <label className="block text-gray-700 mb-1">
-                                    Tải lên nội dung (PDF)
+                                    Trang bắt đầu
                                 </label>
                                 <input
-                                    type="file"
-                                    accept="application/pdf"
+                                    type="number"
+                                    name="startPage"
+                                    defaultValue={chapter.startPage}
                                     onChange={(e) =>
-                                        handleFileChange(e, chapter.idChapter)
+                                        handleInputChange(
+                                            e,
+                                            chapter.idChapter,
+                                            'endPage',
+                                            chapter.endPage,
+                                        )
                                     }
-                                    className="block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className={`block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                                        errors[chapter.idChapter]?.pageError
+                                            ? 'border-red-500'
+                                            : ''
+                                    }`}
                                 />
+                                {errors[chapter.idChapter]?.pageError && (
+                                    <p className="text-red-500 text-sm">
+                                        {errors[chapter.idChapter].pageError}
+                                    </p>
+                                )}
                             </div>
+                            <div>
+                                <label className="block text-gray-700 mb-1">
+                                    Trang kết thúc
+                                </label>
+                                <input
+                                    type="number"
+                                    name="endPage"
+                                    defaultValue={chapter.endPage}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            e,
+                                            chapter.idChapter,
+                                            'startPage',
+                                            chapter.startPage,
+                                        )
+                                    }
+                                    className={`block w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                                        errors[chapter.idChapter]?.pageError
+                                            ? 'border-red-500'
+                                            : ''
+                                    }`}
+                                />
+                                {errors[chapter.idChapter]?.pageError && (
+                                    <p className="text-red-500 text-sm">
+                                        {errors[chapter.idChapter].pageError}
+                                    </p>
+                                )}
+                            </div>
+
+                            {errors[chapter.idChapter]?.orderError && (
+                                <p className="text-red-500 text-sm">
+                                    {errors[chapter.idChapter].orderError}
+                                </p>
+                            )}
+                            {errors[chapter.idChapter]?.nextOrderError && (
+                                <p className="text-red-500 text-sm">
+                                    {errors[chapter.idChapter].nextOrderError}
+                                </p>
+                            )}
+
                             <div className="text-center mt-4">
                                 <button
                                     onClick={() =>
