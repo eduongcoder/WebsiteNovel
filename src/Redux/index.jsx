@@ -5,6 +5,7 @@ import novelReducer from './ReduxSlice/novelSlice';
 import povReducer from './ReduxSlice/povSlice';
 import chapterReducer from './ReduxSlice/chapterSlice';
 import userReducer from './ReduxSlice/userSlice';
+import CommentReducer from './ReduxSlice/commentSlice';
 const store = configureStore({
   reducer: {
     category: categoryReducer,
@@ -13,6 +14,7 @@ const store = configureStore({
     pov: povReducer,
     chapter: chapterReducer,
     user: userReducer,
+    comment: CommentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

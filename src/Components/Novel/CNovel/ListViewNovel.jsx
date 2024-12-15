@@ -25,12 +25,13 @@ const ListViewNovel = () => {
     const chapters = useSelector(chapter);
     const [openedId, setOpenedId] = useState(null);
     console.log('kiem tra ', chapters);
-    useEffect(  () => {
-
-        const fect =  async () => {await dispatch(fetchNovels());};
+    useEffect(() => {
+        const fect = async () => {
+            await dispatch(fetchNovels());
+        };
         // Fetch novels
         fect();
-        }, []);
+    }, []);
 
     const toggleContent = async (idNovel) => {
         if (
@@ -51,59 +52,71 @@ const ListViewNovel = () => {
         <div className="container mx-auto p-4">
             <section>
                 <h4 className="text-xl font-bold mb-4">Novel List</h4>
-                <div className="space-y-4">
+                <div className="container mx-auto p-4">
+                    <ul className="grid grid-cols-5 border-b items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 font-bold text-gray-700 py-2 px-4">
+                        <li className="col-span-1 place-items-center">
+                            Novel Name
+                        </li>
+                        <li className="col-span-1 place-items-center">
+                            Description
+                        </li>
+                        <li className="col-span-1 place-items-center">
+                            totalChapter
+                        </li>
+                        <li className="col-span-1 place-items-center">Image</li>
+                        <li className="col-span-1 place-items-center">
+                            Delete Action
+                        </li>
+                    </ul>
                     {novels.map((novel) => (
                         <div
                             key={novel.idNovel}
                             className="border border-blue-300 rounded"
                         >
-                            <div
-                                className="cursor-pointer  ite bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:bg-gray-200"
+                            <lu
+                                className="cursor-pointergrid grid grid-cols-5 border-b items-center justify-center border-gray-300 py-2 px-4 list-none bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%  hover:bg-blue-200"
                                 onClick={() => toggleContent(novel.idNovel)}
                             >
-                                <lu className="flex flex-col p-4 md:p-0 mt-4 font-medium border md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 from-indigo-500 via-purple-500 to-pink-500">
-                                    <li>
-                                        {' '}
-                                        <p className="font-medium">
-                                            {novel.nameNovel}
-                                        </p>
-                                    </li>
-                                    <li>
-                                        {' '}
-                                        <p className="text-sm text-white-600">
-                                            {novel.descriptionNovel}
-                                        </p>
-                                    </li>
-                                    <li>
-                                        {' '}
-                                        <p className="text-sm text-white-600">
-                                            totalChapter {novel.totalChapter}
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p className="px-3 py-3">
-                                            <img
-                                                src={novel.imageNovel}
-                                                alt={`Novel ${novel.idNovel}`}
-                                                className="w-20 h-auto"
-                                            />
-                                        </p>
-                                    </li>
-                                    <li>
-                                        {' '}
-                                        <button
-                                            onClick={() =>
-                                                dispatch(
-                                                    deleteNovel(novel.idNovel),
-                                                )
-                                            }
-                                            className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 transition duration-150"
-                                        >
-                                            Xóa
-                                        </button>
-                                    </li>
-                                </lu>
-                            </div>
+                                <li className=" border-r place-items-center  h-full border-red-400">
+                                    {' '}
+                                    <p className="font-medium text-justify text-2xl  text-white-400">
+                                        {novel.nameNovel}
+                                    </p>
+                                </li>
+                                <li className=" place-items-center border-r h-full border-red-400">
+                                    {' '}
+                                    <p className=" text-2xl text-justify text-white-400">
+                                        {novel.descriptionNovel}
+                                    </p>
+                                </li>
+                                <li className=" place-items-center border-r h-full border-red-400">
+                                    {' '}
+                                    <p className=" text-2xl text-justify text-white-400">
+                                        {novel.totalChapter}
+                                    </p>
+                                </li>
+                                <li className=" border-r text-justify  place-items-center h-full border-red-400">
+                                    {' '}
+                                    <p className="px-3 py-3">
+                                        <img
+                                            src={novel.imageNovel}
+                                            alt={`Novel ${novel.idNovel}`}
+                                            className="w-20 h-auto bg-origin-border"
+                                        />
+                                    </p>
+                                </li>
+                                <li className="col-span-1 items-center ">
+                                    {' '}
+                                    <button
+                                        onClick={() =>
+                                            dispatch(deleteNovel(novel.idNovel))
+                                        }
+                                        className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 transition duration-150"
+                                    >
+                                        Xóa
+                                    </button>
+                                </li>
+                            </lu>
                             <div>
                                 {openedId === novel.idNovel && (
                                     <div className="p-4">
