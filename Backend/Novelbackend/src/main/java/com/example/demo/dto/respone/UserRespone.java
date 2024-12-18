@@ -23,6 +23,7 @@ public class UserRespone {
 	String password;
 	String avatarUser;
 	String email;
+	String publicIDUser;
 	LocalDate dobUser;
 	HistoryReadRespone historyRead;
 

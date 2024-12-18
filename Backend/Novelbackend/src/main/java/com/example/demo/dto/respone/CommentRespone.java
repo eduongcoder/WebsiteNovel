@@ -13,13 +13,15 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentRespone {
+	
+	String idComment;
+	String avatarUser;
+	String userName;
 	int likeComment;
 	int dislikeComment;
 	String content_Comment;
 
 	boolean reviewStatusComment;
 
-	String idChapter;
 
-	String idUser;
 }

@@ -47,7 +47,7 @@ public class UserController {
 	public ApiRespone<UserRespone> createUser(@RequestBody UserCreationRequest request){
 		return ApiRespone.<UserRespone>builder()
 				.result(userService.createUser(request))
-				.build();
+				.build(); 
 	}
 	
 	@PostMapping("/createUserByEmail")

@@ -19,7 +19,7 @@ public class CommentCreationRequest {
 
 	boolean reviewStatusComment;
 
-	String idchapter;
+	String idChapter;
 
-	String iduser;
+	String idUser;
 }

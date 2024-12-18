@@ -54,8 +54,10 @@ public class UserService {
 		if (user != null) {
 			throw new AppException(ErrorCode.USER_EXISTED);
 		}
+		String userName=request.getEmail().split("@")[0];
+
 		user = userMapper.toUser(request);
-		
+		user.setUserName(userName);
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 
 		return userMapper.toUserRespone(userRepository.save(user));
@@ -69,8 +71,11 @@ public class UserService {
 		if (user != null) {
 			throw new AppException(ErrorCode.USER_EXISTED);
 		}
-		user = userMapper.toUser(request);
 		
+		String userName=request.getEmail().split("@")[0];
+		
+		user = userMapper.toUser(request);
+		user.setUserName(userName);
 		return userMapper.toUserRespone(userRepository.save(user));
 
 	}
@@ -97,6 +102,7 @@ public class UserService {
 		if (user==null) {
 			throw new AppException(ErrorCode.USER_NOT_EXISTED);
 		}
+
 		return userMapper.toUserRespone(user);
 	}
 	

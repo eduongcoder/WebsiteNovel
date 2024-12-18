@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,13 +44,13 @@ public class AuthorController {
 	}
 	
 	@PostMapping(value = "/createAuthor",consumes = { "multipart/form-data"})
-	public ApiRespone<AuthorRespone> createNovel(@RequestPart AuthorCreationRequest request,@RequestParam MultipartFile image) throws IOException {
+	public ApiRespone<AuthorRespone> createNovel(@RequestPart AuthorCreationRequest request, @RequestParam(required=false) MultipartFile image) throws IOException {
 		AuthorRespone authorRespone= authorService.createAuthor(request, image);
 
 		return ApiRespone.<AuthorRespone>builder().result(authorRespone).build();
 	}
 	@PutMapping(value = "/updateAuthor",consumes = { "multipart/form-data"})
-	public ApiRespone<Optional<AuthorRespone>> updateAuthor(@RequestPart AuthorUpdateRequest request,@RequestParam MultipartFile image) {
+	public ApiRespone<Optional<AuthorRespone>> updateAuthor(@RequestPart AuthorUpdateRequest request,@RequestParam(required = false) MultipartFile image) {
 		 
 		return ApiRespone.<Optional<AuthorRespone>>builder().result(authorService.updateAuthor(request,image)).build();
 	}

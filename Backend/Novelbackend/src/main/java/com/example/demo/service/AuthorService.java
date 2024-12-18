@@ -35,9 +35,15 @@ public class AuthorService {
 
 	public AuthorRespone createAuthor(AuthorCreationRequest request, MultipartFile image) throws IOException {
 		Author author = authorMapper.toAuthor(request);
-		UploadFileRespone respone= uploadFileService.uploadFile(image);
-		author.setImageAuthor(respone.getUrl());
-		author.setPublicIDAuthor(respone.getPublic_id());
+		if (image==null) {
+			author.setImageAuthor(null);
+			author.setPublicIDAuthor(null);
+		}else {
+			UploadFileRespone respone= uploadFileService.uploadFile(image);
+			author.setImageAuthor(respone.getUrl());
+			author.setPublicIDAuthor(respone.getPublic_id());
+		}
+		
 		return authorMapper.toAuthorRespone(authorRepository.save(author));
 	}
 
@@ -103,9 +109,15 @@ public class AuthorService {
 			t.setDescriptionAuthor(request.getDescriptionAuthor());
 			t.setNameAuthor(request.getNameAuthor());
 			try {
-				UploadFileRespone respone=uploadFileService.uploadFile(image);
-				t.setImageAuthor(respone.getUrl());
-				t.setPublicIDAuthor(respone.getPublic_id());
+				if (image!=null) {
+					UploadFileRespone respone=uploadFileService.uploadFile(image);
+					t.setImageAuthor(respone.getUrl());
+					t.setPublicIDAuthor(respone.getPublic_id());
+				}else {
+					t.setImageAuthor(null);
+					t.setPublicIDAuthor(null);
+				}
+				
 			} catch (IOException e) {
 				throw new AppException(ErrorCode.UPLOAD_FILE_ERROR);
 			}

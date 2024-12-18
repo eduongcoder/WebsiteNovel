@@ -219,6 +219,13 @@ public class ChapterService {
 	}
 
 	public boolean createChapters(String idNovel, List<Integer> array, List<String> totalTitle) throws IOException {
+		
+		List<Chapter> chapters=novelRepository.findById(idNovel).get().getChapter();
+		
+		for (Chapter chapter : chapters) {
+			deleteChapter(chapter.getIdChapter());
+		}
+		
 		Novel novel = novelRepository.findByIdNovel(idNovel);
 		byte[] filePdf = novel.getOriginalNovel();
 		if (filePdf.length < 0) {
