@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 public class HistoryId {
 
 	String idUser;
-	String idChapter;
+	String idNovel;
 	
 	
 }

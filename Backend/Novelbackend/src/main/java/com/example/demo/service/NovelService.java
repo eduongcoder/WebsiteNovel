@@ -263,15 +263,17 @@ public class NovelService {
 		}
 		List<Chapter> chapters = novel.getChapter();
 
+		List<HistoryRead> historyRead = historyReadRepository.findByNovel(novel);
+		if (!historyRead.isEmpty()) {
+			for (int i = 0; i < historyRead.size(); i++) {
+				historyReadService.deleteHistoryRead(historyRead.get(i).getId());
+
+			}
+		}
+		
 		if (!chapters.isEmpty()) {
 			for (Chapter chapter : chapters) {
-				List<HistoryRead> historyRead = historyReadRepository.findByChapter(chapter);
-				if (!historyRead.isEmpty()) {
-					for (int i = 0; i < historyRead.size(); i++) {
-						historyReadService.deleteHistoryRead(historyRead.get(i).getId());
-
-					}
-				}
+				
 				
 				List<Comment> comments = chapter.getComment();
 				if (!comments.isEmpty()) {

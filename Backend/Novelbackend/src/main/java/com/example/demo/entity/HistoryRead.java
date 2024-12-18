@@ -31,9 +31,11 @@ public class HistoryRead {
 	private User user; 
 
 	@ManyToOne
-	@MapsId("idChapter")
-	@JoinColumn(name = "id_Chapter", nullable = false)
-	private Chapter chapter;
+	@MapsId("idNovel")
+	@JoinColumn(name = "id_Novel", nullable = false)
+	private Novel novel;
 
+	private String titleChapter;
+	
 	private LocalDateTime readingTime;
 }

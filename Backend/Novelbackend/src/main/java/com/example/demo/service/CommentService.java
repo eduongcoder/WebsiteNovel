@@ -42,7 +42,6 @@ public class CommentService {
 	IChapterRepository chapterRepository;
 	IUserRepository userRepository;
 	ICommentMapper commentMapper;
-	INovelRepository novelRepository;
 
 	public List<CommentRespone> getAllCommentByChapter(String idChapter) {
 		Chapter chapter = chapterRepository.findByIdChapter(idChapter);
@@ -125,7 +124,7 @@ public class CommentService {
 			Comment comment = commentRepository.findByIdComment(idComment);
 			int dislike = comment.getDislikeComment();
 		
-			comment.setLikeComment(dislike + 1);
+			comment.setDislikeComment(dislike + 1);
 			commentRepository.save(comment);
 			return idComment;
 		} catch (Exception e) {

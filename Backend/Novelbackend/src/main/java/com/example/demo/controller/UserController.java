@@ -20,7 +20,10 @@ import com.example.demo.dto.request.UserLoginByEmailRequest;
 import com.example.demo.dto.request.UserLoginRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
 import com.example.demo.dto.respone.ApiRespone;
+import com.example.demo.dto.respone.HistoryReadRespone;
 import com.example.demo.dto.respone.UserRespone;
+import com.example.demo.entity.HistoryId;
+import com.example.demo.service.HistoryReadService;
 import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 
@@ -36,7 +39,7 @@ public class UserController {
 
 	UserService userService;
 	MailService mailService;
-	
+	HistoryReadService historyReadService;
 	
 	@GetMapping("/getAllUser")
 	public ApiRespone<List<UserRespone>> getAllUser(){
@@ -78,11 +81,11 @@ public class UserController {
 	public ApiRespone<UserRespone> uploadAvatar(@RequestParam MultipartFile image,@RequestParam String email) throws IOException {
 		return ApiRespone.<UserRespone>builder().result(userService.uploadUser(image, email)).build();
 	}
+	 
+	@PutMapping(value = "/updateUser")
+	public ApiRespone<UserRespone> updateUser(@RequestBody UserUpdateRequest request) throws IOException{
 	
-	@PutMapping(value = "/updateUser",consumes = { "multipart/form-data"})
-	public ApiRespone<UserRespone> updateUser(@RequestParam MultipartFile avatar,@RequestPart UserUpdateRequest request) throws IOException{
-	
-		return ApiRespone.<UserRespone>builder().result(userService.updateUser(avatar,request)).build();
+		return ApiRespone.<UserRespone>builder().result(userService.updateUser(request)).build();
 	} 
 	
 	@DeleteMapping("/deleteUser")
@@ -90,7 +93,17 @@ public class UserController {
 		return ApiRespone.<String>builder().result(userService.deleteUser(idUser)).build();
 	}
 	@PostMapping("/createHistory")
-	public ApiRespone<UserRespone> createHistory(@RequestParam String idChapter,@RequestParam String email){
-		return ApiRespone.<UserRespone>builder().result(userService.createHistoryRead(idChapter, email)).build();
+	public ApiRespone<UserRespone> createHistory(@RequestParam String idNovel,@RequestParam String email,@RequestParam String titleChapter){
+		return ApiRespone.<UserRespone>builder().result(userService.createHistoryRead(idNovel, email,titleChapter)).build();
 	}
+	
+	@DeleteMapping("/deleteHistory")
+	public ApiRespone<String> deleteHistory(@RequestBody HistoryId historyId){
+		return ApiRespone.<String>builder().result(historyReadService.deleteHistoryRead(historyId)).build();
+	}
+	@GetMapping("/getHistory")
+	public ApiRespone<List<HistoryReadRespone>> getHistory(@RequestParam String idUser) {
+		return  ApiRespone.<List<HistoryReadRespone>>builder().result(historyReadService.getHistoryRead(idUser)).build();
+	}
+	
 }

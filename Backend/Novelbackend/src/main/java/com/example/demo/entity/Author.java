@@ -24,14 +24,14 @@ public class Author {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	String idAuthor;
-
+ 
 	String descriptionAuthor;
 	String nameAuthor;
 	String nationality;
 
 	@Column(name = "imageAuthor", length = 255)
 	String imageAuthor;
-	String publicIDAuthor;
+	String publicIDAuthor; 
 	LocalDate dobAuthor;
 	LocalDate dodAuthor;
 

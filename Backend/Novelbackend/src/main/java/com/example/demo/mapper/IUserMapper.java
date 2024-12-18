@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import com.example.demo.dto.request.UserCreationByEmailRequest;
 import com.example.demo.dto.request.UserCreationRequest;
@@ -24,6 +25,7 @@ public interface IUserMapper {
 	User toUser(UserCreationByEmailRequest request);
 
 	UserRespone toUserRespone(User user);
-	@Mapping(target = "email",ignore = true)
-	User toUser2(UserUpdateRequest request); 
+
+	
+	void updateUser(UserUpdateRequest request,@MappingTarget User user);
 }

@@ -40,6 +40,7 @@ public class User {
 	String avatarUser;
 	
 	LocalDate dobUser;
+	
 	String publicIDUser;
 	
 	@OneToMany(mappedBy = "user")

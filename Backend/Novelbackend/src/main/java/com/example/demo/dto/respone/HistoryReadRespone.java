@@ -18,6 +18,9 @@ import lombok.experimental.FieldDefaults;
 public class HistoryReadRespone {
 	private HistoryId id;
 
+	private String nameNovel;
+
+	private String titleChapter;
 
 	private LocalDateTime readingTime;
 }
