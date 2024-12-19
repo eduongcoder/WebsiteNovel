@@ -30,11 +30,13 @@ import com.example.demo.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@Slf4j
 public class UserController {
 
 	UserService userService;
@@ -94,10 +96,11 @@ public class UserController {
 	}
 	@PostMapping("/createHistory")
 	public ApiRespone<UserRespone> createHistory(@RequestParam String idNovel,@RequestParam String email,@RequestParam String titleChapter){
+//		log.info(idNovel + " "+ email+ " "+ titleChapter);
 		return ApiRespone.<UserRespone>builder().result(userService.createHistoryRead(idNovel, email,titleChapter)).build();
 	}
 	
-	@DeleteMapping("/deleteHistory")
+	@PostMapping("/deleteHistory")
 	public ApiRespone<String> deleteHistory(@RequestBody HistoryId historyId){
 		return ApiRespone.<String>builder().result(historyReadService.deleteHistoryRead(historyId)).build();
 	}

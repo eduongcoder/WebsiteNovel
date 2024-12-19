@@ -166,16 +166,21 @@ public class UserService {
 		historyId.setIdNovel(idNovel);
 		historyId.setIdUser(user.getIdUser());
 
+		
 		HistoryRead historyRead=HistoryRead.builder().id(historyId).novel(novel).readingTime(LocalDateTime.now()).titleChapter(titleChapter)
 				.user(user).build();
 		
 		Optional<HistoryRead> historyReadPast=historyReadRepository.findById(historyId);
 		
-		if (historyReadPast!=null) {
+		if (!historyReadPast.isEmpty()) {
+
 			historyReadMapper.updateHistoryRead(historyRead, historyReadPast.get());
+			historyReadRepository.save(historyReadPast.get());
+			return userMapper.toUserRespone(user);
+
 		}
-		
 		historyReadRepository.save(historyRead);
+
 		return userMapper.toUserRespone(user);
 	}
 

@@ -17,7 +17,7 @@ public interface IUserMapper {
 	@Mapping(target = "dobUser",ignore = true)
 	@Mapping(target = "userName",ignore = true)
 	User toUser(UserCreationRequest request);
-	
+	 
 	@Mapping(target = "idUser",ignore = true)
 	@Mapping(target = "avatarUser",ignore = true)
 	@Mapping(target = "dobUser",ignore = true)

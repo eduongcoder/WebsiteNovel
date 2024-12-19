@@ -24,7 +24,7 @@ public interface INovelMapper {
 	@Mapping(target = "totalPage",ignore = true)
 	@Mapping(target = "publicIDNovel",ignore = true)
 	Novel toNovel(NovelCreationRequest request); 
-	
+	 
 	NovelJustIdAndNameRespone toNovelJustIdAndNameRespone(Novel novel); 
 	NovelNoImageRespone toNovelNoImageRespone(Novel novel);
  

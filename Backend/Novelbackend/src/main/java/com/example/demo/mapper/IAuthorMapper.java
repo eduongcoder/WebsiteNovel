@@ -11,7 +11,7 @@ import com.example.demo.entity.Author;
 @Mapper(componentModel = "spring")
 public interface IAuthorMapper {
 	
-	@Mapping(target = "idAuthor",ignore = true)
+	@Mapping(target = "idAuthor",ignore = true) 
 	@Mapping(target = "imageAuthor",ignore = true)
 	Author toAuthor(AuthorCreationRequest request);
 	@Mapping(target = "imageAuthor",ignore = true) 

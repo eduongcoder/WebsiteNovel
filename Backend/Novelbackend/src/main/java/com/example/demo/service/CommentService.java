@@ -119,6 +119,31 @@ public class CommentService {
 
 	}
 
+	public CommentRespone likeComemntRespone(String idComment) {
+		try {
+			Comment comment = commentRepository.findByIdComment(idComment);
+			comment.setLikeComment(comment.getLikeComment() + 1);
+			
+			return commentMapper.toCommentRespone(commentRepository.save(comment));
+		} catch (Exception e) {
+			throw new AppException(ErrorCode.COMMENT_NOT_EXISTED);
+		}
+
+	}
+	
+	public CommentRespone dislikeComemntRespone(String idComment) {
+		try {
+			Comment comment = commentRepository.findByIdComment(idComment);
+			int dislike = comment.getDislikeComment();
+		
+			comment.setDislikeComment(dislike + 1);
+			commentRepository.save(comment);
+			return commentMapper.toCommentRespone(commentRepository.save(comment));
+		} catch (Exception e) {
+			throw new AppException(ErrorCode.COMMENT_NOT_EXISTED);
+		}
+	}
+	
 	public String dislike(String idComment) {
 		try {
 			Comment comment = commentRepository.findByIdComment(idComment);

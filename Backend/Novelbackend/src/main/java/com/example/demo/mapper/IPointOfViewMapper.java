@@ -16,3 +16,4 @@ public interface IPointOfViewMapper {
 	PointOfView toPointOfView(PointOfViewUpdateRequest request);
 	PointOfViewRespone toPointOfViewRespone(PointOfView pointOfView);  
 }
+ 

@@ -102,6 +102,7 @@ public class AuthorService {
 	}
 
 	public Optional<AuthorRespone> updateAuthor(AuthorUpdateRequest request, MultipartFile image) {
+		Author author=authorRepository.findByIdAuthor(request.getIdAuthor());
 		if (!authorRepository.existsById(request.getIdAuthor())) {
 			throw new AppException(ErrorCode.AUTHOR_NOT_EXISTED);
 		}
@@ -110,12 +111,20 @@ public class AuthorService {
 			t.setNameAuthor(request.getNameAuthor());
 			try {
 				if (image!=null) {
+					
+					if (author.getPublicIDAuthor()!=null) {
+						uploadFileService.deleteImage(author.getPublicIDAuthor());
+
+					}
+					
 					UploadFileRespone respone=uploadFileService.uploadFile(image);
 					t.setImageAuthor(respone.getUrl());
 					t.setPublicIDAuthor(respone.getPublic_id());
 				}else {
-					t.setImageAuthor(null);
-					t.setPublicIDAuthor(null);
+					t.setImageAuthor(author.getImageAuthor());
+					t.setPublicIDAuthor(author.getPublicIDAuthor());
+//					t.setImageAuthor(null);
+//					t.setPublicIDAuthor(null);
 				}
 				
 			} catch (IOException e) {

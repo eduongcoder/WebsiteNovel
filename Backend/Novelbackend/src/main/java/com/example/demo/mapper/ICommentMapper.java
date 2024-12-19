@@ -16,7 +16,7 @@ public interface ICommentMapper {
 	@Mapping(target = "idComment",ignore = true)
 	@Mapping(target = "user",ignore = true)
 	Comment toComment(CommentCreationRequest request);
-
+ 
 	@Mapping(target = "avatarUser",ignore = true)
 	@Mapping(target = "userName",ignore = true) 
 	CommentRespone toCommentRespone(Comment comment);

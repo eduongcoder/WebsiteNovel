@@ -15,4 +15,4 @@ public interface IHistoryReadMapper {
 	
 	void updateHistoryRead(HistoryRead updateHistoryRead,@MappingTarget HistoryRead historyRead);
 }
- 
+  
