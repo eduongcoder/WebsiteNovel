@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import NovelDetails from './NovelDetails';
 import ChapterList from './ChapterList';
-
 export default function TabNovel({ idNovel }) {
     // State để lưu tab hiện tại (default là "chapters")
-    const [activeTab, setActiveTab] = useState('chapters');
+    const [activeTab, setActiveTab] = useState('about');
     return (
         <div className="text-gray-600 bg-blue-200 body-font mx-auto pb-8 h-full max-w-[1280px] flex-1 py-0 px-8 md:px-24">
             {/* Tabs header */}
@@ -40,7 +39,7 @@ export default function TabNovel({ idNovel }) {
             </div>
 
             {/* Nội dung hiển thị dựa trên tab hiện tại */}
-            {activeTab === 'about' && <NovelDetails />}
+            {activeTab === 'about' && <NovelDetails  idNovel={idNovel} />}
             {activeTab === 'chapters' && <ChapterList idNovel={idNovel} />}
         </div>
     );

@@ -22,14 +22,16 @@ function Login() {
         // Giả sử bạn sử dụng action login trong Redux để gửi API request
         const result = await dispatch(login(userCredentials)); // login là một action creator của Redux
 
-        if (result.error) {
-            alert('User login successfully');
-            // Nếu đăng nhập thành công, có thể chuyển hướng hoặc cập nhật trạng thái đăng nhập
-            toggleModal(); // Đóng modal khi đăng nhập thành công
+        // if (result.error) {
+        //     alert('User login successfully');
+        //     // Nếu đăng nhập thành công, có thể chuyển hướng hoặc cập nhật trạng thái đăng nhập
+        //     toggleModal(); // Đóng modal khi đăng nhập thành công
             
-        } else {
-            setError('Invalid email or password');
-        }
+        // } else {
+        //     setError('Invalid email or password');
+        // }
+        alert('User login successfully');
+        toggleModal();
     };
 
     return (

@@ -10,7 +10,7 @@ import Customer from '@/Components/PagesNovel/index.jsx';
 import textAll from '@/Components/TestLayoutJSX/textAll.jsx';
 import AreaCategory from '@/Components/PagesCategory/AreaCategory.jsx';
 const publicRoute = [
-    { path: '/', component: Home },
+    { path: '/', component: Product },
     { path: '/Order', component: Order ,layout: null },
     { path: '/Category', component: Category },
     { path: '/Product', component: Product }, //,layout: null

@@ -20,8 +20,20 @@ const ListViewCategory = () => {
 
     // Fetch categories when the component mounts
     useEffect(() => {
-        dispatch(fetchCategories());
-    }, [dispatch]);
+        const viewCate = async () => {
+            try {
+                dispatch(fetchCategories());
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        if(categories.length > 0){
+            //có thông tin chỉ viêc hiển thị 
+        }else{
+            // chưa có thông tin gọi viewCate
+            viewCate();
+        }
+    }, []);
 
     const handleDelete = (cateId) => {
         try {

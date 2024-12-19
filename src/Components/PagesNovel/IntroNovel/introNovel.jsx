@@ -7,12 +7,12 @@ const NovelCard = ({ idNovel }) => {
 
     // Lấy dữ liệu từ Redux store
     const { novels, status } = useSelector((state) => state.novel);
-    console.log('idNovel:', idNovel); // Kiểm tra idNovel từ props
-    console.log('All novels:', novels); // Kiểm tra tất cả các novels
-
     useEffect(() => {
-        dispatch(fetchNovels());
-    }, [dispatch]);
+        const fetchCard = async() => {
+           await dispatch(fetchNovels());
+        }
+        fetchCard(); // Fetch novels on component mounting
+    }, []);
 
     // Kiểm tra trạng thái loading
     if (status === 'loading') {
@@ -36,7 +36,6 @@ const NovelCard = ({ idNovel }) => {
     const novel = novels.find(
         (item) => item.idNovel.toString() === idNovel.replace(':', ''),
     );
-    console.log('Matched novel:', novel); // Kiểm tra kết quả tìm kiếm
 
     if (!novel) {
         return (

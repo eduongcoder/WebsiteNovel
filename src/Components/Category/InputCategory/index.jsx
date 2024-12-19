@@ -12,8 +12,15 @@ const InputCategory = ({
 
     // Lấy danh sách danh mục từ Redux store
     useEffect(() => {
-        dispatch(fetchCategoriesAction());
-    }, [dispatch, fetchCategoriesAction]);
+        const FeatchCate = async () => {
+            try {
+              await  dispatch(fetchCategoriesAction());
+            } catch (error) {
+                console.error(error)
+            }
+        }
+       FeatchCate();
+    }, []);
 
     const categories = useSelector((state) => state.category.categories);
     const loading = useSelector((state) => state.category.loading);

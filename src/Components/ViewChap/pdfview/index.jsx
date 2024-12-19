@@ -28,7 +28,6 @@ const PdfViewer = ({ pdfId, page, pageGet }) => {
                     Xem Trang {page}
                 </button>
                 {error && <p className="text-red-500">Error: {error}</p>}
-                {console.log(' giá trị pageContent : ', pageContent)}
                 {pageContent ? (
                     <iframe
                         src={'data:application/pdf;base64,' + pageContent}

@@ -2,6 +2,8 @@ import React from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
 import PdfViewe from './pdfview';
 import Navbar from '@/Layout/DefaultLayout/navbar';
+import Comment from '../Comment/Comment';
+import ViewComponent from '../Comment/ViewComment/ViCo';
 function ViewChap() {
     const { idChapter } = useParams();
     const [searchParams] = useSearchParams();
@@ -9,7 +11,6 @@ function ViewChap() {
     const startPage = searchParams.get('startPage');
     const totalPageChapter = searchParams.get('totalPageChapter');
     const titleChapter = searchParams.get('titleChapter');
-    console.log(startPage, totalPageChapter, idChapter);
     if (
         !idChapter ||
         startPage === undefined ||
@@ -42,7 +43,9 @@ function ViewChap() {
                     page={startPage}
                     pageGet={totalPageChapter }
                 />
+                <Comment idChapter={idChapter} />
             </div>
+            
         </div>
     );
 }

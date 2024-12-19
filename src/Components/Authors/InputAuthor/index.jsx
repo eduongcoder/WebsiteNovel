@@ -19,8 +19,15 @@ const InputAuthor = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(fetchAuthors());
-    }, [dispatch]);
+        const inauthor = async () => {
+            try {
+                dispatch(fetchAuthors());
+            } catch (error) {
+                console.error(' inauthor' + error);
+            }
+        };
+        inauthor();
+    }, []);
 
     const authors = useSelector((state) => state.author.authors);
 
@@ -57,7 +64,7 @@ const InputAuthor = () => {
         return true;
     };
 
-    const handleCreate = (e) => {
+    const handleCreate = async (e) => {
         e.preventDefault();
 
         if (!isValidDateRange(dobAuthor, dodAuthor)) {
@@ -68,20 +75,23 @@ const InputAuthor = () => {
         //     alert('Vui lòng chọn file ảnh.');
         //     return;
         // }
-
-        dispatch(
-            createAuthor({
-                nameAuthor,
-                descriptionAuthor,
-                nationality: nationalityauthor,
-                dobAuthor,
-                dodAuthor,
-                file,
-            }),
-        );
+        try {
+            await dispatch(
+                createAuthor({
+                    nameAuthor,
+                    descriptionAuthor,
+                    nationality: nationalityauthor,
+                    dobAuthor,
+                    dodAuthor,
+                    file,
+                }),
+            );
+        } catch (error) {
+            console.error(error);
+        }
     };
 
-    const handleUpdate = (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
 
         if (!isValidDateRange(dobAuthor, dodAuthor)) {
@@ -109,9 +119,11 @@ const InputAuthor = () => {
                 type: 'application/json',
             }),
         );
-
-        dispatch(updateAuthor(formData));
-        
+        try {
+            await dispatch(updateAuthor(formData));
+        } catch (error) {
+            console.error('Error updating');
+        }
     };
 
     const handleAuthorChange = (e) => {
@@ -136,17 +148,36 @@ const InputAuthor = () => {
             setNameAuthor(selectedAuthor.nameAuthor);
             setDescriptionAuthor(selectedAuthor.descriptionAuthor);
             setNationality(selectedAuthor.nationality);
-            // console.log(typeof selectedAuthor.dobAuthor);
+            console.log('dob', selectedAuthor.dobAuthor);
+            console.log('dod', selectedAuthor.dodAuthor);
             // setDobAuthor(selectedAuthor.dobAuthor);
             try {
-                const dob = new Date(selectedAuthor.dobAuthor)
-                    .toISOString()
-                    .split('T')[0];
-                setDobAuthor(dob);
+                if (selectedAuthor.dobAuthor) {
+                    const [day, month, year] =
+                        selectedAuthor.dobAuthor.split('/'); // Tách ngày, tháng, năm
+                    const formattedDate = `${year}-${month.padStart(
+                        2,
+                        '0',
+                    )}-${day.padStart(2, '0')}`; // Định dạng yyyy-MM-dd
+                    setDobAuthor(formattedDate);
+                }
             } catch (error) {
                 console.error('Invalid date format:', error);
             }
-            setDodAuthor(selectedAuthor.dodAuthor);
+
+            try {
+                if (selectedAuthor.dodAuthor) {
+                    const [day, month, year] =
+                        selectedAuthor.dodAuthor.split('/'); // Tách ngày, tháng, năm
+                    const formattedDate = `${year}-${month.padStart(
+                        2,
+                        '0',
+                    )}-${day.padStart(2, '0')}`; // Định dạng yyyy-MM-dd
+                    setDodAuthor(formattedDate);
+                }
+            } catch (error) {
+                console.error('Invalid date format:', error);
+            }
             setFile(selectedAuthor.imageUrl || null);
         }
     };

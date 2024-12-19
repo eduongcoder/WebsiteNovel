@@ -88,7 +88,7 @@ function Sidebar() {
                                 <span className="ms-3">Chapter</span>
                             </Link>
                         </li>
-                        <li>
+                        {/* <li>
                             <Link
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                                 to="/Order"
@@ -96,7 +96,7 @@ function Sidebar() {
                                 <MdBorderColor />
                                 <span className="ms-3">Home User</span>
                             </Link>
-                        </li>
+                        </li> */}
                         <li>
                             <Link
                                 to="/Product"
@@ -133,7 +133,7 @@ function Sidebar() {
                                 <span className="ms-3">Point Of Views</span>
                             </Link>
                         </li>
-                        <li>
+                        {/* <li>
                             <Link
                                 to="/textAll"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -141,7 +141,7 @@ function Sidebar() {
                                 <AiOutlineCustomerService />
                                 <span className="ms-3">Test</span>
                             </Link>
-                        </li>
+                        </li> */}
                         
                     </ul>
                 </div>

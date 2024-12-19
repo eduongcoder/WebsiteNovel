@@ -186,7 +186,7 @@ const chapterSlice = createSlice({
             .addCase(fetchChapters.fulfilled, (state, action) => {
                 state.loading = false;
                 const chapter = action.payload.data.result;
-                console.log('', typeof chapter);
+                //console.log('', typeof chapter);
                 Array.from(chapter).map((el)=>state.chapters.push(el));
             })
             .addCase(fetchChapters.rejected, (state, action) => {
