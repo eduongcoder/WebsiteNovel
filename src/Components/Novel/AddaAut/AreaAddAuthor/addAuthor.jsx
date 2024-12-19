@@ -43,7 +43,7 @@ function AddAuthor() {
     return (
         <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
-                Add Author to Novel
+                Thêm Tác Giả Vào Tiểu Thuyết
             </h2>
 
             <div className="mb-4">
@@ -51,7 +51,7 @@ function AddAuthor() {
                     htmlFor="author"
                     className="block text-gray-600 font-medium mb-2"
                 >
-                    Author
+                    Tác Giả
                 </label>
                 <select
                     id="author"
@@ -73,7 +73,7 @@ function AddAuthor() {
                     htmlFor="novel"
                     className="block text-gray-600 font-medium mb-2"
                 >
-                    Novel
+                    Tiểu thuyết
                 </label>
                 <select
                     id="novel"
@@ -81,7 +81,7 @@ function AddAuthor() {
                     onChange={(e) => setIdNovel(e.target.value)}
                     className="w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                    <option value="">Select Novel</option>
+                    <option value="">Chọn Novel</option>
                     {novels.map((novel) => (
                         <option key={novel.idNovel} value={novel.idNovel}>
                             {novel.nameNovel}

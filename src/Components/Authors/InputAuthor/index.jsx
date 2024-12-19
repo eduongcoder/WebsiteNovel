@@ -185,7 +185,6 @@ const InputAuthor = () => {
     return (
         <form className="max-w-4xl p-6 mx-auto bg-indigo-800 rounded-md shadow-md dark:bg-gray-800">
             {error && <p className="text-red-500 mb-4">{error}</p>}
-
             <select
                 onChange={handleAuthorChange}
                 value={selectedAuthorId}
@@ -198,7 +197,7 @@ const InputAuthor = () => {
                     </option>
                 ))}
             </select>
-
+            <p>Tên tác giả</p>
             <input
                 className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="text"
@@ -207,6 +206,7 @@ const InputAuthor = () => {
                 placeholder="Tên tác giả"
                 required
             />
+            <p>Thông tin tác giả </p>
             <textarea
                 className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 value={descriptionAuthor}
@@ -214,6 +214,7 @@ const InputAuthor = () => {
                 placeholder="Description"
                 required
             />
+            <p>Quốc tịch </p>
             <input
                 className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="text"
@@ -228,6 +229,7 @@ const InputAuthor = () => {
                 <option value="French" />
                 <option value="Japanese" />
             </datalist>
+            <p>ngày sinh tác giả </p>
             <input
                 className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="date"
@@ -235,6 +237,7 @@ const InputAuthor = () => {
                 onChange={(e) => setDobAuthor(e.target.value)}
                 placeholder="Ngày sinh"
             />
+            <p>ngày mất tác giả </p>
             <input
                 className="block w-full px-4 py-2 mb-4 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                 type="date"
@@ -242,7 +245,7 @@ const InputAuthor = () => {
                 onChange={(e) => setDodAuthor(e.target.value)}
                 placeholder="Ngày mất"
             />
-
+            <p>ảnh tác giả </p>
             <div className="mb-4">
                 {file && typeof file === 'string' && (
                     <div>

@@ -10,8 +10,11 @@ function ShowPOV() {
 
     // Gọi API khi component mount
     useEffect(() => {
-        dispatch(fetchNovelsNoImage());
-    }, [dispatch]);
+        const fnov = async() => {
+          await  dispatch(fetchNovelsNoImage());
+        }
+        fnov();
+    }, []);
 
     // Xử lý trường hợp dữ liệu chưa sẵn sàng hoặc không hợp lệ
     if (!novels || novels.length === 0) {
@@ -21,16 +24,16 @@ function ShowPOV() {
     return (
         <div className="max-w-4xl mx-auto mt-6 bg-black shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-center mb-4">
-                List of Novels and POV
+                Danh Sách Ngôi Kể Truyện
             </h2>
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
                     <tr>
                         <th className="border border-gray-300 px-4 py-2 text-left">
-                            Novel Name
+                            Tên Sách
                         </th>
                         <th className="border border-gray-300 px-4 py-2 text-left">
-                            POV
+                            Ngôi Kể Truyện
                         </th>
                     </tr>
                 </thead>

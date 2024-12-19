@@ -15,12 +15,15 @@ function AddCategory() {
     const novels = useSelector((state) => state.novel.novels);
 
     useEffect(() => {
-        dispatch(fetchCategories());
-        dispatch(fetchNovelOnlyName());
-    }, [dispatch]);
+        const ffcano = async () => {
+            await dispatch(fetchCategories());
+            await dispatch(fetchNovelOnlyName());
+        };
+        ffcano();
+    }, []);
 
     const handleAddCategory = async () => {
-        console.log(nameCategory, idNovel);
+      
         if (nameCategory && idNovel) {
             setIsLoading(true);
             setMessage('');
@@ -43,7 +46,7 @@ function AddCategory() {
     return (
         <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
-                Add Category to Novel
+                Thêm Thể Loại Vào Tiểu Thuyết
             </h2>
 
             <div className="mb-4">
@@ -51,7 +54,7 @@ function AddCategory() {
                     htmlFor="category"
                     className="block text-gray-600 font-medium mb-2"
                 >
-                    Category
+                    Thể loại
                 </label>
                 <select
                     id="category"

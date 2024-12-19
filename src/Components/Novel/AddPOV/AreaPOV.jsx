@@ -14,7 +14,7 @@ function AreaPOV() {
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 type="button"
             >
-                Add POV
+                Thêm Ngôi Kể Truyện
             </button>
 
             {/* Modal */}
@@ -31,7 +31,7 @@ function AreaPOV() {
                             {/* Modal header */}
                             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Add POV
+                                    Thêm Ngôi Kể Truyện
                                 </h3>
                                 <button
                                     onClick={toggleModal}

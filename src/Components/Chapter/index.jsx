@@ -33,7 +33,7 @@ export default function Chapter() {
                                     : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
                             }`}
                         >
-                            Input chapter
+                            Tạo Chương
                         </button>
                     </li>
                     {/* Tab Chapters */}
@@ -46,7 +46,7 @@ export default function Chapter() {
                                     : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
                             }`}
                         >
-                            Update chapter
+                            Cập Nhập Chương
                         </button>
                     </li>
                 </ul>

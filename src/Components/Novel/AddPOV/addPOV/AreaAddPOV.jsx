@@ -15,9 +15,12 @@ function AddPOV() {
     const novels = useSelector((state) => state.novel.novels);
     console.log(povs);
     useEffect(() => {
-        dispatch(fetchPov());
-        dispatch(fetchNovelOnlyName());
-    }, [dispatch]);
+        const ffpovnov = async () => {
+            await dispatch(fetchNovelOnlyName());
+            await dispatch(fetchPov());
+        }
+        ffpovnov();
+    }, []);
 
     const handleAddPOV = async () => {
         setMessage('');
@@ -43,7 +46,7 @@ function AddPOV() {
     return (
         <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
-                Add POV to Novel
+            Thêm Ngôi Kể Truyện Vào Sách
             </h2>
 
             <div className="mb-4">
@@ -51,7 +54,7 @@ function AddPOV() {
                     htmlFor="pov"
                     className="block text-gray-600 font-medium mb-2"
                 >
-                    Point of View
+                    Ngôi Kể Truyện
                 </label>
                 <select
                     id="pov"
@@ -59,7 +62,7 @@ function AddPOV() {
                     onChange={(e) => setNamePOV(e.target.value)}
                     className="w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                    <option value="">Select POV</option>
+                    <option value="">Chọn POV</option>
                     {povs.map((pov) => (
                         <option
                             key={pov.idPointOfView}
@@ -76,7 +79,7 @@ function AddPOV() {
                     htmlFor="novel"
                     className="block text-gray-600 font-medium mb-2"
                 >
-                    Novel
+                    Sách
                 </label>
                 <select
                     id="novel"
@@ -84,7 +87,7 @@ function AddPOV() {
                     onChange={(e) => setIdNovel(e.target.value)}
                     className="w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                    <option value="">Select Novel</option>
+                    <option value="">Chọn Sách</option>
                     {novels.map((novel) => (
                         <option key={novel.idNovel} value={novel.idNovel}>
                             {novel.nameNovel}

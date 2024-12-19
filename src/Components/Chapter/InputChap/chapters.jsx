@@ -201,7 +201,7 @@ const CreateChapterForm = () => {
             {showChapters &&
                 chapterPagesArray.map((item, index) => (
                     <div key={index} className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-blue-500">
                             Tên Chương {index + 1}
                         </label>
                         <input
@@ -212,11 +212,11 @@ const CreateChapterForm = () => {
                                 newTitles[index] = e.target.value;
                                 setTitleChapters(newTitles);
                             }}
-                            className="mt-1 block w-full p-2 border rounded-md focus:outline-none mb-2"
+                            className="mt-1 block w-full p-2 border text-white rounded-md focus:outline-none mb-2"
                         />
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-blue-400">
                                     Trang Bắt Đầu
                                 </label>
                                 <input
@@ -235,11 +235,11 @@ const CreateChapterForm = () => {
                                             ),
                                         )
                                     }
-                                    className="mt-1 block w-full p-2 border rounded-md focus:outline-none"
+                                    className="mt-1 block w-full p-2 border text-white rounded-md focus:outline-none"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-blue-400">
                                     Trang Kết Thúc
                                 </label>
                                 <input
@@ -258,7 +258,7 @@ const CreateChapterForm = () => {
                                             ),
                                         )
                                     }
-                                    className="mt-1 block w-full p-2 border rounded-md focus:outline-none"
+                                    className="mt-1 block w-full p-2 border text-white rounded-md focus:outline-none"
                                 />
                             </div>
                         </div>

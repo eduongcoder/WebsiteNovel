@@ -27,10 +27,10 @@ function ShowAuth() {
                 <thead>
                     <tr>
                         <th className="border border-gray-300 px-4 py-2 text-left">
-                            Novel Name
+                            Tên Tiểu Thuyết
                         </th>
                         <th className="border border-gray-300 px-4 py-2 text-left">
-                            Author
+                            Tác Giả
                         </th>
                     </tr>
                 </thead>

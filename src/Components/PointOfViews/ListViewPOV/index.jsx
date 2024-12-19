@@ -77,12 +77,12 @@ function ListViewPOV() {
             <section className="bg-cyan-600 rounded-md shadow-cyan-500/50 p-4 md:p-6">
                 <div className="mb-3 flex items-center justify-between">
                     <h4 className="text-[18px] text-sky-100">
-                        Point of View List
+                        Danh Sách Góc Nhìn
                     </h4>
                     <div>
                         <input
                             type="text"
-                            placeholder="Search POV..."
+                            placeholder="Tìm kiếm góc Nhìn..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="mt-2 p-2 w-full md:w-64 border border-gray-300 rounded"
@@ -91,7 +91,7 @@ function ListViewPOV() {
                 </div>
 
                 <div className="mb-3">
-                    <label className="text-sm">Povs per page: </label>
+                    <label className="text-sm">Trang Danh Sách: </label>
                     <select
                         value={povsPerPage}
                         onChange={handlePovsPerPageChange}

@@ -84,7 +84,7 @@ const ListViewCategory = () => {
         <div>
             <section className="bg-cyan-600 rounded-md shadow-cyan-500/50 p-4 md:p-6">
                 <div className="mb-3 flex items-center justify-between">
-                    <h4 className="text-[18px] text-sky-100">Category List</h4>
+                    <h4 className="text-[18px] text-sky-100">Danh sách thể loại</h4>
                     <div>
                         <input
                             type="text"

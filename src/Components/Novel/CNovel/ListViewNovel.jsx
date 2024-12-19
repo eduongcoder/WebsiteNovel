@@ -13,9 +13,8 @@ const TABLE_HEADS_NOVEL = [
 ];
 
 const TABLE_HEADS_CHAPTER = [
-    'idChapter',
-    'titleChapter',
-    'historyReads',
+    'Tên Chương',
+    'Tên Chương',
     'Action',
 ];
 
@@ -51,17 +50,17 @@ const ListViewNovel = () => {
     return (
         <div className="container mx-auto p-4">
             <section>
-                <h4 className="text-xl font-bold mb-4">Novel List</h4>
+                <h4 className="text-xl font-bold mb-4">Danh Sách Sách</h4>
                 <div className="container mx-auto p-4">
                     <ul className="grid grid-cols-5 border-b items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 font-bold text-gray-700 py-2 px-4">
                         <li className="col-span-1 place-items-center">
-                            Novel Name
+                            Tên Sách
                         </li>
                         <li className="col-span-1 place-items-center">
-                            Description
+                            Thông Tin
                         </li>
                         <li className="col-span-1 place-items-center">
-                            totalChapter
+                            Số Chương
                         </li>
                         <li className="col-span-1 place-items-center">Image</li>
                         <li className="col-span-1 place-items-center">
@@ -121,7 +120,7 @@ const ListViewNovel = () => {
                                 {openedId === novel.idNovel && (
                                     <div className="p-4">
                                         <h5 className="font-semibold mb-2">
-                                            Chapter List
+                                            Danh Sách Chương
                                         </h5>
                                         {chapters.length > 0 ? (
                                             <table className="table-auto w-full border-collapse border border-gray-300">
@@ -163,11 +162,6 @@ const ListViewNovel = () => {
                                                                     }
                                                                 </td>
                                                                 <td className="border px-4 py-2">
-                                                                    {
-                                                                        chapter.historyReads
-                                                                    }
-                                                                </td>
-                                                                <td className="border px-4 py-2">
                                                                     <button
                                                                         onClick={() =>
                                                                             dispatch(
@@ -178,7 +172,7 @@ const ListViewNovel = () => {
                                                                         }
                                                                         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                                                                     >
-                                                                        Delete
+                                                                        Xóa
                                                                     </button>
                                                                 </td>
                                                             </tr>
